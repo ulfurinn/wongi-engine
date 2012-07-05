@@ -1,0 +1,144 @@
+module Wongi::Engine
+
+  class WME < Struct.new( :subject, :predicate, :object )
+
+    attr_reader :rete
+
+    attr_reader :alphas, :tokens, :generating_tokens
+    attr_reader :neg_join_results, :opt_join_results
+
+    def initialize s, p, o, r = nil
+
+      @alphas = []
+      @tokens = []
+      @generating_tokens = []
+      @neg_join_results = []
+      @opt_join_results = []
+
+      @rete = r
+
+      if r
+        super( r.import(s), r.import(p), r.import(o) )
+      else
+        super( s, p, o )
+      end
+
+    end
+
+    def import_into r
+      self.class.new subject, predicate, object, r
+    end
+
+    def dup
+      self.class.new subject, predicate, object, rete
+    end
+
+    def == other
+      subject == other.subject && predicate == other.predicate && object == other.object
+    end
+
+    def =~ template
+      raise "Cannot match a WME against a #{template.class}" unless Template === template
+      result = match_member( template, :subject ) & match_member( template, :predicate ) & match_member( template, :object )
+      if result.match?
+        result
+      end
+    end
+
+    def manual?
+      generating_tokens.empty?
+    end
+
+    def generated?
+      !manual?
+    end
+
+    def destroy snapshot = nil
+
+      alphas.each { |alpha| alpha.remove self }.clear
+      while tokens.first
+        tokens.first.delete self    # => will remove itself from the array
+      end
+
+      destroy_neg_join_results snapshot
+      destroy_opt_join_results
+
+    end
+
+    def to_s
+      "<#{subject} #{predicate} #{object}>"
+    end
+
+    def hash
+      @hash ||= array_form.map( &:hash ).hash
+    end
+
+    protected
+
+    def array_form
+      @array_form ||= [ subject, predicate, object ]
+    end
+
+    def destroy_neg_join_results snapshot
+      neg_join_results.each do |njr|
+
+        token = njr.owner
+        results = token.neg_join_results
+        results.delete njr
+
+        if results.empty?
+          token.node.children.each { |beta|
+
+            # When we're destroying for snapshot and the source alpha has the same WME as this it
+            # makes no sense to activate the neganode because it will be undone in a moment.
+
+            if snapshot.nil? || !snapshot.wmes( :forced ).include?( self )
+              beta.left_activate token, nil, { }
+            end
+          }
+        end
+
+      end.clear
+    end
+
+    def destroy_opt_join_results
+      opt_join_results.each do |ojr|
+
+        token = ojr.owner
+        results = token.opt_join_results
+        results.delete ojr
+
+        if results.empty?
+          token.delete_children
+          token.node.children.each { |beta|
+            beta.left_activate token
+          }
+        end
+
+      end.clear
+    end
+
+    def match_member template, member
+      result = WMEMatchData.new
+      mine = self.send member
+      theirs = template.send member
+      if theirs.nil? || mine == theirs
+        result.match!
+      elsif Template.variable? theirs
+        result.match!
+        result[theirs] = mine
+      end
+      result
+    end
+
+    def inspect
+      "<WME #{subject.inspect} #{predicate.inspect} #{object.inspect}>"
+    end
+
+    def to_s
+      inspect
+    end
+
+  end
+
+end
