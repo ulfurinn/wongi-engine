@@ -2,7 +2,7 @@ module Wongi
   module Engine
     class ProductionNode < BetaMemory
 
-      attr_accessor :debug
+      attr_accessor :tracer
 
       def initialize parent, actions
         super(parent)
@@ -26,65 +26,7 @@ module Wongi
       end
     end
 
-    class DebugAction
-
-      attr_accessor :production
-
-      class DefaultDebugger
-        class << self
-          def report rule, token = nil
-            if token
-              puts "EXECUTED #{rule} WITH #{token}"
-            else
-              puts "EXECUTED #{rule}"
-            end
-          end
-        end
-      end
-
-      class << self
-        attr_writer :production_debugger
-        def production_debugger
-          @production_debugger || DefaultDebugger
-        end
-      end
-
-      def initialize rule_name
-        @rule_name = rule_name
-        @verbose = false
-        @values = false
-      end
-
-      def verbose!
-        @verbose = true
-      end
-
-      def silent!
-        @verbose = false
-      end
-
-      def report_values!
-        @values = true
-      end
-
-      def report *args
-        self.class.production_debugger.report *args
-      end
-
-      def execute token
-        production.debug = @verbose
-        if @values
-          report @rule_name, token
-        else
-          report @rule_name
-        end
-      end
-    end
-
-    class StatementGenerator
-
-      attr_accessor :model
-      attr_accessor :production
+    class StatementGenerator < Action
 
       def initialize template
         @template = template
@@ -118,7 +60,7 @@ module Wongi
 
         wme = WME.new subject, predicate, object
 
-        puts "generating wme #{wme}" if production.debug
+        production.tracer.trace( action: self, wme: wme ) if production.tracer
         if existing = model.exists?( wme )
           generated = existing.generating_tokens.size
           if generated > 0 && ! token.generated_wmes.include?( existing )

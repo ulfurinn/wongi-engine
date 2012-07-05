@@ -10,9 +10,7 @@ module Wongi
         end
 
         def register name, ruleset
-          #        if rulesets.has_key?(name)
-          #          rulesets.delete(name)
-          #        end
+          raise "ruleset #{name} already exists" if rulesets.has_key?( name )
           rulesets[ name ] = ruleset
         end
 

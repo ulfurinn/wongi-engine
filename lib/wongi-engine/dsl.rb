@@ -10,6 +10,7 @@ module Wongi
           c = ExtensionClause.new *args, &block
           c.name = clause
           c.action = action
+          c.rule = self
           accept c
         end
       end
@@ -50,6 +51,7 @@ module Wongi
 
       attr_accessor :production
       attr_accessor :model
+      attr_accessor :rule
 
       def self.category category = nil
         if category
@@ -107,7 +109,7 @@ module Wongi
 
     class ExtensionClause
 
-      attr_accessor :name, :action
+      attr_accessor :name, :action, :rule
 
       def initialize *args, &block
         @args = args
@@ -116,6 +118,7 @@ module Wongi
 
       def import_into model
         a = action.new *@args, &@block
+        a.rule = rule
         a.model = model
         a
       rescue Exception => e
@@ -258,21 +261,6 @@ module Wongi
         accept GenerationClause.new( Template.new( s, p, o ) )
       end
 
-      def debug *opts
-        action = DebugAction.new( @name )
-        opts.each do |opt|
-          case opt
-          when :verbose
-            action.verbose!
-          when :silent
-            action.silent!
-          when :values
-            action.report_values!
-          end
-        end
-        accept action# if WONGI_DEBUG
-      end
-
       alias_method :generate, :gen
 
     end
@@ -408,3 +396,6 @@ end
 def dsl &definition
   Wongi::Engine::DSLBuilder.new.build &definition
 end
+
+require 'wongi-engine/dsl/trace_action'
+require 'wongi-engine/dsl/error_generator'

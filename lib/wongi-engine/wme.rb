@@ -65,8 +65,12 @@ module Wongi::Engine
 
     end
 
+    def inspect
+      "<WME #{subject.inspect} #{predicate.inspect} #{object.inspect}>"
+    end
+
     def to_s
-      "<#{subject} #{predicate} #{object}>"
+      inspect
     end
 
     def hash
@@ -129,14 +133,6 @@ module Wongi::Engine
         result[theirs] = mine
       end
       result
-    end
-
-    def inspect
-      "<WME #{subject.inspect} #{predicate.inspect} #{object.inspect}>"
-    end
-
-    def to_s
-      inspect
     end
 
   end
