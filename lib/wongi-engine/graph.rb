@@ -7,6 +7,14 @@ module Wongi::Engine
     end
 
     def dot io
+
+      if String === io
+        File.open io, "w" do |actual_io|
+          dot actual_io
+        end
+        return
+      end
+
       @io = io
 
       @io.puts "digraph {"
