@@ -37,6 +37,10 @@ module Wongi::Engine
       beta_top.dump
     end
 
+    def alphas
+      alpha_hash.values
+    end
+
     def import thing
       case thing
       when String, Numeric, TrueClass, FalseClass, NilClass
