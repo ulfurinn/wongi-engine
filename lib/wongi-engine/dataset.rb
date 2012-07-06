@@ -332,7 +332,7 @@ module Wongi::Engine
     public
 
     def inspect
-      "<ReteModel>"
+      "<Rete>"
     end
 
     def add_collector collector, category

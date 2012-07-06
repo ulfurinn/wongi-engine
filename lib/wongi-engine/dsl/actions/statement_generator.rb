@@ -1,6 +1,8 @@
 module Wongi::Engine
   class StatementGenerator < Action
 
+    attr_accessor :rete
+
     def initialize template
       @template = template
     end

@@ -17,10 +17,10 @@ module Wongi
         @message, @messenger = message, messenger
       end
 
-      def rete= m
-        super
-        rete.add_collector :error, self
-      end
+      #def rete= m
+      #  super
+      #  rete.add_collector :error, self
+      #end
 
       def errors
         production.tokens.map do |token|

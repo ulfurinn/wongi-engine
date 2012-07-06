@@ -24,21 +24,18 @@ module Wongi::Engine
     
     def action klass = nil, &block
       raise "Cannot create an action without a clause" if @current_clause.nil?
-      klass.category( @current_clause ) if klass.respond_to?(:category) && klass.category.nil?
       @clauses << { :section => @current_section, :clause => @current_clause, :action => klass || block }
       @current_clause = nil
     end
 
     def body klass = nil, &block
       raise "Cannot create a body without a clause" if @current_clause.nil?
-      klass.category( @current_clause ) if klass.respond_to?(:category) && klass.category.nil?
       @clauses << { :section => @current_section, :clause => @current_clause, :body => klass || block }
       @current_clause = nil
     end
 
     def accept klass = nil, &block
       raise "Cannot create an acceptor without a clause" if @current_clause.nil?
-      klass.category( @current_clause ) if klass.respond_to?(:category) && klass.category.nil?
       @clauses << { :section => @current_section, :clause => @current_clause, :accept => klass || block }
       @current_clause = nil
     end

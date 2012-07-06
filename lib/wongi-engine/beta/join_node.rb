@@ -34,8 +34,8 @@ module Wongi
         @assignment_pattern = assignment
       end
 
-      def satisfy? alpha, tests, assignment
-        return false  # => TODO: not quite yet...
+      def equivalent? alpha, tests, assignment
+        #return false  # => TODO: not quite yet...
         return false unless self.alpha == alpha
         return false unless assignment_pattern == assignment
         return false unless self.tests.all? { |my_test| tests.any? { |new_test| my_test.equivalent? new_test } }

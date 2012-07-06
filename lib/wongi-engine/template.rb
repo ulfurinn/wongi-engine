@@ -41,7 +41,7 @@ module Wongi::Engine
     end
 
     def == other
-      return false unless Template === template
+      return false unless Template === other
       subject == other.subject && predicate == other.predicate && object == other.object
     end
 

@@ -1,5 +1,13 @@
 require 'spec_helper'
 
+dsl {
+
+  section :make
+  clause :test_collector
+  action Class.new(Wongi::Engine::SimpleCollector)
+
+}
+
 describe 'the engine' do
 
   def reflexive_rule
@@ -21,7 +29,29 @@ describe 'the engine' do
         same :A, :B
       }
       make {
-        trace values: true
+        
+      }
+    }
+  end
+
+  def collection_rule
+    rule('collector') {
+      forall {
+        has :X, nil, 42
+      }
+      make {
+        test_collector :X
+      }
+    }
+  end
+
+  def generic_collection_rule
+    rule('generic-collector') {
+      forall {
+        has :X, nil, 42
+      }
+      make {
+        collect :X, :things_that_are_42
       }
     }
   end
@@ -62,6 +92,44 @@ describe 'the engine' do
     rete << equality_rule
 
     rete << [ 42, "same", 42 ]
+
+  end
+
+  it 'should use collectors' do
+
+    rete = Wongi::Engine::Dataset.new
+    rete << collection_rule
+
+    rete << [ "answer", "is", 42 ]
+    rete << [ "question", "is", -1 ]
+
+    collection = rete.collection(:test_collector)
+    collection.should have(1).item
+    collection.first.should == "answer"
+
+  end
+
+  it 'should use generic collectors' do
+
+    rete = Wongi::Engine::Dataset.new
+    rete << generic_collection_rule
+
+    rete << [ "answer", "is", 42 ]
+    rete << [ "question", "is", -1 ]
+
+    collection = rete.collection(:things_that_are_42)
+    collection.should have(1).item
+    collection.first.should == "answer"
+
+  end
+
+  it 'should accept several rules' do
+
+    lambda {
+      rete = Wongi::Engine::Dataset.new
+      rete << generic_collection_rule
+      rete << collection_rule
+    }.should_not raise_error
 
   end
 

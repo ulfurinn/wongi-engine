@@ -13,6 +13,7 @@ module Wongi::Engine
         self
       else
         a = action.new *@args, &@block
+        a.name = name if a.respond_to? :name=
         a.rule = rule if a.respond_to? :rule=
         a.rete = rete if a.respond_to? :rete=
         a

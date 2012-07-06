@@ -95,5 +95,8 @@ dsl {
   clause :error
   action Wongi::Engine::ErrorGenerator
 
+  clause :collect
+  action Wongi::Engine::SimpleCollector
+
 }
 
