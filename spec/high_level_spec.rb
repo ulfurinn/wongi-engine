@@ -68,6 +68,8 @@ describe 'the engine' do
 
       rete.should have(3).facts
       rete.facts.select( &:manual? ).should have(2).items
+      generated = rete.facts.find( &:generated? )
+      generated.should == Wongi::Engine::WME.new( "Bob", "friend", "Alice" )
     end
 
     it 'should generate wmes with an added rule' do

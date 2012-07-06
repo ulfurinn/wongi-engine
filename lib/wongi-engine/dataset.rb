@@ -1,8 +1,12 @@
+require 'wongi-engine/dataset/collectable'
+
 module Wongi::Engine
   class Dataset
 
     attr_reader :alpha_top, :beta_top
     attr_reader :queries, :results
+
+    include DatasetParts::Collectable
 
     protected
     attr_accessor :alpha_hash
@@ -26,7 +30,6 @@ module Wongi::Engine
 
       @collectors = {}
       @collectors[:error] = []
-      @error_collectors = @collectors[:error]
 
     end
 
@@ -252,37 +255,6 @@ module Wongi::Engine
 
     def inspect
       "<Rete>"
-    end
-
-    def add_collector collector, category
-      @collectors[category] ||= []
-      @collectors[category] << collector
-    end
-
-    def collectors category
-      @collectors[category]
-    end
-
-    def collection category
-      @collectors[category].map(&:default_collect).flatten
-    end
-
-    def collected_tokens category
-      @collectors[category].map{ |cl| cl.production.tokens }.flatten
-    end
-
-    def add_error_collector collector
-      add_collector(collector, :error)
-    end
-
-    def error_collectors
-      collectors :error
-    end
-
-    def errors
-      error_collectors.map do |collector|
-        collector.errors
-      end.flatten
     end
 
     def context= name
