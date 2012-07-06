@@ -1,16 +1,5 @@
 module Wongi
   module Engine
-    class NegTemplate < Template
-      # :arg: context => Wongi::Rete::BetaNode::CompilationContext
-      def compile context
-        tests, _ = *JoinNode.compile( self, context.earlier, context.parameters )
-        alpha = context.rete.compile_alpha( self )
-        context.node = context.node.neg_node( alpha, tests, context.alpha_deaf )
-        context.node.debug = debug?
-        context.earlier << self
-        context
-      end
-    end
 
     NegJoinResult = Struct.new :owner, :wme
 

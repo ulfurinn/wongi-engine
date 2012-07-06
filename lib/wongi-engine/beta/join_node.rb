@@ -117,11 +117,6 @@ module Wongi
         assignments
       end
 
-      def propagate_activation token, wme, assignments
-        self.children.each do |child|
-          child.left_activate token, wme, assignments
-        end
-      end
     end
   end
 end

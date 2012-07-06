@@ -120,7 +120,7 @@ module Wongi::Engine
       case something
       when Array
         if something.length == 3
-          assert WME.new( *(something.map &:to_node) )
+          assert WME.new( *something )
         else
           raise "Arrays must have 3 elements"
         end

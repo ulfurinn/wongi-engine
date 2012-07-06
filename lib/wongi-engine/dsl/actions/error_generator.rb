@@ -40,11 +40,3 @@ module Wongi
     end
   end
 end
-
-dsl {
-
-  section :make
-  clause :error
-  action Wongi::Engine::ErrorGenerator
-
-}

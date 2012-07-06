@@ -106,6 +106,12 @@ module Wongi::Engine
 
     private
 
+    def propagate_activation token, wme, assignments
+      self.children.each do |child|
+        child.left_activate token, wme, assignments
+      end
+    end
+
     def update_from parent
       case parent
 

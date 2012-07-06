@@ -1,17 +1,5 @@
 module Wongi
   module Engine
-    class OptionalTemplate < Template
-
-      def compile context
-        tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
-        alpha = context.rete.compile_alpha( self )
-        context.node = context.node.beta_memory.optional_node( alpha, tests, assignment, context.alpha_deaf )
-        context.node.debug = debug?
-        context.earlier << self
-        context
-      end
-
-    end
 
     OptionalJoinResult = Struct.new :owner, :wme
 

@@ -49,8 +49,8 @@ module Wongi::Engine
       case template
       when Template
         ( template.subject.nil? || template.subject == subject ) &&
-            ( template.predicate.nil? || template.predicate == predicate ) &&
-            ( template.object.nil? || template.object == object )
+        ( template.predicate.nil? || template.predicate == predicate ) &&
+        ( template.object.nil? || template.object == object )
       else
         raise "Templates can only match templates"
       end
@@ -80,5 +80,32 @@ module Wongi::Engine
     end
 
   end
+
+  class NegTemplate < Template
+    # :arg: context => Wongi::Rete::BetaNode::CompilationContext
+    def compile context
+      tests, _ = *JoinNode.compile( self, context.earlier, context.parameters )
+      alpha = context.rete.compile_alpha( self )
+      context.node = context.node.neg_node( alpha, tests, context.alpha_deaf )
+      context.node.debug = debug?
+      context.earlier << self
+      context
+    end
+  end
+
+  class OptionalTemplate < Template
+
+    def compile context
+      tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
+      alpha = context.rete.compile_alpha( self )
+      context.node = context.node.beta_memory.optional_node( alpha, tests, assignment, context.alpha_deaf )
+      context.node.debug = debug?
+      context.earlier << self
+      context
+    end
+
+  end
+
+
 
 end

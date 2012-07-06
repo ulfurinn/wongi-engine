@@ -9,8 +9,19 @@ describe 'the engine' do
         has :A, :P, :B
       }
       make {
-        trace :verbose, :values
         gen :B, :P, :A
+      }
+    }
+  end
+
+  def equality_rule
+    rule('equality') {
+      forall {
+        fact :A, "same", :B
+        same :A, :B
+      }
+      make {
+        trace values: true
       }
     }
   end
@@ -42,6 +53,15 @@ describe 'the engine' do
       rete.should have(3).facts
       rete.facts.select( &:manual? ).should have(2).items
     end
+
+  end
+
+  it 'should check equality' do
+
+    rete = Wongi::Engine::Dataset.new
+    rete << equality_rule
+
+    rete << [ 42, "same", 42 ]
 
   end
 

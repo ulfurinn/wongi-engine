@@ -23,13 +23,13 @@ module Wongi
 
       def passes? token
 
-        x = if @x.variable?
+        x = if Template.variable? @x
           token[@x]
         else
           @x
         end
 
-        y = if @y.variable?
+        y = if Template.variable? @y
           token[@y]
         else
           @y
@@ -41,20 +41,20 @@ module Wongi
       end
     end
 
-    class UnequalityTest
+    class InequalityTest < FilterTest
       def initialize x, y
         @x, @y = x, y
       end
 
       def passes? token
 
-        x = if @x.variable?
+        x = if Template.variable? @x
           token[@x]
         else
           @x
         end
 
-        y = if @y.variable?
+        y = if Template.variable? @y
           token[@y]
         else
           @y
