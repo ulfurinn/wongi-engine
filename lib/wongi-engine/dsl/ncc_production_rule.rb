@@ -8,10 +8,10 @@ module Wongi::Engine
       end
     end
 
-    def import_into model
+    def import_into rete
       NccSet.new @acceptors[:forall].map { |condition|
         if condition.respond_to? :import_into
-          condition.import_into(model)
+          condition.import_into(rete)
         else
           condition
         end

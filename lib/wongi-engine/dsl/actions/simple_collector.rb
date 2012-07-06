@@ -16,9 +16,9 @@ module Wongi::Engine
         collect @variable
       end
 
-      def model= model
+      def rete= rete
         super
-        model.add_collector self, category
+        rete.add_collector self, category
       end
 
       def collect var

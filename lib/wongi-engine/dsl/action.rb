@@ -4,7 +4,7 @@ module Wongi::Engine
     include CoreExt
 
     attr_accessor :production
-    attr_accessor :model
+    attr_accessor :rete
     attr_accessor :rule
 
     def self.category category = nil

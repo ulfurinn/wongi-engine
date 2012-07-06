@@ -5,9 +5,9 @@ module Wongi::Engine
       @triple = Template.new( s, p, o )
     end
 
-    def import_into model
-      generator = StatementGenerator.new @triple.import_into( model )
-      generator.model = model
+    def import_into rete
+      generator = StatementGenerator.new @triple.import_into( rete )
+      generator.rete = rete
       generator
     end
 

@@ -17,9 +17,9 @@ module Wongi
         @message, @messenger = message, messenger
       end
 
-      def model= m
+      def rete= m
         super
-        model.add_collector :error, self
+        rete.add_collector :error, self
       end
 
       def errors

@@ -16,10 +16,10 @@ module Wongi::Engine
       variants << var
     end
 
-    def import_into model
+    def import_into rete
       AnySet.new variants.map { |variant|
         if variant.respond_to? :import_into
-          variant.import_into(model)
+          variant.import_into(rete)
         else
           variant
         end
@@ -35,10 +35,10 @@ module Wongi::Engine
       @current_section = :forall
     end
 
-    def import_into model
+    def import_into rete
       VariantSet.new @acceptors[:forall].map { |condition|
         if condition.respond_to? :import_into
-          condition.import_into(model)
+          condition.import_into(rete)
         else
           condition
         end

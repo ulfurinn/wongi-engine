@@ -8,13 +8,13 @@ module Wongi::Engine
       @block = block
     end
 
-    def import_into model
+    def import_into rete
       if action.respond_to? :call
         self
       else
         a = action.new *@args, &@block
         a.rule = rule if a.respond_to? :rule=
-        a.model = model if a.respond_to? :model=
+        a.rete = rete if a.respond_to? :rete=
         a
       end
     rescue Exception => e

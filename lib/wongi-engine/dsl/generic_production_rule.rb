@@ -36,13 +36,13 @@ module Wongi::Engine
       GenericProductionRule.sections.each { |section| @acceptors[section] ||= [] }
     end
 
-    def import_into model
+    def import_into rete
 
       copy = self.class.new @name
 
       copy.conditions = @acceptors[:forall].map do |condition|
         if condition.respond_to? :import_into
-          condition.import_into(model)
+          condition.import_into(rete)
         else
           condition
         end
@@ -50,7 +50,7 @@ module Wongi::Engine
 
       copy.actions = @acceptors[:make].map do |action|
         if action.respond_to? :import_into
-          action.import_into(model)
+          action.import_into(rete)
         else
           action
         end
