@@ -4,7 +4,7 @@ dsl {
 
   section :make
   clause :test_collector
-  action Class.new(Wongi::Engine::SimpleCollector)
+  action Wongi::Engine::SimpleCollector.collector
 
 }
 

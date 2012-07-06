@@ -138,26 +138,26 @@ module Wongi::Engine
       #  something.statements.each do |st|
       #    assert WME.new( st.subject, st.predicate, st.object, self )
       #  end
-      when Rete
-        something.each do |st|
-          assert st.import_into( self )
-        end
-      else
-        raise "I don't know how to accept a #{something.class}"
+    when Rete
+      something.each do |st|
+        assert st.import_into( self )
+      end
+    else
+      raise "I don't know how to accept a #{something.class}"
+    end
+  end
+
+  def retract wme, is_real = false
+
+    if ! is_real
+      if @current_context
+        @current_context.retracted_wmes << wme
       end
     end
 
-    def retract wme, is_real = false
-
-      if ! is_real
-        if @current_context
-          @current_context.retracted_wmes << wme
-        end
-      end
-
-      real = if is_real
-        wme
-      else
+    real = if is_real
+      wme
+    else
         #find(wme.subject, wme.predicate, wme.object)
         @cache[wme]
       end
@@ -250,87 +250,6 @@ module Wongi::Engine
       end
     end
 
-    private
-
-    def lookup s, p, o
-      key = Template.hash_for(s, p, o)
-      # puts "Lookup for #{key}"
-      self.alpha_hash[ key ]
-    end
-
-    def alpha_activate alpha, wme
-      alpha.activate(wme) if alpha
-    end
-
-    def more_generic_alpha template
-      return alpha_top    # OPTIMISE => temporary; may use later or not use at all
-      return alpha_top if template.root?
-      more_generic_templates(template).reduce alpha_top do |best, template|
-        alpha = alpha_hash[template.hash]
-        if alpha && alpha.wmes.size < best.wmes.size
-          alpha
-        else
-          best
-        end
-      end
-    end
-
-    def more_generic_templates template
-      set = []
-      set << template.with_subject( nil ) unless template.subject.nil?
-      set << template.with_predicate( nil ) unless template.predicate.nil?
-      set << template.with_object( nil ) unless template.object.nil?
-      set.select { |item| not item.root? }
-    end
-
-    def best_alpha template
-      raise
-      candidates = alpha_hash.values.select do |alpha|
-        template =~ alpha.template
-      end
-      result = candidates.inject do |best, alpha|
-        if best.nil?
-          alpha
-        elsif alpha.wmes.length < best.wmes.length
-          alpha
-        else
-          best
-        end
-      end
-      puts "Best alpha for #{template} is #{result}"
-      result
-    end
-
-    def real_add_production root, conditions, parameters, actions, alpha_deaf
-      beta = root.network conditions, [], parameters, alpha_deaf
-      production = ProductionNode.new( beta, actions )
-      production.update_above
-      production
-    end
-
-    def delete_node_with_ancestors node
-
-      if node.kind_of?( NccNode )
-        delete_node_with_ancestors node.partner
-      end
-
-      if [BetaMemory, NegNode, NccNode, NccPartner].any? { | klass| node.kind_of? klass }
-        while node.tokens.first
-          node.tokens.first.delete
-        end
-      end
-
-      if node.parent
-        node.parent.children.delete node
-        if node.parent.children.empty?
-          delete_node_with_ancestors(node.parent)
-        end
-      end
-
-    end
-
-    public
-
     def inspect
       "<Rete>"
     end
@@ -421,6 +340,84 @@ module Wongi::Engine
       source.wmes.detect { |wme| wme =~ template }
     end
 
+    protected
+
+    def lookup s, p, o
+      key = Template.hash_for(s, p, o)
+      # puts "Lookup for #{key}"
+      self.alpha_hash[ key ]
+    end
+
+    def alpha_activate alpha, wme
+      alpha.activate(wme) if alpha
+    end
+
+    def more_generic_alpha template
+      return alpha_top    # OPTIMISE => temporary; may use later or not use at all
+      return alpha_top if template.root?
+      more_generic_templates(template).reduce alpha_top do |best, template|
+        alpha = alpha_hash[template.hash]
+        if alpha && alpha.wmes.size < best.wmes.size
+          alpha
+        else
+          best
+        end
+      end
+    end
+
+    def more_generic_templates template
+      set = []
+      set << template.with_subject( nil ) unless template.subject.nil?
+      set << template.with_predicate( nil ) unless template.predicate.nil?
+      set << template.with_object( nil ) unless template.object.nil?
+      set.select { |item| not item.root? }
+    end
+
+    def best_alpha template
+      raise
+      candidates = alpha_hash.values.select do |alpha|
+        template =~ alpha.template
+      end
+      result = candidates.inject do |best, alpha|
+        if best.nil?
+          alpha
+        elsif alpha.wmes.length < best.wmes.length
+          alpha
+        else
+          best
+        end
+      end
+      puts "Best alpha for #{template} is #{result}"
+      result
+    end
+
+    def real_add_production root, conditions, parameters, actions, alpha_deaf
+      beta = root.network conditions, [], parameters, alpha_deaf
+      production = ProductionNode.new( beta, actions )
+      production.update_above
+      production
+    end
+
+    def delete_node_with_ancestors node
+
+      if node.kind_of?( NccNode )
+        delete_node_with_ancestors node.partner
+      end
+
+      if [BetaMemory, NegNode, NccNode, NccPartner].any? { | klass| node.kind_of? klass }
+        while node.tokens.first
+          node.tokens.first.delete
+        end
+      end
+
+      if node.parent
+        node.parent.children.delete node
+        if node.parent.children.empty?
+          delete_node_with_ancestors(node.parent)
+        end
+      end
+
+    end
 
   end
 

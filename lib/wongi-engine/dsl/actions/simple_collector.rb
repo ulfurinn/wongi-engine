@@ -2,6 +2,10 @@ module Wongi::Engine
 
   class SimpleCollector < Action
 
+    def self.collector
+      Class.new self
+    end
+
     def initialize variable, name = nil
       @variable = variable
       @name = name if name
