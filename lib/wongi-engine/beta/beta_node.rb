@@ -62,8 +62,11 @@ module Wongi::Engine
       node
     end
 
-    def filter_node tests
-      node = FilterNode.new self, tests
+    def filter_node test
+      existing = children.find{ |node| FilterNode === node && node.equivalent?( test ) }
+      return existing if existing
+
+      node = FilterNode.new self, test
       node.update_above
       node
     end

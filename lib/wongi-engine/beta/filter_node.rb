@@ -14,9 +14,16 @@ module Wongi
         context
       end
 
+      def == other
+        self.class == other.class
+      end
+
     end
 
     class EqualityTest < FilterTest
+
+      attr_reader :x, :y
+
       def initialize x, y
         @x, @y = x, y
       end
@@ -39,9 +46,17 @@ module Wongi
         return x == y
 
       end
+
+      def == other
+        super && x == other.x && y == other.y
+      end
+      
     end
 
     class InequalityTest < FilterTest
+
+      attr_reader :x, :y
+
       def initialize x, y
         @x, @y = x, y
       end
@@ -64,6 +79,11 @@ module Wongi
         return x != y
 
       end
+
+      def == other
+        super && x == other.x && y == other.y
+      end
+
     end
 
     class FilterNode < BetaNode
@@ -79,6 +99,10 @@ module Wongi
         if test.passes? token
           propagate_activation token, nil, {}
         end
+      end
+
+      def equivalent? test
+        test == self.test
       end
     end
   end

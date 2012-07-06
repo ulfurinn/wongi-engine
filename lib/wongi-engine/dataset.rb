@@ -369,6 +369,7 @@ module Wongi::Engine
 
     def real_add_production root, conditions, parameters, actions, alpha_deaf
       beta = root.network conditions, [], parameters, alpha_deaf
+
       production = ProductionNode.new( beta, actions )
       production.update_above
       production
