@@ -28,7 +28,7 @@ module Wongi::Engine
 
     def dump_alphas
       @ds.alphas.each do |alpha|
-        @io.puts "node#{print_hash alpha.hash} [shape=box label=\"#{alpha.template.to_s.gsub /"/, ""}\"];"
+        @io.puts "node#{print_hash alpha.hash} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"
       end
     end
 
