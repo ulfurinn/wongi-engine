@@ -13,6 +13,12 @@ def rule name, &definition
   r
 end
 
+def query name, &definition
+  q = Wongi::Engine::Query.new name
+  q.instance_eval &definition
+  q
+end
+
 def dsl &definition
   Wongi::Engine::DSLBuilder.new.build &definition
 end

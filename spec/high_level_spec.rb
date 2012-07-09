@@ -135,4 +135,23 @@ describe 'the engine' do
 
   end
 
+  it 'should support prepared queries' do
+
+    ds = Wongi::Engine::Dataset.new
+
+    ds << query("test-query") {
+      search_on :X
+      forall {
+        has :X, "is", :Y
+      }
+    }
+
+    ds << ["answer", "is", 42]
+
+    ds.execute "test-query", {X: "answer"}
+    ds.results["test-query"].should have(1).tokens
+    ds.results["test-query"].tokens.first[:Y].should == 42
+
+  end
+
 end
