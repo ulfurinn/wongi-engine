@@ -5,6 +5,7 @@ module Wongi::Engine
 
     attr_reader :alpha_top, :beta_top
     attr_reader :queries, :results
+    attr_reader :productions
 
     include DatasetParts::Collectable
 
@@ -27,6 +28,8 @@ module Wongi::Engine
       @cache = {}
       @revns = {}
       @contexts = {}
+
+      @productions = { }
 
       @collectors = {}
       @collectors[:error] = []
@@ -133,7 +136,10 @@ module Wongi::Engine
         end
       when ProductionRule
         derived = something.import_into self
-        add_production derived.conditions, derived.actions
+        production = add_production derived.conditions, derived.actions
+        if something.name
+          productions[ something.name ] = production
+        end
       when Query
         derived = something.import_into self
         prepare_query derived.name, derived.conditions, derived.parameters, derived.actions
