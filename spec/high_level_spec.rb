@@ -14,66 +14,36 @@ describe 'the engine' do
     Wongi::Engine::Dataset.new
   end
 
-  def reflexive_rule
-    rule('reflexive') {
-      forall {
-        has :P, "reflexive", true
-        has :A, :P, :B
-      }
-      make {
-        gen :B, :P, :A
-      }
-    }
-  end
-
   def equality_rule
-    rule('equality') {
-      forall {
-        fact :A, "same", :B
-        same :A, :B
-      }
-      make {
-        
-      }
-    }
+
   end
 
   def collection_rule
-    rule('collector') {
-      forall {
-        has :X, :_, 42
-      }
-      make {
-        test_collector :X
-      }
-    }
+
   end
 
   def generic_collection_rule
-    rule('generic-collector') {
-      forall {
-        has :X, :_, 42
-      }
-      make {
-        collect :X, :things_that_are_42
-      }
-    }
+
   end
 
   def neg_rule
-    rule('negative') {
-      forall {
-        neg :_, :_, 42
-      }
-    }
+
   end
 
   context 'with a simple generative positive rule' do
-  
+
     it 'should generate wmes with an existing rule' do
       rete = dataset
 
-      rete << reflexive_rule
+      rete << rule('reflexive') {
+        forall {
+          has :P, "reflexive", true
+          has :A, :P, :B
+        }
+        make {
+          gen :B, :P, :A
+        }
+      }
 
       rete << Wongi::Engine::WME.new( "friend", "reflexive", true )
       rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
@@ -92,7 +62,15 @@ describe 'the engine' do
 
       rete.should have(2).facts
 
-      rete << reflexive_rule
+      rete << rule('reflexive') {
+        forall {
+          has :P, "reflexive", true
+          has :A, :P, :B
+        }
+        make {
+          gen :B, :P, :A
+        }
+      }
 
       rete.should have(3).facts
       rete.facts.select( &:manual? ).should have(2).items
@@ -103,7 +81,15 @@ describe 'the engine' do
   it 'should check equality' do
 
     rete = dataset
-    rete << equality_rule
+    rete << rule('equality') {
+      forall {
+        fact :A, "same", :B
+        same :A, :B
+      }
+      make {
+
+      }
+    }
 
     rete << [ 42, "same", 42 ]
 
@@ -112,7 +98,14 @@ describe 'the engine' do
   it 'should use collectors' do
 
     rete = dataset
-    rete << collection_rule
+    rete << rule('collector') {
+      forall {
+        has :X, :_, 42
+      }
+      make {
+        test_collector :X
+      }
+    }
 
     rete << [ "answer", "is", 42 ]
     rete << [ "question", "is", -1 ]
@@ -126,7 +119,14 @@ describe 'the engine' do
   it 'should use generic collectors' do
 
     rete = dataset
-    rete << generic_collection_rule
+    rete << rule('generic-collector') {
+      forall {
+        has :X, :_, 42
+      }
+      make {
+        collect :X, :things_that_are_42
+      }
+    }
 
     rete << [ "answer", "is", 42 ]
     rete << [ "question", "is", -1 ]
@@ -139,18 +139,40 @@ describe 'the engine' do
 
   it 'should accept several rules' do
 
-    lambda {
+    lambda do
+
       rete = dataset
-      rete << generic_collection_rule
-      rete << collection_rule
-    }.should_not raise_error
+
+      rete << rule('generic-collector') {
+        forall {
+          has :X, :_, 42
+        }
+        make {
+          collect :X, :things_that_are_42
+        }
+      }
+
+      rete << rule('collector') {
+        forall {
+          has :X, :_, 42
+        }
+        make {
+          test_collector :X
+        }
+      }
+
+    end.should_not raise_error
 
   end
 
   it 'should process negative nodes' do
 
     ds = dataset
-    production = (ds << neg_rule)
+    production = (ds << rule('negative') {
+      forall {
+        neg :_, :_, 42
+      }
+      })
 
     production.should have(1).tokens
 
