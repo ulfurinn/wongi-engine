@@ -10,6 +10,10 @@ dsl {
 
 describe 'the engine' do
 
+  def dataset
+    Wongi::Engine::Dataset.new
+  end
+
   def reflexive_rule
     rule('reflexive') {
       forall {
@@ -56,10 +60,18 @@ describe 'the engine' do
     }
   end
 
+  def neg_rule
+    rule('negative') {
+      forall {
+        neg nil, nil, 42
+      }
+    }
+  end
+
   context 'with a simple generative positive rule' do
   
     it 'should generate wmes with an existing rule' do
-      rete = Wongi::Engine::Dataset.new
+      rete = dataset
 
       rete << reflexive_rule
 
@@ -90,7 +102,7 @@ describe 'the engine' do
 
   it 'should check equality' do
 
-    rete = Wongi::Engine::Dataset.new
+    rete = dataset
     rete << equality_rule
 
     rete << [ 42, "same", 42 ]
@@ -99,7 +111,7 @@ describe 'the engine' do
 
   it 'should use collectors' do
 
-    rete = Wongi::Engine::Dataset.new
+    rete = dataset
     rete << collection_rule
 
     rete << [ "answer", "is", 42 ]
@@ -113,7 +125,7 @@ describe 'the engine' do
 
   it 'should use generic collectors' do
 
-    rete = Wongi::Engine::Dataset.new
+    rete = dataset
     rete << generic_collection_rule
 
     rete << [ "answer", "is", 42 ]
@@ -128,16 +140,29 @@ describe 'the engine' do
   it 'should accept several rules' do
 
     lambda {
-      rete = Wongi::Engine::Dataset.new
+      rete = dataset
       rete << generic_collection_rule
       rete << collection_rule
     }.should_not raise_error
 
   end
 
+  it 'should process negative nodes' do
+
+    ds = dataset
+    production = (ds << neg_rule)
+
+    production.should have(1).tokens
+
+    ds << [ "answer", "is", 42 ]
+
+    production.should have(0).tokens
+
+  end
+
   it 'should support prepared queries' do
 
-    ds = Wongi::Engine::Dataset.new
+    ds = dataset
 
     ds << query("test-query") {
       search_on :X
