@@ -126,7 +126,7 @@ module Wongi::Engine
       result = WMEMatchData.new
       mine = self.send member
       theirs = template.send member
-      if theirs.nil? || mine == theirs
+      if theirs == :_ || mine == theirs
         result.match!
       elsif Template.variable? theirs
         result.match!

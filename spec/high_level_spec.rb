@@ -41,7 +41,7 @@ describe 'the engine' do
   def collection_rule
     rule('collector') {
       forall {
-        has :X, nil, 42
+        has :X, :_, 42
       }
       make {
         test_collector :X
@@ -52,7 +52,7 @@ describe 'the engine' do
   def generic_collection_rule
     rule('generic-collector') {
       forall {
-        has :X, nil, 42
+        has :X, :_, 42
       }
       make {
         collect :X, :things_that_are_42
@@ -63,7 +63,7 @@ describe 'the engine' do
   def neg_rule
     rule('negative') {
       forall {
-        neg nil, nil, 42
+        neg :_, :_, 42
       }
     }
   end

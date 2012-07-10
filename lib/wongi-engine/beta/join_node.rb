@@ -13,7 +13,8 @@ module Wongi
       def matches? token, wme
         assignment = token[ self.variable ]
         field = wme.send( self.field )
-        field.nil? || assignment && field == assignment
+        #field.nil? ||
+        assignment && field == assignment
       end
 
       def equivalent? other

@@ -10,7 +10,7 @@ module Wongi::Engine
       Symbol === thing && thing =~ /^[A-Z]/
     end
 
-    def initialize s = nil, p = nil, o = nil, time = 0
+    def initialize s = :_, p = :_, o = :_, time = 0
       raise "Cannot work with continuous time" unless time.integer?
       raise "Cannot look into the future" if time > 0
       super
@@ -21,7 +21,7 @@ module Wongi::Engine
     end
 
     def root?
-      subject.nil? && predicate.nil? && object.nil?
+      subject == :_ && predicate == :_ && object == :_
     end
 
     def contains? var
@@ -48,9 +48,9 @@ module Wongi::Engine
     def =~ template
       case template
       when Template
-        ( template.subject.nil? || template.subject == subject ) &&
-        ( template.predicate.nil? || template.predicate == predicate ) &&
-        ( template.object.nil? || template.object == object )
+        ( template.subject == :_ || template.subject == subject ) &&
+        ( template.predicate == :_ || template.predicate == predicate ) &&
+        ( template.object == :_ || template.object == object )
       else
         raise "Templates can only match templates"
       end

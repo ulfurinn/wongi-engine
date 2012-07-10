@@ -18,8 +18,8 @@ module Wongi::Engine
 
     def initialize
       @timeline = []
-      self.alpha_top = AlphaMemory.new( Template.new(nil, nil, nil), self )
-      self.alpha_hash = { Template.hash_for( nil, nil, nil ) => self.alpha_top }
+      self.alpha_top = AlphaMemory.new( Template.new( :_, :_, :_ ), self )
+      self.alpha_hash = { Template.hash_for( :_, :_, :_ ) => self.alpha_top }
       self.beta_top = BetaMemory.new(nil)
       self.beta_top.rete = self
       self.beta_top.seed
@@ -75,14 +75,14 @@ module Wongi::Engine
       p = wme.predicate
       o = wme.object
 
-      alpha_activate(lookup(  s,   p,   o), wme)
-      alpha_activate(lookup(  s,   p, nil), wme)
-      alpha_activate(lookup(  s, nil,   o), wme)
-      alpha_activate(lookup(nil,   p,   o), wme)
-      alpha_activate(lookup(  s, nil, nil), wme)
-      alpha_activate(lookup(nil,   p, nil), wme)
-      alpha_activate(lookup(nil, nil,   o), wme)
-      alpha_activate(lookup(nil, nil, nil), wme)
+      alpha_activate(lookup( s,  p,  o), wme)
+      alpha_activate(lookup( s,  p, :_), wme)
+      alpha_activate(lookup( s, :_,  o), wme)
+      alpha_activate(lookup(:_,  p,  o), wme)
+      alpha_activate(lookup( s, :_, :_), wme)
+      alpha_activate(lookup(:_,  p, :_), wme)
+      alpha_activate(lookup(:_, :_,  o), wme)
+      alpha_activate(lookup(:_, :_, :_), wme)
 
       wme
     end
@@ -186,7 +186,7 @@ module Wongi::Engine
     end
 
     def compile_alpha condition
-      template = Template.new nil, nil, nil
+      template = Template.new :_, :_, :_
       time = condition.time
 
       template.subject = condition.subject unless Template.variable?( condition.subject )
@@ -254,15 +254,6 @@ module Wongi::Engine
       beta.subst valuations
     end
 
-    def each template = nil
-      return unless block_given?
-      self.alpha_top.wmes.each do |wme|
-        if template.nil? or wme.matches?(template)
-          yield wme
-        end
-      end
-    end
-
     def inspect
       "<Rete>"
     end
@@ -295,11 +286,11 @@ module Wongi::Engine
         raise "Document#each expects a pattern or nothing at all"
       end
       s, p, o = if args.empty?
-        [nil, nil, nil]
+        [:_, :_, :_]
       else
         args
       end
-      no_check = s.nil? && p.nil? && o.nil?
+      no_check = s == :_ && p == :_ && o == :_
       template = Template.new(s, p, o).import_into self
       alpha_top.wmes.each do |wme|
         yield wme if (no_check || wme =~ template)
@@ -349,9 +340,9 @@ module Wongi::Engine
 
     def more_generic_templates template
       set = []
-      set << template.with_subject( nil ) unless template.subject.nil?
-      set << template.with_predicate( nil ) unless template.predicate.nil?
-      set << template.with_object( nil ) unless template.object.nil?
+      set << template.with_subject( :_ ) unless template.subject == :_
+      set << template.with_predicate( :_ ) unless template.predicate == :_
+      set << template.with_object( :_ ) unless template.object == :_
       set.select { |item| not item.root? }
     end
 

@@ -73,8 +73,8 @@ describe Wongi::Engine::WME do
   end
 
   it 'should match against templates' do
-    t1 = Wongi::Engine::Template.new "a", nil, nil
-    t2 = Wongi::Engine::Template.new "b", nil, nil
+    t1 = Wongi::Engine::Template.new "a", :_, :_
+    t2 = Wongi::Engine::Template.new "b", :_, :_
 
     subject.should =~ t1
     subject.should_not =~ t2
