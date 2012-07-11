@@ -4,7 +4,7 @@ module Wongi::Engine
     def initialize name = nil, &block
       super
       if block
-        instance_eval &block
+        forall &block
       end
     end
 

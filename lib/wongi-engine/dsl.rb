@@ -51,7 +51,7 @@ dsl {
   action Wongi::Engine::NegTemplate
 
   clause :none
-  action Wongi::Engine::NccProductionRule
+  accept Wongi::Engine::NccProductionRule
 
   clause :any
   action Wongi::Engine::AnyRule
