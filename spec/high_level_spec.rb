@@ -18,22 +18,6 @@ describe 'the engine' do
     @rete
   end
 
-  def equality_rule
-
-  end
-
-  def collection_rule
-
-  end
-
-  def generic_collection_rule
-
-  end
-
-  def neg_rule
-
-  end
-
   context 'with a simple generative positive rule' do
 
     it 'should generate wmes with an existing rule' do
