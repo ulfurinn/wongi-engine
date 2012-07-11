@@ -56,22 +56,22 @@ dsl {
   clause :any
   action Wongi::Engine::AnyRule
 
-  clause :maybe
+  clause :maybe, :optional
   accept Wongi::Engine::OptionalTemplate
 
-  clause :same
+  clause :same, :eq, :equal
   accept Wongi::Engine::EqualityTest
 
-  clause :diff
+  clause :diff, :ne
   accept Wongi::Engine::InequalityTest
 
-  clause :asserted
+  clause :asserted, :added
   body { |s, p, o|
     missing s, p, o, -1
     has s, p, o, 0
   }
 
-  clause :retracted 
+  clause :retracted, :removed
   body { |s, p, o|
     has s, p, o, -1
     missing s, p, o, 0
