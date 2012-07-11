@@ -15,7 +15,7 @@ module Wongi::Engine
 
         if body
 
-          body.call *args, &block
+          instance_exec *args, &body
 
         elsif acceptor
 

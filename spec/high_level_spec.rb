@@ -268,6 +268,62 @@ describe 'the engine' do
 
     end
 
+    context 'using the :asserted clause' do
+
+      it 'should match asserted items' do
+        production = rete.rule do
+          forall {
+            asserted 1, 2, 3
+          }
+        end
+        production.should have(0).tokens
+        rete.snapshot!
+        rete << [1, 2, 3]
+        production.should have(1).tokens
+      end
+
+      it 'should not match kept items' do
+        production = rete.rule do
+          forall {
+            asserted 1, 2, 3
+          }
+        end
+        rete << [1, 2, 3]
+        production.should have(1).tokens
+        rete.snapshot!
+        production.should have(0).tokens
+      end
+
+    end
+
+    context 'using the :kept clause' do
+
+      it 'should match kept items' do
+        production = rete.rule do
+          forall {
+            kept 1, 2, 3
+          }
+        end
+        rete << [1, 2, 3]
+        production.should have(0).tokens
+        rete.snapshot!
+        production.should have(1).tokens
+      end
+
+      it 'should not match asserted wmes' do
+        production = rete.rule do
+          forall {
+            kept 1, 2, 3
+          }
+        end
+        production.should have(0).tokens
+        rete.snapshot!
+        rete << [1, 2, 3]
+        production.should have(0).tokens
+      end
+
+    end
+
   end
 
 end
