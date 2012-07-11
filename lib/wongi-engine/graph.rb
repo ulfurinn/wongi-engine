@@ -6,7 +6,7 @@ module Wongi::Engine
       @ds = dataset
     end
 
-    def dot io
+    def dot io, opts = { }
 
       if String === io
         File.open io, "w" do |actual_io|
@@ -19,8 +19,8 @@ module Wongi::Engine
 
       @io.puts "digraph {"
 
-      dump_alphas
-      dump_betas
+      dump_alphas(opts) unless opts[:alpha] == false
+      dump_betas(opts)
 
       @io.puts "};"
 
@@ -42,11 +42,11 @@ module Wongi::Engine
       @io.puts "};"
     end
 
-    def dump_betas
-      dump_beta @ds.beta_top
+    def dump_betas opts
+      dump_beta @ds.beta_top, opts
     end
 
-    def dump_beta beta
+    def dump_beta beta, opts
       @io.puts "node#{print_hash beta.hash} [label=\"#{beta.class.name.split('::').last}\"];"
       if beta.parent
         @io.puts "node#{print_hash beta.parent.hash} -> node#{print_hash beta.hash};"
@@ -55,14 +55,14 @@ module Wongi::Engine
         @io.puts "node#{print_hash beta.partner.hash} -> node#{print_hash beta.hash};"
         @io.puts "{ rank=same; node#{print_hash beta.partner.hash} node#{print_hash beta.hash} }"
       end
-      if beta.respond_to? :alpha
+      if beta.respond_to? :alpha and opts[:alpha] != false
         alpha = beta.alpha
         if alpha
           @io.puts "node#{print_hash alpha.hash} -> node#{print_hash beta.hash};"
         end
       end
       beta.children.each do |child|
-        dump_beta child
+        dump_beta child, opts
       end
     end
 
