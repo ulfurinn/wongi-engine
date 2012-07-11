@@ -50,7 +50,7 @@ dsl {
   clause :missing, :neg
   action Wongi::Engine::NegTemplate
 
-  clause :none
+  clause :none, :ncc
   accept Wongi::Engine::NccProductionRule
 
   clause :any

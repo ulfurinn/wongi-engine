@@ -201,4 +201,63 @@ describe 'the engine' do
 
   end
 
+  it 'should support negative subnets' do
+
+    ds = dataset
+    production = (ds << rule('ncc') {
+      forall {
+        has "base", "is", :Base
+        none {
+          has :Base, 2, :X
+          has :X, 4, 5
+        }
+      }
+    })
+
+    ds << ["base", "is", 1]
+
+    production.should have(1).tokens
+
+    ds << [1, 2, 3]
+
+    production.should have(1).tokens
+
+    ds << [3, 4, 5]
+
+    production.should have(0).tokens
+
+    ds << ["base", "is", 2]
+
+    production.should have(1).tokens
+
+  end
+
+  it 'should support optional matches' do
+
+    ds = dataset
+
+    production = (ds << rule('optional') {
+      forall {
+        has "answer", "is", :Answer
+        maybe :Answer, "is", :Kind
+      }
+    })
+
+    ds << ["answer", "is", 42]
+    ds << ["answer", "is", 43]
+    ds << [42, "is", "canonical"]
+
+    production.should have(2).tokens
+
+    canon = production.tokens.select { |token| not token[:Kind].nil? }
+    canon.should have(1).items
+    canon.first[:Answer].should == 42
+    canon.first[:Kind].should == "canonical"
+
+    non_canon = production.tokens.select { |token| token[:Kind].nil? }
+    non_canon.should have(1).items
+    non_canon.first[:Answer].should == 43
+
+  end
+
 end
