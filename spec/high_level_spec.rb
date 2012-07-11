@@ -235,4 +235,39 @@ describe 'the engine' do
 
   end
 
+  context 'with timelines' do
+
+    it 'should not match with no past point' do
+
+      production = rete.rule {
+        forall {
+          has 1, 2, 3, -1
+        }
+      }
+
+      production.should have(0).tokens
+
+      rete << [1, 2, 3]
+
+      production.should have(0).tokens
+
+    end
+
+    it 'should match a simple past point' do
+
+      production = rete.rule {
+        forall {
+          has 1, 2, 3, -1
+        }
+      }
+
+      rete << [1, 2, 3]
+      rete.snapshot!
+
+      production.should have(1).tokens
+
+    end
+
+  end
+
 end

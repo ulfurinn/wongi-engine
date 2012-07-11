@@ -116,6 +116,12 @@ module Wongi::Engine
       end
     end
 
+    def rule name = nil, &block
+      r = ProductionRule.new( name || generate_rule_name )
+      r.instance_eval &block
+      self << r
+    end
+
     def << something
       case something
       when Array
@@ -312,7 +318,9 @@ module Wongi::Engine
       @in_snapshot = false
     end
 
-
+    def generate_rule_name
+      "rule_#{productions.length}"
+    end
 
     def lookup s, p, o
       key = Template.hash_for(s, p, o)
