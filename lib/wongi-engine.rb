@@ -1,6 +1,10 @@
 module Wongi
   module Engine
-    # Your code goes here...
+    
+    def self.create
+      Network.new
+    end
+
   end
 end
 
