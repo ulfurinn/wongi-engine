@@ -4,7 +4,7 @@ module Wongi::Engine
 
     def initialize action = nil, *args, &block
       @action = if action.is_a? Class
-        action.new *args
+        action.new *args, &block
       else
         action || block
       end
