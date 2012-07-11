@@ -10,8 +10,12 @@ dsl {
 
 describe 'the engine' do
 
-  def dataset
-    Wongi::Engine::Dataset.new
+  before :each do
+    @rete = Wongi::Engine::Dataset.new
+  end
+
+  def rete
+    @rete
   end
 
   def equality_rule
@@ -33,7 +37,6 @@ describe 'the engine' do
   context 'with a simple generative positive rule' do
 
     it 'should generate wmes with an existing rule' do
-      rete = dataset
 
       rete << rule('reflexive') {
         forall {
@@ -55,7 +58,6 @@ describe 'the engine' do
     end
 
     it 'should generate wmes with an added rule' do
-      rete = Wongi::Engine::Dataset.new
 
       rete << Wongi::Engine::WME.new( "friend", "reflexive", true )
       rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
@@ -80,7 +82,6 @@ describe 'the engine' do
 
   it 'should check equality' do
 
-    rete = dataset
     rete << rule('equality') {
       forall {
         fact :A, "same", :B
@@ -97,7 +98,6 @@ describe 'the engine' do
 
   it 'should use collectors' do
 
-    rete = dataset
     rete << rule('collector') {
       forall {
         has :X, :_, 42
@@ -118,7 +118,6 @@ describe 'the engine' do
 
   it 'should use generic collectors' do
 
-    rete = dataset
     rete << rule('generic-collector') {
       forall {
         has :X, :_, 42
@@ -140,8 +139,6 @@ describe 'the engine' do
   it 'should accept several rules' do
 
     lambda do
-
-      rete = dataset
 
       rete << rule('generic-collector') {
         forall {
@@ -167,8 +164,7 @@ describe 'the engine' do
 
   it 'should process negative nodes' do
 
-    ds = dataset
-    production = (ds << rule('negative') {
+    production = (rete << rule('negative') {
       forall {
         neg :_, :_, 42
       }
@@ -176,7 +172,7 @@ describe 'the engine' do
 
     production.should have(1).tokens
 
-    ds << [ "answer", "is", 42 ]
+    rete << [ "answer", "is", 42 ]
 
     production.should have(0).tokens
 
@@ -184,27 +180,24 @@ describe 'the engine' do
 
   it 'should support prepared queries' do
 
-    ds = dataset
-
-    ds << query("test-query") {
+    rete << query("test-query") {
       search_on :X
       forall {
         has :X, "is", :Y
       }
     }
 
-    ds << ["answer", "is", 42]
+    rete << ["answer", "is", 42]
 
-    ds.execute "test-query", {X: "answer"}
-    ds.results["test-query"].should have(1).tokens
-    ds.results["test-query"].tokens.first[:Y].should == 42
+    rete.execute "test-query", {X: "answer"}
+    rete.results["test-query"].should have(1).tokens
+    rete.results["test-query"].tokens.first[:Y].should == 42
 
   end
 
   it 'should support negative subnets' do
 
-    ds = dataset
-    production = (ds << rule('ncc') {
+    production = (rete << rule('ncc') {
       forall {
         has "base", "is", :Base
         none {
@@ -214,19 +207,19 @@ describe 'the engine' do
       }
     })
 
-    ds << ["base", "is", 1]
+    rete << ["base", "is", 1]
 
     production.should have(1).tokens
 
-    ds << [1, 2, 3]
+    rete << [1, 2, 3]
 
     production.should have(1).tokens
 
-    ds << [3, 4, 5]
+    rete << [3, 4, 5]
 
     production.should have(0).tokens
 
-    ds << ["base", "is", 2]
+    rete << ["base", "is", 2]
 
     production.should have(1).tokens
 
@@ -234,18 +227,16 @@ describe 'the engine' do
 
   it 'should support optional matches' do
 
-    ds = dataset
-
-    production = (ds << rule('optional') {
+    production = (rete << rule('optional') {
       forall {
         has "answer", "is", :Answer
         maybe :Answer, "is", :Kind
       }
     })
 
-    ds << ["answer", "is", 42]
-    ds << ["answer", "is", 43]
-    ds << [42, "is", "canonical"]
+    rete << ["answer", "is", 42]
+    rete << ["answer", "is", 43]
+    rete << [42, "is", "canonical"]
 
     production.should have(2).tokens
 
