@@ -66,7 +66,7 @@ module Wongi::Engine
     end
 
     def inspect
-      "<Template #{subject.inspect} #{predicate.inspect} #{object.inspect} #{time}>"
+      "<~ #{subject.inspect} #{predicate.inspect} #{object.inspect} #{time}>"
     end
 
     def to_s

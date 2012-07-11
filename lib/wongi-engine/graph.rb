@@ -35,9 +35,11 @@ module Wongi::Engine
     end
 
     def dump_alphas
-      @ds.alphas.each do |alpha|
+      @io.puts "subgraph cluster_alphas {"
+      @ds.alphas.select { |alpha| not alpha.betas.empty? }.each do |alpha|
         @io.puts "node#{print_hash alpha.hash} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"
       end
+      @io.puts "};"
     end
 
     def dump_betas
@@ -48,6 +50,10 @@ module Wongi::Engine
       @io.puts "node#{print_hash beta.hash} [label=\"#{beta.class.name.split('::').last}\"];"
       if beta.parent
         @io.puts "node#{print_hash beta.parent.hash} -> node#{print_hash beta.hash};"
+      end
+      if beta.is_a? NccNode
+        @io.puts "node#{print_hash beta.partner.hash} -> node#{print_hash beta.hash};"
+        @io.puts "{ rank=same; node#{print_hash beta.partner.hash} node#{print_hash beta.hash} }"
       end
       if beta.respond_to? :alpha
         alpha = beta.alpha
