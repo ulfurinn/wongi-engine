@@ -20,7 +20,6 @@ module Wongi::Engine
 
     end
 
-    attr_accessor :production
     attr_reader :io
     attr_predicate :generation, :values
 

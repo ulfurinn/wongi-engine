@@ -33,6 +33,7 @@ require 'wongi-engine/dsl/production_rule'
 require 'wongi-engine/dsl/ncc_production_rule'
 require 'wongi-engine/dsl/any_rule'
 require 'wongi-engine/dsl/query'
+require 'wongi-engine/dsl/actions/simple_action'
 require 'wongi-engine/dsl/actions/statement_generator'
 require 'wongi-engine/dsl/actions/simple_collector'
 require 'wongi-engine/dsl/actions/trace_action'
@@ -103,6 +104,9 @@ dsl {
 
   clause :collect
   action Wongi::Engine::SimpleCollector
+
+  clause :action
+  action Wongi::Engine::SimpleAction
 
 }
 
