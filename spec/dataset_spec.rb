@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Wongi::Engine::Dataset do  
+describe Wongi::Engine::Network do  
 
   it 'should expose compiled productions' do
 
-    ds = Wongi::Engine::Dataset.new
+    ds = Wongi::Engine::Network.new
 
     ds << rule('test-rule') {
       forall {

@@ -2,14 +2,11 @@ require 'wongi-engine'
 
 include Wongi::Engine
 
-ds = Dataset.new
-ds << rule('reflexive') {
+ds = Network.new
+ds << rule('demo') {
   forall {
-    has :P, "reflexive", true
-    has :A, :P, :B
-  }
-  make {
-    gen :B, :P, :A
+    has 1, 2, 3
+    maybe 4, 5, 6
   }
 }
 

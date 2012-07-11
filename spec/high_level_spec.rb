@@ -11,7 +11,7 @@ dsl {
 describe 'the engine' do
 
   before :each do
-    @rete = Wongi::Engine::Dataset.new
+    @rete = Wongi::Engine::Network.new
   end
 
   def rete
@@ -271,27 +271,33 @@ describe 'the engine' do
     context 'using the :asserted clause' do
 
       it 'should match asserted items' do
+        count = 0
         production = rete.rule do
           forall {
             asserted 1, 2, 3
           }
+          make { action { count += 1} }
         end
         production.should have(0).tokens
         rete.snapshot!
         rete << [1, 2, 3]
         production.should have(1).tokens
+        puts count
       end
 
       it 'should not match kept items' do
+        count = 0
         production = rete.rule do
           forall {
             asserted 1, 2, 3
           }
+          make { action { count += 1} }
         end
         rete << [1, 2, 3]
         production.should have(1).tokens
         rete.snapshot!
         production.should have(0).tokens
+        puts count
       end
 
     end
@@ -299,27 +305,33 @@ describe 'the engine' do
     context 'using the :kept clause' do
 
       it 'should match kept items' do
+        count = 0
         production = rete.rule do
           forall {
             kept 1, 2, 3
           }
+          make { action { count += 1} }
         end
         rete << [1, 2, 3]
         production.should have(0).tokens
         rete.snapshot!
         production.should have(1).tokens
+        puts count
       end
 
       it 'should not match asserted wmes' do
+        count = 0
         production = rete.rule do
           forall {
             kept 1, 2, 3
           }
+          make { action { count += 1} }
         end
         production.should have(0).tokens
         rete.snapshot!
         rete << [1, 2, 3]
         production.should have(0).tokens
+        puts count
       end
 
     end

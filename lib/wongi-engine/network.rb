@@ -1,13 +1,13 @@
-require 'wongi-engine/dataset/collectable'
+require 'wongi-engine/network/collectable'
 
 module Wongi::Engine
-  class Dataset
+  class Network
 
     attr_reader :alpha_top, :beta_top
     attr_reader :queries, :results
     attr_reader :productions
 
-    include DatasetParts::Collectable
+    include NetworkParts::Collectable
 
     protected
     attr_accessor :alpha_hash

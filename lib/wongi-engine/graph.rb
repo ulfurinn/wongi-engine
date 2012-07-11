@@ -2,8 +2,8 @@ module Wongi::Engine
 
   class Graph
 
-    def initialize dataset
-      @ds = dataset
+    def initialize rete
+      @rete = rete
     end
 
     def dot io, opts = { }
@@ -36,14 +36,14 @@ module Wongi::Engine
 
     def dump_alphas opts
       @io.puts "subgraph cluster_alphas {"
-      @ds.alphas.select { |alpha| not alpha.betas.empty? }.each do |alpha|
+      @rete.alphas.select { |alpha| not alpha.betas.empty? }.each do |alpha|
         @io.puts "node#{print_hash alpha.hash} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"
       end
       @io.puts "};"
     end
 
     def dump_betas opts
-      dump_beta @ds.beta_top, opts
+      dump_beta @rete.beta_top, opts
     end
 
     def dump_beta beta, opts

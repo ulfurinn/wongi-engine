@@ -1,6 +1,6 @@
 include Wongi::Engine
 
-ds = Dataset.new
+ds = Network.new
 
 ds << WME.new( "Alice", "friend", "Bob" )
 

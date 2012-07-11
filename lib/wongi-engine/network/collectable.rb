@@ -1,5 +1,5 @@
 module Wongi::Engine
-  module DatasetParts
+  module NetworkParts
 
     module Collectable
 

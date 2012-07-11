@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Wongi::Engine::SimpleAction do
 
   before :each do
-    @rete = Wongi::Engine::Dataset.new
+    @rete = Wongi::Engine::Network.new
   end
 
   def rete
