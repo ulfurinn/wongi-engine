@@ -34,7 +34,7 @@ module Wongi::Engine
       h.to_s.gsub /-/, '_'
     end
 
-    def dump_alphas
+    def dump_alphas opts
       @io.puts "subgraph cluster_alphas {"
       @ds.alphas.select { |alpha| not alpha.betas.empty? }.each do |alpha|
         @io.puts "node#{print_hash alpha.hash} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"

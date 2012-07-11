@@ -2,7 +2,7 @@ module Wongi::Engine
 
   class AlphaMemory
 
-    attr_reader :betas, :template, :rete
+    attr_reader :betas, :template, :rete, :wmes
 
     def initialize template, rete = nil
       @template = template
@@ -10,14 +10,6 @@ module Wongi::Engine
       @betas = []
       @wmes = []
       @frozen = false
-    end
-
-    def wmes force_real = nil
-      if rete.in_snapshot? && force_real != :forced
-        []
-      else
-        @wmes
-      end
     end
 
     def activate wme
@@ -42,7 +34,7 @@ module Wongi::Engine
     end
 
     def inspect
-      "<Alpha #{__id__} template=#{template} wmes=#{wmes :forced}>"
+      "<Alpha #{__id__} template=#{template} wmes=#{wmes}>"
     end
 
     def to_s

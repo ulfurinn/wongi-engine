@@ -53,14 +53,14 @@ module Wongi::Engine
       !manual?
     end
 
-    def destroy snapshot = nil
+    def destroy
 
       alphas.each { |alpha| alpha.remove self }.clear
       while tokens.first
         tokens.first.delete self    # => will remove itself from the array
       end
 
-      destroy_neg_join_results snapshot
+      destroy_neg_join_results
       destroy_opt_join_results
 
     end
@@ -83,22 +83,16 @@ module Wongi::Engine
       @array_form ||= [ subject, predicate, object ]
     end
 
-    def destroy_neg_join_results snapshot
+    def destroy_neg_join_results
       neg_join_results.each do |njr|
 
         token = njr.owner
         results = token.neg_join_results
         results.delete njr
 
-        if results.empty?
+        if results.empty? && !rete.in_snapshot?
           token.node.children.each { |beta|
-
-            # When we're destroying for snapshot and the source alpha has the same WME as this it
-            # makes no sense to activate the neganode because it will be undone in a moment.
-
-            if snapshot.nil? || !snapshot.wmes( :forced ).include?( self )
-              beta.left_activate token, nil, { }
-            end
+            beta.left_activate token, nil, { }
           }
         end
 

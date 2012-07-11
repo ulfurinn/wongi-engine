@@ -93,16 +93,6 @@ module Wongi::Engine
     alias_method :statements, :wmes
     alias_method :facts, :wmes
 
-    # This is tricky. in_snapshot? makes alphas pretend they have no WMEs so that neg-nodes'
-    # children don't get activated too much. This affects the "asserted" predicate when the
-    # relevant WME is, in fact, kept. Perhaps (and likely) other related predicates are affected
-    # as well, but it hasn't surfaced anywhere so far. In fact, this fix might in itself silence a
-    # single "missing -1" clause. The symptom is too many production activations; this is actually
-    # harmless if all you have in your rules are collectors (because collectors are normally
-    # inspected at a later stage) but may wreak havoc if they contain generators or other actions
-    # that respond to "execute". So if "missing" is actually silenced, you won't get activations
-    # that you're supposed to get. FIXME run more experiments and try to come up with a better
-    # solution if necessary
     def in_snapshot?
       @in_snapshot
     end
@@ -118,9 +108,9 @@ module Wongi::Engine
         wmes = {}
         slice.each { |key, alpha| wmes[key] = alpha.wmes }
         slice.each do |key, alpha|
-          @in_snapshot = true
-          wmes[key].dup.each { |wme| wme.destroy_for_snapshot source[key] }
-          @in_snapshot = false
+          in_snapshot {
+            wmes[key].dup.each { |wme| wme.destroy }
+          }
           alpha.snapshot! source[key]
         end
       end
@@ -314,6 +304,15 @@ module Wongi::Engine
     end
 
     protected
+
+    def in_snapshot
+      @in_snapshot = true
+      yield
+    ensure
+      @in_snapshot = false
+    end
+
+
 
     def lookup s, p, o
       key = Template.hash_for(s, p, o)
