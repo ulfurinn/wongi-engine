@@ -166,7 +166,7 @@ Passes whether or not the template matches anything. It's only useful if it intr
 
 The `none` block contains other matchers and passes if that *entire subchain* returns an empty set. In other words, it corresponds to an expression `not ( a and b and ... )`.
 
-#### `any { variant { ... } ... }
+#### `any { variant { ... } ... }`
 
 The `any` block contains several `variant` blocks, each of them containing other matchers. It passes if any of the `variant` subchains matches. It's a shame that disjunction has to be so much more verbose than conjunction, but life is cruel.
 
