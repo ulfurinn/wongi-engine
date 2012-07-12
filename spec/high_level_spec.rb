@@ -22,9 +22,9 @@ describe 'the engine' do
 
     it 'should generate wmes with an existing rule' do
 
-      rete << rule('reflexive') {
+      rete << rule('symmetric') {
         forall {
-          has :P, "reflexive", true
+          has :P, "symmetric", true
           has :A, :P, :B
         }
         make {
@@ -32,7 +32,7 @@ describe 'the engine' do
         }
       }
 
-      rete << Wongi::Engine::WME.new( "friend", "reflexive", true )
+      rete << Wongi::Engine::WME.new( "friend", "symmetric", true )
       rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
 
       rete.should have(3).facts
@@ -43,14 +43,14 @@ describe 'the engine' do
 
     it 'should generate wmes with an added rule' do
 
-      rete << Wongi::Engine::WME.new( "friend", "reflexive", true )
+      rete << Wongi::Engine::WME.new( "friend", "symmetric", true )
       rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
 
       rete.should have(2).facts
 
-      rete << rule('reflexive') {
+      rete << rule('symmetric') {
         forall {
-          has :P, "reflexive", true
+          has :P, "symmetric", true
           has :A, :P, :B
         }
         make {

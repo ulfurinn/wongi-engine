@@ -8,13 +8,14 @@ module Wongi::Engine
 
     class << self
 
-      def section s
+      def section s, *aliases
         unless sections.include?(s)
           sections << s
           define_method s do |&d|
             @current_section = s
             instance_eval &d
           end
+          aliases.each { |a| alias_method a, s }
         end
       end
       
@@ -24,8 +25,8 @@ module Wongi::Engine
 
     end
 
-    section :forall
-    section :make
+    section :forall, :for_all
+    section :make, :do!
 
     def initialize name
       @name = name

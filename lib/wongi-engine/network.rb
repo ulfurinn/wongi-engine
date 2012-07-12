@@ -1,4 +1,5 @@
 require 'wongi-engine/network/collectable'
+require 'wongi-engine/network/debug'
 
 module Wongi::Engine
   class Network
@@ -15,6 +16,10 @@ module Wongi::Engine
     attr_writer :queries, :results
 
     public
+
+    def debug!
+      extend NetworkParts::Debug
+    end
 
     def initialize
       @timeline = []
