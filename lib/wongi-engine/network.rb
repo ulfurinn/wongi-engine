@@ -127,6 +127,12 @@ module Wongi::Engine
       self << r
     end
 
+    def query name, &block
+      q = Query.new name
+      q.instance_eval &block
+      self << q
+    end
+
     def << something
       case something
       when Array

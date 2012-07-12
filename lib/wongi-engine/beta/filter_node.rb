@@ -42,7 +42,7 @@ module Wongi
           @y
         end
 
-        return false if x.nil? || y.nil?
+        return false if x == :_ || y == :_
         return x == y
 
       end
@@ -75,7 +75,7 @@ module Wongi
           @y
         end
 
-        return false if x.nil? || y.nil?
+        return false if x == :_ || y == :_
         return x != y
 
       end
