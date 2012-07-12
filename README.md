@@ -124,9 +124,40 @@ Note how our facts define relations that always go from subject to object - they
 
 	engine << ["friend", "symmetric", true]
 
-If you have the "self-printer" installed, you will see some new friendships pop up!
+If you still have the "self-printer" rule installed, you will see some new friendships pop up!
 
 The built-in `gen` action creates new facts, taking either fixed values or variables as arguments. (It will complain if use provide a variable that isn't bound by the time it's activated.) Here, it takes all relations we've defined to be [symmetric](http://en.wikipedia.org/wiki/Symmetric_relation), finds all couples in those sorts of relations and turns them around.
+
+### Organising rules
+
+To make rules more manageable, you will probably want to keep them separate from the engine instance. One way to do that is to just say:
+
+	my_rule = rule "name" do
+		...
+	end
+
+	engine << my_rule
+
+For even more convenience, why not group rules together:
+
+	my_ruleset = ruleset {
+		rule "rule 1" do
+			...
+		end
+		rule "rule 2" do
+			...
+		end
+	}
+
+	engine << my_ruleset
+
+Again, you don't need to hold on to object references if you don't want to:
+
+	ruleset "my set" do
+		...
+	end
+
+	engine << Wongi::Engine::Ruleset[ "my set" ]
 
 ## Contributing
 
