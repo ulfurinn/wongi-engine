@@ -127,7 +127,7 @@ There's more to rules than passive accumulation:
 		}
 	end
 
-The `make` section (also spelled `do!`, if you find it more agreeable English, because `do` is a keyword in Ruby) lists everything that happens when a rule's condition are fully matched (we say the production node is activated). Wongi::Engine provides only a small amount of build-in actions, but you can define define your own ones, and the simplest one is just `action` with a block.
+The `make` section (also spelled `do!`, if you find it more agreeable English, because `do` is a keyword in Ruby) lists everything that happens when a rule's conditions are fully matched (we say the production node is activated). Wongi::Engine provides only a small amount of build-in actions, but you can define define your own ones, and the simplest one is just `action` with a block.
 
 ### More facts!
 
@@ -145,7 +145,7 @@ Note how our facts define relations that always go from subject to object - they
 
 	engine << ["friend", "symmetric", true]
 
-If you still have the "self-printer" rule installed, you will see some new friendships pop up!
+If you still have the "self-printer" rule installed, you will see some new friendships pop up immediately!
 
 The built-in `gen` action creates new facts, taking either fixed values or variables as arguments. (It will complain if use provide a variable that isn't bound by the time it's activated.) Here, it takes all relations we've defined to be [symmetric](http://en.wikipedia.org/wiki/Symmetric_relation), finds all couples in those sorts of relations and turns them around.
 
