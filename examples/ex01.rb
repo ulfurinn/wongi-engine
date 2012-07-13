@@ -12,12 +12,12 @@ end
 
 puts "Enumerate by pattern:"
 
-ds.each nil, "friend", nil do |wme|
+ds.each :_, "friend", :_ do |wme|
   puts wme
 end
 
 puts "Mismatching pattern:"
 
-ds.each nil, "foe", nil do |wme|
+ds.each :_, "foe", :_ do |wme|
   puts wme
 end
