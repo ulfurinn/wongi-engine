@@ -334,6 +334,12 @@ The class also gets arguments to `initialize` from the action's invocation.
 
 The Rete implementation in this library largely follows the outline presented in [\[Doorenbos, 1995\]](http://reports-archive.adm.cs.cmu.edu/anon/1995/CMU-CS-95-113.pdf).
 
+## Changelog
+
+### 0.0.1
+
+* initial repackaged release
+
 ## Contributing
 
 1. Fork it
