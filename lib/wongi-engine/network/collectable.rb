@@ -25,7 +25,7 @@ module Wongi::Engine
       end
 
       def collection name
-        collectors( name ).map( &:default_collect ).flatten
+        collectors( name ).map( &:default_collect ).flatten.uniq
       end
 
       def errors

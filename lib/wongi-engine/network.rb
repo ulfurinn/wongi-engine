@@ -155,29 +155,29 @@ module Wongi::Engine
       when WME
         assert something
       #when Wongi::RDF::Document
-      #  something.statements.each do |st|
-      #    assert WME.new( st.subject, st.predicate, st.object, self )
-      #  end
-    when Rete
-      something.each do |st|
-        assert st.import_into( self )
-      end
-    else
-      raise "I don't know how to accept a #{something.class}"
-    end
-  end
-
-  def retract wme, is_real = false
-
-    if ! is_real
-      if @current_context
-        @current_context.retracted_wmes << wme
+        #  something.statements.each do |st|
+        #    assert WME.new( st.subject, st.predicate, st.object, self )
+        #  end
+      when Rete
+        something.each do |st|
+          assert st.import_into( self )
+        end
+      else
+        raise "I don't know how to accept a #{something.class}"
       end
     end
 
-    real = if is_real
-      wme
-    else
+    def retract wme, is_real = false
+
+      if ! is_real
+        if @current_context
+          @current_context.retracted_wmes << wme
+        end
+      end
+
+      real = if is_real
+        wme
+      else
         #find(wme.subject, wme.predicate, wme.object)
         @cache[wme]
       end

@@ -19,11 +19,7 @@ module Wongi::Engine
 
         elsif acceptor
 
-          if acceptor.respond_to? :call
-            accept acceptor.call( *args, &block )
-          else
-            accept acceptor.new( *args, &block )
-          end
+          accept acceptor.new( *args, &block )
 
         elsif action
 

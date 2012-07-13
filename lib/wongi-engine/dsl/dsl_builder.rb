@@ -34,9 +34,9 @@ module Wongi::Engine
       @current_clause = nil
     end
 
-    def accept klass = nil, &block
+    def accept klass
       raise "Cannot create an acceptor without a clause" if @current_clause.nil?
-      @clauses << { :section => @current_section, :clause => @current_clause, :accept => klass || block }
+      @clauses << { :section => @current_section, :clause => @current_clause, :accept => klass }
       @current_clause = nil
     end
 

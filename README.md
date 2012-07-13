@@ -1,7 +1,6 @@
 # Wongi::Engine
 
-This library provides a rule engine for applications written in Ruby.
-It contains an implementation of the [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm), which largely follows the outline presented in [\[Doorenbos, 1995\]](http://reports-archive.adm.cs.cmu.edu/anon/1995/CMU-CS-95-113.pdf), and a DSL for expressing rules in a readable way.
+This library contains a rule engine written in Ruby. It's based on the [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm) and uses a DSL to express rules in a readable way.
 
 ## Installation
 
@@ -228,11 +227,43 @@ Short for:
 
 Alias: `still_missing`.
 
+### Other built-in actions
+
+#### `collect variable, collector_name`
+
+If you use this action, `engine.collection( collector_name )` will provide a `uniq`'ed array of all values `variable` has been bound to. It's a bit shorter than iterating over the tokens by hand.
+
+#### `error message`, `error { |hash\_of\_variable\_assignments| ... }`
+
+Useful when you want to detect contradictory facts. `engine.errors` will give an array of all error messages produced when this action is activated. If you use the block form, the block needs to return a message.
+
+#### `trace options`
+
+The debugging action that will print a message every time it's activated. Possible options are:
+
+* `values` (boolean = false): whether to print variable assignments as well
+* `io` (IO = $stdout): which IO object to use
+* `generation` (boolean = false): whether this rule's `gen` action should print messages too. `trace` must come before any `gen` actions in this case.
+* `tracer`, `tracer_class`: a custom tracer that must respond to `trace` and accept a hash argument. Hash contents will vary depending on the action being traced.
+
 ### Custom actions
 
-TODO
+We've seen one way to specify custom actions: using `action` with a block. Another way to use it is to say:
 
-#### Custom matchers
+	action class, ... do
+		...
+	end
+
+Any additional arguments or blocks will be given to `initialize`, and the class must define an `execute` method taking a token. Passing any object with an `execute` method also works.
+
+If your action class inherits from `Wongi::Engine::Action`, you'll have the following (more or less useful) attributes:
+
+* `rete`: the engine instance
+* `rule`: the rule object that is using this action
+* `name`: the extension clause used to define this action (read more under [DSL extensions])
+* `production`: the production node
+
+If you can't or don't want to inherit, you can define the accessors yourself. Having just the ones you need is fine.
 
 ### Organising rules
 
@@ -264,6 +295,44 @@ Again, you don't need to hold on to object references if you don't want to:
 	end
 
 	engine << Wongi::Engine::Ruleset[ "my set" ]
+
+### DSL extensions
+
+This is a more advanced method of customising. In general, DSL extensions have the form:
+
+	dsl {
+		section [ :forall | :make ]
+		clause :my_action
+		[ action | accept | body ] ...
+	}
+
+which is then used in a rule like this:
+
+	make {
+		my_action ...
+	}
+
+DSL extensions are globally visible to all engine instances.
+
+Let's have a look at the three ways to define a clause's implementation.
+
+#### `body { |...| ... }`
+
+This simply allows you to group several other actions or matchers. It is perhaps the only way you have to extend the `forall` section, as any non-trivial matchers will require special support from the engine itself.
+
+#### `action class`, `action do |token| ... end`
+
+This works almost exactly as using the `action` action directly in a rule, but gives it a more meaningful alias. Arguments to `initialize`, however, are taken from the action's invocation in `make`, not definition.
+
+#### `accept class`
+
+Most library users probably won't need this, but it's here for completion. Acceptors represent an intermediate state. They allow you to have some shared data that you customize for a given engine instance. The class needs to respond to `import\_into( engine\_instance )` and return something usable as an action, or to be usable as an action itself.
+
+The class also gets arguments to `initialize` from the action's invocation.
+
+## Acknowledgemts
+
+The Rete implementation in this library largely follows the outline presented in [\[Doorenbos, 1995\]](http://reports-archive.adm.cs.cmu.edu/anon/1995/CMU-CS-95-113.pdf).
 
 ## Contributing
 
