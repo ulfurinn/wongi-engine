@@ -33,7 +33,7 @@ Triples can contain any Ruby object that defines the `==` comparison in a meanin
 Try this:
 
 	engine << [ "Alice", "friend", "Bob" ]
-	engine << [ "Alice, "age", 35 ]
+	engine << [ "Alice", "age", 35 ]
 
 What can we do with this information?
 
@@ -233,7 +233,7 @@ Alias: `still_missing`.
 
 If you use this action, `engine.collection( collector_name )` will provide a `uniq`'ed array of all values `variable` has been bound to. It's a bit shorter than iterating over the tokens by hand.
 
-#### `error message`, `error { |hash\_of\_variable\_assignments| ... }`
+#### `error message`, `error { |hash_of_variable_assignments| ... }`
 
 Useful when you want to detect contradictory facts. `engine.errors` will give an array of all error messages produced when this action is activated. If you use the block form, the block needs to return a message.
 
@@ -267,7 +267,7 @@ If you can't or don't want to inherit, you can define the accessors yourself. Ha
 
 ### Organising rules
 
-To make rules and queries more manageable, you will probably want to keep them separate from the engine instance. One way to do that is to just say:
+Using `engine.rule` and `engine.query` is fine if you want to experiment, but to make rules and queries more manageable, you will probably want to keep them separate from the engine instance. One way to do that is to just say:
 
 	my_rule = rule "name" do
 		...
@@ -322,15 +322,15 @@ This simply allows you to group several other actions or matchers. It is perhaps
 
 #### `action class`, `action do |token| ... end`
 
-This works almost exactly as using the `action` action directly in a rule, but gives it a more meaningful alias. Arguments to `initialize`, however, are taken from the action's invocation in `make`, not definition.
+This works almost exactly like using the `action` action directly in a rule, but gives it a more meaningful alias. Arguments to `initialize`, however, are taken from the action's invocation in `make`, not definition.
 
 #### `accept class`
 
-Most library users probably won't need this, but it's here for completion. Acceptors represent an intermediate state. They allow you to have some shared data that you customize for a given engine instance. The class needs to respond to `import\_into( engine\_instance )` and return something usable as an action, or to be usable as an action itself.
+Most library users probably won't need this, but it's here for completion. Acceptors represent an intermediate state. They allow you to have some shared data that you customize for a given engine instance. The class needs to respond to `import_into( engine_instance )` and return something usable as an action, or to be usable as an action itself.
 
 The class also gets arguments to `initialize` from the action's invocation.
 
-## Acknowledgemts
+## Acknowledgements
 
 The Rete implementation in this library largely follows the outline presented in [\[Doorenbos, 1995\]](http://reports-archive.adm.cs.cmu.edu/anon/1995/CMU-CS-95-113.pdf).
 
