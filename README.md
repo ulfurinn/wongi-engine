@@ -286,7 +286,7 @@ If your action class inherits from `Wongi::Engine::Action`, you'll have the foll
 
 * `rete`: the engine instance
 * `rule`: the rule object that is using this action
-* `name`: the extension clause used to define this action (read more under [DSL extensions])
+* `name`: the extension clause used to define this action (read more under [DSL extensions](#dsl-extensions))
 * `production`: the production node
 
 If you can't or don't want to inherit, you can define the accessors yourself. Having just the ones you need is fine.
