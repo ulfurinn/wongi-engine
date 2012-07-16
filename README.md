@@ -141,7 +141,7 @@ engine.rule "self-printer" do
 end
 ```
 
-The `make` section (also spelled `do!`, if you find it more agreeable English, because `do` is a keyword in Ruby) lists everything that happens when a rule's conditions are fully matched (we say the production node is activated). Wongi::Engine provides only a small amount of build-in actions, but you can define define your own ones, and the simplest one is just `action` with a block.
+The `make` section (also spelled `do!`, if you find it more agreeable English, because `do` is a keyword in Ruby) lists everything that happens when a rule's conditions are fully matched (we say the production node is activated). Wongi::Engine provides only a small amount of build-in actions, but you can define your own ones, and the simplest one is just `action` with a block.
 
 ### More facts!
 
