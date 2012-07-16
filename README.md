@@ -26,7 +26,7 @@ Now let's add some facts to the system.
 
 ### Facts
 
-All knowledge in Wongi::Engine is represented as triples of { subject, predicate, object }. Predicates usually stand for subjects' properties, and objects for values of those properties. More complex types can always be decomposed into such triples.
+All knowledge in Wongi::Engine is represented by triples of { subject, predicate, object }. Predicates usually stand for subjects' properties, and objects for values of those properties. More complex types can always be decomposed into such triples.
 
 Triples can contain any Ruby object that defines the `==` comparison in a meaningful way, but some symbols have special meaning, as we will see.
 
