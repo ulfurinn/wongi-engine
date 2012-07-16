@@ -32,8 +32,10 @@ Triples can contain any Ruby object that defines the `==` comparison in a meanin
 
 Try this:
 
+	```ruby
 	engine << [ "Alice", "friend", "Bob" ]
 	engine << [ "Alice", "age", 35 ]
+	```
 
 What can we do with this information?
 
@@ -41,9 +43,11 @@ What can we do with this information?
 
 Suppose we want to list all we know about Alice. You could, for instance, do:
 
+	```ruby
 	engine.each "Alice", :_, :_ do |item|
 		puts "Alice's #{item.predicate} is #{item.object}"
 	end
+	```
 
 `each` takes three arguments for every field of a triple and tries to match the resulting template against the known facts. `:_` is the special value that matches anything. This kind of pattern matching plays a large role in Wongi::Engine; more on that later.
 
@@ -53,19 +57,23 @@ In a similar way, you can use `select` to get an array of matching facts and `fi
 
 It's not very interesting to use the engine like that, though. Rule engines are supposed to be declarative. Let's try this:
 
+	```ruby
 	friends = engine.rule "friends" do
 		forall {
 			has :PersonA, "friend", :PersonB
 		}
 	end
+	```
 
 Here's your first taste of the engine's DSL. A rule, generally speaking, consists of a number of conditions the dataset needs to meet; those are defined in the `forall` section (also spelled `for_all`, if you prefer that). `has` (or `fact`) specifies that there needs to be a fact that matches the given pattern; in this case, one with the predicate `"friends"`.
 
 When a pattern contains a symbol that starts with an uppercase letter, it introduces a variable which will be bound to an actual triple field. Their values can be retrieved from the result set:
 
+	```ruby
 	friends.tokens.each do |token|
 		puts "%s and %s are friends" % [ token[ :PersonA ], token[ :PersonB ] ]
 	end
+	```
 
 A **token** represents all facts that passed the rule's conditions. If you think of the dataset as of a long SQL table being joined with itself, then a token is like a row in the resulting table.
 
@@ -77,6 +85,7 @@ Once a variable is bound, it can be used to match further facts within a rule. L
 
 and another rule:
 	
+	```ruby
 	remote = engine.rule "remote friends" do
 		forall {
 			has :PersonA, "friend", :PersonB
@@ -87,6 +96,7 @@ and another rule:
 	remote.tokens.each do |token|
 		puts "%s and %s are friends through %s" % [ token[ :PersonA ], token[ :PersonC ], token[ :PersonB ] ]
 	end
+	```
 
 (`engine.rule` returns the created **production node** - an object that accumulates the rule's result set. You don't have to carry it around if you don't want to - it is always possible to retrieve it later as `engine.productions["remote friends"]`.)
 
@@ -94,6 +104,7 @@ and another rule:
 
 Taking the SQL metaphor further, you can use the engine to do fancy searches:
 
+	```ruby
 	q = engine.query "friends" do
 		search_on :Name
 		forall {
@@ -105,6 +116,7 @@ Taking the SQL metaphor further, you can use the engine to do fancy searches:
 	q.tokens.each do |token|
 		... # you know the drill
 	end
+	```
 
 Not that this is a particularly fancy search, but you get the idea.
 
@@ -116,6 +128,7 @@ You can also retrieve the query's production node from `engine.results["friends"
 
 There's more to rules than passive accumulation:
 
+	```ruby
 	engine.rule "self-printer" do
 		forall {
 			has :PersonA, "friend", :PersonB
@@ -126,6 +139,7 @@ There's more to rules than passive accumulation:
 			}
 		}
 	end
+	```
 
 The `make` section (also spelled `do!`, if you find it more agreeable English, because `do` is a keyword in Ruby) lists everything that happens when a rule's conditions are fully matched (we say the production node is activated). Wongi::Engine provides only a small amount of build-in actions, but you can define define your own ones, and the simplest one is just `action` with a block.
 
@@ -133,6 +147,7 @@ The `make` section (also spelled `do!`, if you find it more agreeable English, b
 
 Note how our facts define relations that always go from subject to object - they form a directed graph. In a perfect world, friendships go both ways, but to specify this in out model, we need to have two facts for each couple. Instead of duplicating everything by hand, let's automate that:
 
+	```ruby
 	engine.rule "symmetric predicate" do
 		forall {
 			has :Predicate, "symmetric", true
@@ -144,6 +159,7 @@ Note how our facts define relations that always go from subject to object - they
 	end
 
 	engine << ["friend", "symmetric", true]
+	```
 
 If you still have the "self-printer" rule installed, you will see some new friendships pop up immediately!
 
@@ -195,8 +211,10 @@ The following matchers are nothing but syntactic sugar for a combination of prim
 
 Short for:
 	
+	```ruby
 	neg subject, predicate, object, -1
 	has subject, predicate, object, 0
+	```
 
 That is, it passes if the fact was missing in the previous state but exists in the current one. Alias: `added`.
 
@@ -204,8 +222,10 @@ That is, it passes if the fact was missing in the previous state but exists in t
 
 Short for:
 
+	```ruby
 	has subject, predicate, object, -1
 	neg subject, predicate, object, 0
+	```
 
 The reverse of `asserted`. Alias: `removed`.
 
@@ -213,8 +233,10 @@ The reverse of `asserted`. Alias: `removed`.
 
 Short for:
 
+	```ruby
 	has subject, predicate, object, -1
 	has subject, predicate, object, 0
+	```
 
 Alias: `still_has`.
 
@@ -222,8 +244,10 @@ Alias: `still_has`.
 
 Short for:
 
+	```ruby
 	neg subject, predicate, object, -1
 	neg subject, predicate, object, 0
+	```
 
 Alias: `still_missing`.
 
@@ -250,9 +274,11 @@ The debugging action that will print a message every time it's activated. Possib
 
 We've seen one way to specify custom actions: using `action` with a block. Another way to use it is to say:
 
+	```ruby
 	action class, ... do
 		...
 	end
+	```
 
 Any additional arguments or blocks will be given to `initialize`, and the class must define an `execute` method taking a token. Passing any object with an `execute` method also works.
 
@@ -269,14 +295,17 @@ If you can't or don't want to inherit, you can define the accessors yourself. Ha
 
 Using `engine.rule` and `engine.query` is fine if you want to experiment, but to make rules and queries more manageable, you will probably want to keep them separate from the engine instance. One way to do that is to just say:
 
+	```ruby
 	my_rule = rule "name" do
 		...
 	end
 
 	engine << my_rule
+	```
 
 For even more convenience, why not group rules together:
 
+	```ruby
 	my_ruleset = ruleset {
 		rule "rule 1" do
 			...
@@ -287,30 +316,37 @@ For even more convenience, why not group rules together:
 	}
 
 	engine << my_ruleset
+	```
 
 Again, you don't need to hold on to object references if you don't want to:
 
+	```ruby
 	ruleset "my set" do
 		...
 	end
 
 	engine << Wongi::Engine::Ruleset[ "my set" ]
+	```
 
 ### DSL extensions
 
 This is a more advanced method of customising. In general, DSL extensions have the form:
 
+	```ruby
 	dsl {
 		section [ :forall | :make ]
 		clause :my_action
 		[ action | accept | body ] ...
 	}
+	```
 
 which is then used in a rule like this:
 
+	```ruby
 	make {
 		my_action ...
 	}
+	```
 
 DSL extensions are globally visible to all engine instances.
 
@@ -323,6 +359,33 @@ This simply allows you to group several other actions or matchers. It is perhaps
 #### `action class`, `action do |token| ... end`
 
 This works almost exactly like using the `action` action directly in a rule, but gives it a more meaningful alias. Arguments to `initialize`, however, are taken from the action's invocation in `make`, not definition.
+
+A useful pattern is having specialised named collectors, defined like this:
+
+	```ruby
+	dsl {
+		section :make
+		clause :my_collection
+		action Wongi::Engine::SimpleCollector.collector
+	}
+	```
+
+installed like this:
+
+	```ruby
+	rule('collecting') {
+		...
+		make {
+			my_collection :X
+		}
+	}
+	```
+
+and accessed like this:
+
+	```ruby
+	collection = engine.collection :my_collection
+	```
 
 #### `accept class`
 
