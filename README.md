@@ -358,7 +358,7 @@ This simply allows you to group several other actions or matchers. It is perhaps
 
 #### `action class`, `action do |token| ... end`
 
-This works almost exactly like using the `action` action directly in a rule, but gives it a more meaningful alias. Arguments to `initialize`, however, are taken from the action's invocation in `make`, not definition.
+This works almost exactly like using the `action` action directly in a rule, but gives it a more meaningful alias. Arguments to `initialize`, however, are taken from the action's invocation in `make`, not the definition.
 
 A useful pattern is having specialised named collectors, defined like this:
 
