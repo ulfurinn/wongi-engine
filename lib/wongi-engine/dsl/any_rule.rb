@@ -10,7 +10,7 @@ module Wongi::Engine
       end
     end
 
-    def variant &block
+    def option &block
       var = VariantRule.new
       var.instance_eval &block
       variants << var
