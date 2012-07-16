@@ -81,7 +81,9 @@ If you don't care about a specific field's value, you can use the all-matcher `:
 
 Once a variable is bound, it can be used to match further facts within a rule. Let's add another friendship:
 
-	engine << [ "Bob", "friend", "Claire" ]
+```ruby
+engine << [ "Bob", "friend", "Claire" ]
+```
 
 and another rule:
 	
@@ -141,7 +143,7 @@ engine.rule "self-printer" do
 end
 ```
 
-The `make` section (also spelled `do!`, if you find it more agreeable English, because `do` is a keyword in Ruby) lists everything that happens when a rule's conditions are fully matched (we say the production node is activated). Wongi::Engine provides only a small amount of build-in actions, but you can define define your own ones, and the simplest one is just `action` with a block.
+The `make` section (also spelled `do!`, if you find it more agreeable English, because `do` is a keyword in Ruby) lists everything that happens when a rule's conditions are fully matched (we say "the production node is **activated**"). Wongi::Engine provides only a small amount of built-in actions, but you can define define your own ones, and the simplest one is just `action` with a block.
 
 ### More facts!
 
@@ -163,7 +165,7 @@ engine << ["friend", "symmetric", true]
 
 If you still have the "self-printer" rule installed, you will see some new friendships pop up immediately!
 
-The built-in `gen` action creates new facts, taking either fixed values or variables as arguments. (It will complain if use provide a variable that isn't bound by the time it's activated.) Here, it takes all relations we've defined to be [symmetric](http://en.wikipedia.org/wiki/Symmetric_relation), finds all couples in those sorts of relations and turns them around.
+The built-in `gen` action creates new facts, taking either fixed values or variables as arguments. (It will complain if you provide a variable that isn't bound by the time it's activated.) Here, it takes all relations we've defined to be [symmetric](http://en.wikipedia.org/wiki/Symmetric_relation), finds all couples in those sorts of relations and turns them around.
 
 ### Matchers
 
@@ -175,7 +177,7 @@ Passes if the specified template does *not* match anything in the dataset. Alias
 
 #### `maybe subject, predicate, object`
 
-Passes whether or not the template matches anything. It's only useful if it introduces a new variable. Alias: `optional`.
+Passes whether or not the template matches anything. It's only useful if it introduces a new variable; you can think of `LEFT JOIN`. Alias: `optional`.
 
 #### `none { ... }`
 
@@ -199,7 +201,9 @@ Wongi::Engine has a limited concept of timed facts: time is discrete and only ex
 
 To create past states, say:
 
-	engine.snapshot!
+```ruby
+engine.snapshot!
+```
 
 This will shift all facts one step into the past. The new current state will be a copy of the last one. You can only insert new facts into the current state, "retroactive" facts are not allowed.
 
