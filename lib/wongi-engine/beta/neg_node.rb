@@ -38,6 +38,17 @@ module Wongi
         end
       end
 
+      def refresh_child child
+        tokens.each do |token|
+          if token.neg_join_results.empty?
+            child.left_activate token, nil, {}
+          end
+        end
+        alpha.wmes.each do |wme|
+          right_activate wme
+        end
+      end
+
       protected
 
       def matches? token, wme

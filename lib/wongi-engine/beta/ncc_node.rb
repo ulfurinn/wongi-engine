@@ -42,6 +42,15 @@ module Wongi
           end
         end
       end
+
+      def refresh_child child
+        tokens.each do |token|
+          if token.ncc_results.empty?
+            child.left_activate token, nil, {}
+          end
+        end
+      end
+
     end
   end
 end

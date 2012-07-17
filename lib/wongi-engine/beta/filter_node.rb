@@ -104,6 +104,15 @@ module Wongi
       def equivalent? test
         test == self.test
       end
+
+      def refresh_child child
+        tmp = children
+        self.children = [ child ]
+        parent.tokens.each do |token|
+          left_activate token
+        end
+        self.children = tmp
+      end
     end
   end
 end

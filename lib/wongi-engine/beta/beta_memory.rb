@@ -38,6 +38,12 @@ module Wongi::Engine
       end
     end
 
+    def refresh_child child
+      tokens.each do |token|
+        child.left_activate token, nil, {}
+      end
+    end
+
     # => TODO: investigate if we really need this
     #def beta_memory
     #  self

@@ -390,7 +390,7 @@ module Wongi::Engine
       beta = root.network conditions, [], parameters, alpha_deaf
 
       production = ProductionNode.new( beta, actions )
-      production.update_above
+      production.refresh
       production
     end
 

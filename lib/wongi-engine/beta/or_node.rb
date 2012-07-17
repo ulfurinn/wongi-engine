@@ -18,7 +18,7 @@ module Wongi
         end
         context.earlier += added
         context.node = OrNode.new( branches )
-        context.node.update_above
+        context.node.refresh
         context
       end
 
@@ -65,9 +65,9 @@ module Wongi
         parents.map( &:depth ).max + 1
       end
 
-      def update_above
+      def refresh
         parents.each do |parent|
-          update_from parent
+          parent.refresh_child self
         end
       end
 

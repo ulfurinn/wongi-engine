@@ -39,7 +39,7 @@ module Wongi::Engine
       beta = children.find { |node| BetaMemory === node }
       if beta.nil?
         beta = BetaMemory.new self
-        beta.update_above
+        beta.refresh
       end
       beta
     end
@@ -67,14 +67,14 @@ module Wongi::Engine
       return existing if existing
 
       node = FilterNode.new self, test
-      node.update_above
+      node.refresh
       node
     end
 
     def neg_node alpha, tests, alpha_deaf
       node = NegNode.new self, tests, alpha
       alpha.betas << node unless alpha_deaf
-      node.update_above
+      node.refresh
       node
     end
 
@@ -91,8 +91,8 @@ module Wongi::Engine
       partner.ncc = ncc
       partner.divergent = self
       #    partner.conjuncts = condition.children.size
-      ncc.update_above
-      partner.update_above
+      ncc.refresh
+      partner.refresh
       ncc
     end
 
@@ -104,8 +104,12 @@ module Wongi::Engine
       end.node
     end
 
-    def update_above
-      update_from self.parent
+    def refresh
+      parent.refresh_child self
+    end
+
+    def refresh_child node
+      raise "#{self.class} must implement refresh_child"
     end
 
     private
@@ -116,49 +120,6 @@ module Wongi::Engine
       end
     end
 
-    def update_from parent
-      case parent
-
-      when BetaMemory
-        parent.tokens.each do |token|
-          self.left_activate token, nil, {}
-        end
-
-      when JoinNode, OptionalNode
-        tmp = parent.children
-        parent.children = [ self ]
-        parent.alpha.wmes.each do |wme|
-          parent.right_activate wme
-        end
-        parent.children = tmp
-
-      when FilterNode
-        tmp = parent.children
-        parent.children = [ self ]
-        parent.parent.tokens.each do |token|
-          parent.left_activate token
-        end
-        parent.children = tmp
-
-      when NegNode
-        parent.tokens.each do |token|
-          if token.neg_join_results.empty?
-            left_activate token, nil, {}
-          end
-        end
-        parent.alpha.wmes.each do |wme|
-          parent.right_activate wme
-        end
-
-      when NccNode
-        parent.tokens.each do |token|
-          if token.ncc_results.empty?
-            left_activate token, nil, {}
-          end
-        end
-
-      end # => case
-    end
   end
 
 end

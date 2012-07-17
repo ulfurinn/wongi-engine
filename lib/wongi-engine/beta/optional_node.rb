@@ -38,6 +38,15 @@ module Wongi
         end
       end
 
+      def refresh_child child
+        tmp = children
+        self.children = [ child ]
+        alpha.wmes.each do |wme|
+          right_activate wme
+        end
+        self.children = tmp
+      end
+
     end
   end
 end
