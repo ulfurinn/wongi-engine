@@ -57,7 +57,7 @@ module Wongi::Engine
     def delete preserve_self = false
       delete_children
       # => TODO: why was this last check needed? consult the Rete PhD
-      @node.tokens.delete self unless preserve_self# or @node.kind_of?( NccPartner )
+      @node.tokens.delete self unless preserve_self or @node.kind_of?( NccPartner )
       @wme.tokens.delete self if @wme
       @parent.children.delete self if @parent
 
