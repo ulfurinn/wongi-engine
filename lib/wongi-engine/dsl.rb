@@ -55,7 +55,7 @@ dsl {
   accept Wongi::Engine::NccProductionRule
 
   clause :any
-  action Wongi::Engine::AnyRule
+  accept Wongi::Engine::AnyRule
 
   clause :maybe, :optional
   accept Wongi::Engine::OptionalTemplate
