@@ -48,9 +48,9 @@ module Wongi::Engine
 
     def wmes
       if parent
-        parent.wmes + [wme]
+        parent.wmes + (wme ? [wme] : [])
       else
-        [wme]
+        wme ? [wme] : []
       end
     end
 

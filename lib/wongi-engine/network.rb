@@ -169,6 +169,10 @@ module Wongi::Engine
 
     def retract wme, is_real = false
 
+      if wme.is_a? Array
+        return retract( WME.new(*wme), is_real )
+      end
+
       if ! is_real
         if @current_context
           @current_context.retracted_wmes << wme

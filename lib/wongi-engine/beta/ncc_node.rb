@@ -30,6 +30,7 @@ module Wongi
       #    t.node = self
       def left_activate token, wme = nil, assignments = { } # => FIXME: left_activate has different signatures for storing and non-storing nodes...
         t = Token.new token, nil, {}
+        t.node = self
         tokens << t
         partner.tokens.each do |ncc_token|
           t.ncc_results << ncc_token

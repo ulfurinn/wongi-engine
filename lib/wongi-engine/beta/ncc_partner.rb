@@ -16,19 +16,8 @@ module Wongi
       def left_activate token
         t = Token.new token, nil, {}
         t.node = self
-        #    owners_t = t
-        #  #  owners_w = t.wme
-        #    conjuncts.times do
-        #  #    owners_w = owners_t.wme
-        #      owners_t = owners_t.parent
-        #    end
-        owner = nil
-        ncc.tokens.each do |ncc_token|
-          # if ncc_token.parent == owners_t
-          if ncc_token.parent.node == divergent
-            owner = ncc_token
-            break
-          end
+        owner = ncc.tokens.find do |ncc_token|
+          ncc_token.parent.node == divergent
         end
         if owner
           owner.ncc_results << t
