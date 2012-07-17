@@ -27,6 +27,16 @@ module Wongi
           tokens << t
         end
       end
+
+      def delete_token token
+        token.owner.ncc_results.delete token
+        if token.owner.ncc_results.empty?
+          ncc.children.each do |node|
+            node.left_activate token.owner, nil, {}
+          end
+        end
+
+      end
     end
   end
 end

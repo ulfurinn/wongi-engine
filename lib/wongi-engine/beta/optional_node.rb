@@ -47,6 +47,14 @@ module Wongi
         self.children = tmp
       end
 
+      def delete_token token
+        tokens.delete token
+        token.opt_join_results.each do |ojr|
+          ojr.wme.opt_join_results.delete ojr
+        end
+        token.opt_join_results.clear
+      end
+
     end
   end
 end
