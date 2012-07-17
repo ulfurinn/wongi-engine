@@ -18,6 +18,57 @@ module Wongi::Engine
         end
       end
 
+      def full_dump io = $stdout
+
+        alpha_hash.each_value do |alpha|
+          io.puts "ALPHA #{alpha.template}"
+          alpha.wmes.each do |wme|
+            dump_wme wme, io
+          end
+        end
+        dump_beta beta_top, io
+
+      end
+
+      private
+
+      def dump_wme wme, io
+        io.puts "\tWME: #{wme.object_id} #{wme}"
+        wme.tokens.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
+        io.puts "\tGENERATING:" unless wme.generating_tokens.empty?
+        wme.generating_tokens.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
+      end
+
+      def dump_beta beta, io
+        case beta
+        when BetaMemory
+          dump_beta_memory beta, io
+        when NccNode
+          dump_ncc beta, io
+        else
+          io.puts "BETA #{beta.object_id} #{beta.class} : TODO"
+
+        end
+        io.puts "\tCHILDREN: #{beta.children.map(&:object_id).join ", "}"
+        beta.children.each { |child| dump_beta child, io } unless beta.children.empty?
+      end
+
+      def dump_beta_memory beta, io
+        io.puts "BETA MEMORY #{beta.object_id}"
+        beta.tokens.each { |token|
+          io.puts "\tTOKEN #{token.object_id}"
+          token.wmes.each { |wme| io.puts "\t\tWME " + wme.object_id.to_s }
+        }
+      end
+
+      def dump_ncc beta, io
+        io.puts "NCC #{beta.object_id}"
+        beta.tokens.each { |token|
+          io.puts "\tTOKEN #{token.object_id}"
+          token.wmes.each { |wme| io.puts "\t\tWME " + wme.object_id.to_s }
+        }
+      end
+
     end
 
   end
