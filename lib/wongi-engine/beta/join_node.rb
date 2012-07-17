@@ -114,7 +114,7 @@ module Wongi
         return assignments if self.assignment_pattern.nil?
         # puts "more assignments"
         [:subject, :predicate, :object].each do |field|
-          if self.assignment_pattern.send(field)
+          if self.assignment_pattern.send(field) != :_
             #puts "#{self.assignment_pattern.send(field)} = #{wme.send(field)}"
             assignments[ self.assignment_pattern.send(field) ] = wme.send(field)
           end
