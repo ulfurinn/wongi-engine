@@ -21,10 +21,6 @@ module Wongi
         end
       end
 
-      # => TODO: investigate
-      def deexecute token
-
-      end
     end
 
   end

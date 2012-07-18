@@ -19,7 +19,6 @@ module Wongi::Engine
       @opt_join_results = []
       @ncc_results = []
       @generated_wmes = []
-      @deexecutors = []
       token.children << self if token
       wme.tokens << self if wme
     end
@@ -61,7 +60,6 @@ module Wongi::Engine
       @parent.children.delete self if @parent
 
       retract_generated
-      deexecute
 
       @node.delete_token self
     end
@@ -87,11 +85,6 @@ module Wongi::Engine
       end
       @generated_wmes = []
 
-    end
-
-    def deexecute
-      @deexecutors.each { |deexec| deexec.deexecute self }
-      @deexecutors = []
     end
 
     def all_assignments
