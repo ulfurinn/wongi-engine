@@ -9,14 +9,19 @@ module Wongi::Engine
     end
 
     def seed assignments = {}
+      @seed = assignments
       t = Token.new( nil, nil, assignments )
       t.node = self
       @tokens << t
     end
 
     def subst valuations
-      token = @tokens.first
-      token.delete true
+      @tokens.first.delete
+
+      token = Token.new( nil, nil, @seed )
+      token.node = self
+      @tokens << token
+
       valuations.each { |variable, value| token.subst variable, value }
       self.children.each do |child|
         child.left_activate token
@@ -42,6 +47,10 @@ module Wongi::Engine
       tokens.each do |token|
         child.left_activate token, nil, {}
       end
+    end
+
+    def delete_token token
+      tokens.delete token
     end
 
     # => TODO: investigate if we really need this

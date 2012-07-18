@@ -32,6 +32,15 @@ module Wongi::Engine
 
       private
 
+      def token_lineage token
+        result = []
+        while token.parent
+          result << token.parent
+          token = token.parent
+        end
+        result
+      end
+
       def dump_wme wme, io
         io.puts "\tWME: #{wme.object_id} #{wme}"
         wme.tokens.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
@@ -56,7 +65,7 @@ module Wongi::Engine
       def dump_beta_memory beta, io
         io.puts "BETA MEMORY #{beta.object_id}"
         beta.tokens.each { |token|
-          io.puts "\tTOKEN #{token.object_id}"
+          io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(" - ")}]"
           token.wmes.each { |wme| io.puts "\t\tWME " + wme.object_id.to_s }
         }
       end
@@ -64,7 +73,7 @@ module Wongi::Engine
       def dump_ncc beta, io
         io.puts "NCC #{beta.object_id}"
         beta.tokens.each { |token|
-          io.puts "\tTOKEN #{token.object_id}"
+          io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(" - ")}]"
           token.wmes.each { |wme| io.puts "\t\tWME " + wme.object_id.to_s }
         }
       end

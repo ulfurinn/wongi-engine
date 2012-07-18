@@ -54,45 +54,16 @@ module Wongi::Engine
       end
     end
 
-    def delete preserve_self = false
+    def delete
       delete_children
-      # => TODO: why was this last check needed? consult the Rete PhD
-      @node.tokens.delete self unless preserve_self or @node.kind_of?( NccPartner )
+      @node.tokens.delete self unless @node.kind_of?( NccPartner )
       @wme.tokens.delete self if @wme
       @parent.children.delete self if @parent
 
       retract_generated
       deexecute
 
-      case @node
-      when NegNode
-        @neg_join_results.each do |njr|
-          njr.wme.neg_join_results.delete njr if njr.wme
-        end
-        @neg_join_results = []
-
-      when OptionalNode
-        @opt_join_results.each do |ojr|
-          ojr.wme.opt_join_results.delete ojr
-        end
-        @opt_join_results = []
-
-      when NccNode
-        @ncc_results.each do |nccr|
-          nccr.wme.tokens.delete nccr
-          nccr.parent.children.delete nccr
-        end
-        @ncc_results = []
-
-      when NccPartner
-        @owner.ncc_results.delete self
-        if @owner.ncc_results.empty?
-          @node.ncc.children.each do |node|
-            node.left_activate @owner, nil, {}
-          end
-        end
-      end
-
+      @node.delete_token self
     end
 
     def delete_children

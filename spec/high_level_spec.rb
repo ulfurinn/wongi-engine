@@ -178,63 +178,7 @@ describe 'the engine' do
     rete.results["test-query"].tokens.first[:Y].should == 42
 
   end
-
-  it 'should support negative subnets' do
-
-    production = (rete << rule('ncc') {
-      forall {
-        has "base", "is", :Base
-        none {
-          has :Base, 2, :X
-          has :X, 4, 5
-        }
-      }
-    })
-
-    rete << ["base", "is", 1]
-
-    production.should have(1).tokens
-
-    rete << [1, 2, 3]
-
-    production.should have(1).tokens
-
-    rete << [3, 4, 5]
-
-    production.should have(0).tokens
-
-    rete << ["base", "is", 2]
-
-    production.should have(1).tokens
-
-  end
-
-  it 'should support optional matches' do
-
-    production = (rete << rule('optional') {
-      forall {
-        has "answer", "is", :Answer
-        maybe :Answer, "is", :Kind
-      }
-    })
-
-    rete << ["answer", "is", 42]
-    rete << ["answer", "is", 43]
-    rete << [42, "is", "canonical"]
-
-    production.should have(2).tokens
-
-    canon = production.tokens.select { |token| not token[:Kind].nil? }
-    canon.should have(1).items
-    canon.first[:Answer].should == 42
-    canon.first[:Kind].should == "canonical"
-
-    non_canon = production.tokens.select { |token| token[:Kind].nil? }
-    non_canon.should have(1).items
-    non_canon.first[:Answer].should == 43
-
-  end
-
+  
   context 'with timelines' do
 
     it 'should not match with no past point' do
@@ -282,7 +226,7 @@ describe 'the engine' do
         rete.snapshot!
         rete << [1, 2, 3]
         production.should have(1).tokens
-        puts count
+        #puts count
       end
 
       it 'should not match kept items' do
@@ -297,7 +241,7 @@ describe 'the engine' do
         production.should have(1).tokens
         rete.snapshot!
         production.should have(0).tokens
-        puts count
+        #puts count
       end
 
     end
@@ -316,7 +260,7 @@ describe 'the engine' do
         production.should have(0).tokens
         rete.snapshot!
         production.should have(1).tokens
-        puts count
+        #puts count
       end
 
       it 'should not match asserted wmes' do
@@ -331,7 +275,7 @@ describe 'the engine' do
         rete.snapshot!
         rete << [1, 2, 3]
         production.should have(0).tokens
-        puts count
+        #puts count
       end
 
     end

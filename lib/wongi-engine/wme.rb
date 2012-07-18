@@ -57,7 +57,7 @@ module Wongi::Engine
 
       alphas.each { |alpha| alpha.remove self }.clear
       while tokens.first
-        tokens.first.delete self    # => will remove itself from the array
+        tokens.first.delete    # => will remove itself from the array
       end
 
       destroy_neg_join_results
