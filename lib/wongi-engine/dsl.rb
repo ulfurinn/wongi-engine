@@ -66,6 +66,9 @@ dsl {
   clause :diff, :ne
   accept Wongi::Engine::InequalityTest
 
+  clause :assert, :dynamic
+  accept Wongi::Engine::AssertingTest
+
   clause :asserted, :added
   body { |s, p, o|
     missing s, p, o, -1
