@@ -199,6 +199,10 @@ Passes if the arguments are not equal. Alias: `ne`.
 
 Passes if the block evaluates to `true`. Having no arguments passes the entire token as an argument, listing some variables passes only their values.
 
+#### `assign variable do |token| ... end`
+
+Not a *matcher*, strictly speaking, because it always passes. What it does instead is introduce a new variable bound to the block's return value.
+
 ### Timeline
 
 Wongi::Engine has a limited concept of timed facts: time is discrete and only extends into the past. Matchers that accept a triple specification (`has`, `neg` and `maybe`) can also accept a fourth parameter, an integer <= 0, which will make them look at a past state of the system. "0" means the current state and is the default value, "-1" means the one just before the current, and so on.

@@ -71,6 +71,12 @@ module Wongi::Engine
       node
     end
 
+    def assignment_node variable, body
+      node = AssignmentNode.new self, variable, body
+      node.refresh
+      node
+    end
+
     def neg_node alpha, tests, alpha_deaf
       node = NegNode.new self, tests, alpha
       alpha.betas << node unless alpha_deaf

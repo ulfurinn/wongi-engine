@@ -69,6 +69,9 @@ dsl {
   clause :assert, :dynamic
   accept Wongi::Engine::AssertingTest
 
+  clause :assign, :introduce
+  accept Wongi::Engine::Assignment
+
   clause :asserted, :added
   body { |s, p, o|
     missing s, p, o, -1
