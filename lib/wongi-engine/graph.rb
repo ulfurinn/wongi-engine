@@ -8,6 +8,8 @@ module Wongi::Engine
 
     def dot io, opts = { }
 
+      @seen_betas = []
+
       if String === io
         File.open io, "w" do |actual_io|
           dot actual_io
@@ -47,10 +49,9 @@ module Wongi::Engine
     end
 
     def dump_beta beta, opts
+      return if @seen_betas.include? beta
+      @seen_betas << beta
       @io.puts "node#{print_hash beta.hash} [label=\"#{beta.class.name.split('::').last}\"];"
-      if beta.parent
-        @io.puts "node#{print_hash beta.parent.hash} -> node#{print_hash beta.hash};"
-      end
       if beta.is_a? NccNode
         @io.puts "node#{print_hash beta.partner.hash} -> node#{print_hash beta.hash};"
         @io.puts "{ rank=same; node#{print_hash beta.partner.hash} node#{print_hash beta.hash} }"
@@ -62,6 +63,7 @@ module Wongi::Engine
         end
       end
       beta.children.each do |child|
+        @io.puts "node#{print_hash beta.hash} -> node#{print_hash child.hash};"
         dump_beta child, opts
       end
     end
