@@ -27,7 +27,7 @@ module Wongi::Engine
 
 
     def rete
-      if parent
+      @rete ||= if parent
         parent.rete
       else
         @rete
