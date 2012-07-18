@@ -195,6 +195,10 @@ Passes if the arguments are equal. Alias: `eq`, `equal`.
 
 Passes if the arguments are not equal. Alias: `ne`.
 
+#### `assert { |token| ... }`, assert var1, var2, ... do |val1, val2, ... | ... end`
+
+Passes if the block evaluates to `true`. Having no arguments passes the entire token as an argument, listing some variables passes only their values.
+
 ### Timeline
 
 Wongi::Engine has a limited concept of timed facts: time is discrete and only extends into the past. Matchers that accept a triple specification (`has`, `neg` and `maybe`) can also accept a fourth parameter, an integer <= 0, which will make them look at a past state of the system. "0" means the current state and is the default value, "-1" means the one just before the current, and so on.
