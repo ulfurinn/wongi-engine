@@ -90,7 +90,7 @@ module Wongi::Engine
         results = token.neg_join_results
         results.delete njr
 
-        if results.empty? && !rete.in_snapshot?
+        if results.empty? #&& !rete.in_snapshot?
           token.node.children.each { |beta|
             beta.left_activate token, nil, { }
           }
