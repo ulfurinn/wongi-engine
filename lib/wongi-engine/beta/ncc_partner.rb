@@ -13,7 +13,7 @@ module Wongi
         @tokens = []
       end
 
-      def left_activate token
+      def beta_activate token
         t = Token.new token, nil, {}
         t.node = self
         owner = ncc.tokens.find do |ncc_token|
@@ -32,7 +32,7 @@ module Wongi
         token.owner.ncc_results.delete token
         if token.owner.ncc_results.empty?
           ncc.children.each do |node|
-            node.left_activate token.owner, nil, {}
+            node.beta_activate token.owner, nil, {}
           end
         end
 

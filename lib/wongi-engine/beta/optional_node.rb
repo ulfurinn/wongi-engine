@@ -5,7 +5,7 @@ module Wongi
 
     class OptionalNode < JoinNode
 
-      def right_activate wme
+      def alpha_activate wme
         parent.tokens.each do |token|
           if matches? token, wme
             if token.has_optional?
@@ -20,7 +20,7 @@ module Wongi
         end
       end
 
-      def left_activate token
+      def beta_activate token
         match = false
         alpha.wmes.each do |wme|
           assignments = collect_assignments(wme)
@@ -42,7 +42,7 @@ module Wongi
         tmp = children
         self.children = [ child ]
         alpha.wmes.each do |wme|
-          right_activate wme
+          alpha_activate wme
         end
         self.children = tmp
       end

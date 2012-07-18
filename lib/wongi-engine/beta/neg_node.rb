@@ -13,7 +13,7 @@ module Wongi
         @tokens = []
       end
 
-      def right_activate wme
+      def alpha_activate wme
         self.tokens.each do |token|
           if matches?( token, wme )
             token.delete_children if token.neg_join_results.empty?
@@ -22,7 +22,7 @@ module Wongi
         end
       end
 
-      def left_activate token, newwme, assignments
+      def beta_activate token, newwme, assignments
         t = Token.new token, newwme, assignments
         t.node = self
         self.tokens << t
@@ -33,7 +33,7 @@ module Wongi
         end
         if t.neg_join_results.empty?
           self.children.each do |child|
-            child.left_activate t, nil, {}
+            child.beta_activate t, nil, {}
           end
         end
       end
@@ -41,11 +41,11 @@ module Wongi
       def refresh_child child
         tokens.each do |token|
           if token.neg_join_results.empty?
-            child.left_activate token, nil, {}
+            child.beta_activate token, nil, {}
           end
         end
         alpha.wmes.each do |wme|
-          right_activate wme
+          alpha_activate wme
         end
       end
 

@@ -92,7 +92,7 @@ module Wongi::Engine
 
         if results.empty? #&& !rete.in_snapshot?
           token.node.children.each { |beta|
-            beta.left_activate token, nil, { }
+            beta.beta_activate token, nil, { }
           }
         end
 
@@ -109,7 +109,7 @@ module Wongi::Engine
         if results.empty?
           token.delete_children
           token.node.children.each { |beta|
-            beta.left_activate token
+            beta.beta_activate token
           }
         end
 

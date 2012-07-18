@@ -120,7 +120,7 @@ module Wongi::Engine
 
     def propagate_activation token, wme, assignments
       self.children.each do |child|
-        child.left_activate token, wme, assignments
+        child.beta_activate token, wme, assignments
       end
     end
 

@@ -11,7 +11,7 @@ module Wongi
         @actions.each { |action| action.production = self }
       end
 
-      def left_activate token, wme, assignments
+      def beta_activate token, wme, assignments
         super
         @actions.each do |action|
           # @tokens.each do |t|

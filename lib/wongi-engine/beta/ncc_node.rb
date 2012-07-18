@@ -25,10 +25,10 @@ module Wongi
         @tokens = []
       end
 
-      #  def left_activate token, wme, assignments
+      #  def beta_activate token, wme, assignments
       #    t = Token.new token, wme, assignments
       #    t.node = self
-      def left_activate token, wme = nil, assignments = { } # => FIXME: left_activate has different signatures for storing and non-storing nodes...
+      def beta_activate token, wme = nil, assignments = { } # => FIXME: beta_activate has different signatures for storing and non-storing nodes...
         t = Token.new token, nil, {}
         t.node = self
         tokens << t
@@ -38,7 +38,7 @@ module Wongi
         end
         if t.ncc_results.empty?
           children.each do |child|
-            child.left_activate t, nil, {}
+            child.beta_activate t, nil, {}
           end
         end
       end
@@ -46,7 +46,7 @@ module Wongi
       def refresh_child child
         tokens.each do |token|
           if token.ncc_results.empty?
-            child.left_activate token, nil, {}
+            child.beta_activate token, nil, {}
           end
         end
       end

@@ -10,7 +10,7 @@ module Wongi
         self.test = test
       end
 
-      def left_activate token, wme = nil, assignments = { }
+      def beta_activate token, wme = nil, assignments = { }
         if test.passes? token
           propagate_activation token, nil, {}
         end
@@ -24,7 +24,7 @@ module Wongi
         tmp = children
         self.children = [ child ]
         parent.tokens.each do |token|
-          left_activate token
+          beta_activate token
         end
         self.children = tmp
       end

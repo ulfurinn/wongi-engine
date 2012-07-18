@@ -14,7 +14,7 @@ module Wongi::Engine
 
     def activate wme
       betas.each do |beta|
-        beta.right_activate wme
+        beta.alpha_activate wme
       end
       @wmes << wme
       wme.alphas << self

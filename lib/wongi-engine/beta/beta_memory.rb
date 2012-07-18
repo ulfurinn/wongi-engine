@@ -24,11 +24,11 @@ module Wongi::Engine
 
       valuations.each { |variable, value| token.subst variable, value }
       self.children.each do |child|
-        child.left_activate token
+        child.beta_activate token
       end
     end
 
-    def left_activate token, wme, assignments
+    def beta_activate token, wme, assignments
       # puts "MEMORY #{@id} left-activated with #{wme}"
       t = Token.new( token, wme, assignments)
       t.node = self
@@ -36,16 +36,16 @@ module Wongi::Engine
       @tokens << t
       self.children.each do |child|
         if child.kind_of? BetaMemory
-          child.left_activate t, nil, {}
+          child.beta_activate t, nil, {}
         else
-          child.left_activate t
+          child.beta_activate t
         end
       end
     end
 
     def refresh_child child
       tokens.each do |token|
-        child.left_activate token, nil, {}
+        child.beta_activate token, nil, {}
       end
     end
 

@@ -51,7 +51,7 @@ module Wongi
         # puts "\talpha = #{alpha}"
       end
 
-      def right_activate wme
+      def alpha_activate wme
         ws = '  ' * depth
         # puts "#{ws}JOIN #{@id} right-activated with #{wme}"
         collected = collect_assignments( wme )
@@ -65,7 +65,7 @@ module Wongi
         end
       end
 
-      def left_activate token
+      def beta_activate token
         ws = '  ' * depth
         self.alpha.wmes.uniq.each do |wme|
           if matches?( token, wme )
@@ -78,7 +78,7 @@ module Wongi
         tmp = children
         self.children = [ child ]
         alpha.wmes.each do |wme|
-          right_activate wme
+          alpha_activate wme
         end
         self.children = tmp
       end
