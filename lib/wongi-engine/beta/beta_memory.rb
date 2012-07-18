@@ -1,7 +1,7 @@
 module Wongi::Engine
 
   class BetaMemory < BetaNode
-    attr_reader :tokens, :last_token
+    attr_reader :tokens
 
     def initialize parent
       super
@@ -32,7 +32,6 @@ module Wongi::Engine
       # puts "MEMORY #{@id} left-activated with #{wme}"
       t = Token.new( token, wme, assignments)
       t.node = self
-      @last_token = t
       @tokens << t
       self.children.each do |child|
         if child.kind_of? BetaMemory
