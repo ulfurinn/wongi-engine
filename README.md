@@ -411,6 +411,11 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.3
+
+* bug fixes
+* `assert`, `assign`
+
 ### 0.0.1
 
 * initial repackaged release
