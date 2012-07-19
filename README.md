@@ -411,6 +411,11 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.4
+
+* reintegrated RDF support
+* collapsible filter matchers
+
 ### 0.0.3
 
 * bug fixes
