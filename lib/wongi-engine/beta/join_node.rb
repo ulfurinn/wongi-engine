@@ -75,7 +75,7 @@ module Wongi
         self.alpha.wmes.uniq.each do |wme|
           collected = collect_assignments( wme )
           if matches?( token, wme ) && passes_filters?( token, wme, collected )
-            propagate_activation token, wme, collected_assignments
+            propagate_activation token, wme, collected
           end
         end
       end
