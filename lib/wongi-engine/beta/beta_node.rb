@@ -44,11 +44,11 @@ module Wongi::Engine
       beta
     end
 
-    def join_node alpha, tests, assignment, alpha_deaf
-      existing = children.find{ |node| JoinNode === node && node.equivalent?( alpha, tests, assignment ) }
+    def join_node alpha, tests, assignment, filters, alpha_deaf
+      existing = children.find{ |node| JoinNode === node && node.equivalent?( alpha, tests, assignment, filters ) }
       return existing if existing
 
-      node = JoinNode.new self, tests, assignment
+      node = JoinNode.new self, tests, assignment, filters
       node.alpha = alpha
       alpha.betas << node unless alpha_deaf
 

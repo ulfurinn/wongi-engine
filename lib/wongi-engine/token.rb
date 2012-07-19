@@ -98,4 +98,15 @@ module Wongi::Engine
 
   end
 
+  class FakeToken < Token
+    def initialize token, wme, assignments
+      @parent, @wme, @assignments = token, wme, assignments
+      @children = []
+      @neg_join_results = []
+      @opt_join_results = []
+      @ncc_results = []
+      @generated_wmes = []
+    end
+  end
+
 end

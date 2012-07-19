@@ -68,7 +68,11 @@ module Wongi::Engine
     attr_writer :conditions, :actions
 
     def accept stuff
-      @acceptors[@current_section] << stuff
+      if stuff.respond_to? :accept_into
+        stuff.accept_into @acceptors[@current_section]
+      else
+        @acceptors[@current_section] << stuff
+      end
     end
 
 

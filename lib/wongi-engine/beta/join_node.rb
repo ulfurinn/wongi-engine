@@ -28,20 +28,25 @@ module Wongi
       attr_accessor :alpha
       attr_reader :tests
       attr_reader :assignment_pattern
+      attr_reader :filters
 
-      def initialize parent, tests, assignment
+      def initialize parent, tests, assignment, filters
         super(parent)
         @tests = tests
         @assignment_pattern = assignment
+        @filters = filters
       end
 
-      def equivalent? alpha, tests, assignment_pattern
+      def equivalent? alpha, tests, assignment_pattern, filters
         return false unless self.alpha == alpha
         return false unless self.assignment_pattern == assignment_pattern
-        return false unless (self.tests.empty? && tests.empty?) || self.tests.all? { |my_test|
+        return false unless (self.tests.empty? && tests.empty?) || self.tests.length == tests.length && self.tests.all? { |my_test|
           tests.any? { |new_test|
             my_test.equivalent? new_test
           }
+        }
+        return false unless (self.filters.empty? && filters.empty?) || self.filters.length == filters.length && self.filters.all? { |my_filter|
+          filters.include? my_filter
         }
         true
       end
@@ -58,7 +63,7 @@ module Wongi
         # puts "PARENT HAS #{parent.tokens.length} TOKENS"
         self.parent.tokens.each do |token|
           # puts "#{ws}matching with token"
-          if matches?( token, wme )
+          if matches?( token, wme ) && passes_filters?( token, wme, collected )
             # puts "#{ws}JOIN RIGHT-MATCHED, PROPAGATING"
             propagate_activation token, wme, collected
           end
@@ -68,8 +73,9 @@ module Wongi
       def beta_activate token
         ws = '  ' * depth
         self.alpha.wmes.uniq.each do |wme|
-          if matches?( token, wme )
-            propagate_activation token, wme, collect_assignments( wme )
+          collected = collect_assignments( wme )
+          if matches?( token, wme ) && passes_filters?( token, wme, collected )
+            propagate_activation token, wme, collected_assignments
           end
         end
       end
@@ -116,6 +122,11 @@ module Wongi
           return false unless test.matches?( token, wme )
         end
         true
+      end
+
+      def passes_filters? token, wme, assignments
+        t = FakeToken.new token, wme, assignments
+        @filters.all? { |filter| filter.passes? t }
       end
 
       def collect_assignments wme

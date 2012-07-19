@@ -4,6 +4,7 @@ module Wongi::Engine
 
     include CoreExt
 
+    attr_reader :filters
     attr_predicate debug: false
 
     def self.variable? thing
@@ -14,10 +15,13 @@ module Wongi::Engine
       raise "Cannot work with continuous time" unless time.integer?
       raise "Cannot look into the future" if time > 0
       super
+      @filters = []
     end
 
     def import_into r
-      self.class.new r.import( subject ), r.import( predicate ), r.import( object ), time
+      copy = self.class.new r.import( subject ), r.import( predicate ), r.import( object ), time
+      @filters.each { |f| copy.filters << f }
+      copy
     end
 
     def root?
@@ -60,7 +64,7 @@ module Wongi::Engine
     def compile context
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
       alpha = context.rete.compile_alpha( self )
-      context.node = context.node.beta_memory.join_node( alpha, tests, assignment, context.alpha_deaf )
+      context.node = context.node.beta_memory.join_node( alpha, tests, assignment, @filters, context.alpha_deaf )
       context.earlier << self
       context
     end

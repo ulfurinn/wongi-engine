@@ -5,6 +5,10 @@ module Wongi
 
     class OptionalNode < JoinNode
 
+      def initialize parent, tests, assignment
+        super parent, tests, assignment, []
+      end
+
       def alpha_activate wme
         parent.tokens.each do |token|
           if matches? token, wme
