@@ -46,10 +46,10 @@ dsl {
   section :forall
 
   clause :has, :fact
-  action Wongi::Engine::Template
+  accept Wongi::Engine::Template
 
   clause :missing, :neg
-  action Wongi::Engine::NegTemplate
+  accept Wongi::Engine::NegTemplate
 
   clause :none, :ncc
   accept Wongi::Engine::NccProductionRule
