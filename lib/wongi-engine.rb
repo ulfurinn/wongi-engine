@@ -6,6 +6,15 @@ module Wongi
     end
 
   end
+
+  # pre-declare things to avoid undefined constants
+  module RDF
+
+    class Document; end
+    class Statement; end
+    class Node; end
+
+  end
 end
 
 require 'wongi-engine/version'

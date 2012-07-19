@@ -21,6 +21,28 @@ module Wongi::Engine
       extend NetworkParts::Debug
     end
 
+    def rdf!
+      if ! defined? Wongi::RDF::DocumentSupport
+        begin
+          require 'wongi-rdf'
+        rescue LoadError => e
+          raise "'wongi-rdf' is required for RDF support"
+        end
+      end
+
+      extend Wongi::RDF::DocumentSupport
+      class << self
+        def statements
+          alpha_top.wmes
+        end
+      end
+
+      @namespaces = { }
+      @blank_counter = 1
+      @ns_counter = 0
+      @used_blanks = { }
+    end
+
     def initialize
       @timeline = []
       self.alpha_top = AlphaMemory.new( Template.new( :_, :_, :_ ), self )
@@ -51,12 +73,12 @@ module Wongi::Engine
 
     def import thing
       case thing
-      when String, Numeric, TrueClass, FalseClass, NilClass
+      when String, Numeric, TrueClass, FalseClass, NilClass, Wongi::RDF::Node
         thing
       when Symbol
         thing
       else
-        raise "I don't know how to import a #{thing.class}"
+        thing
       end
     end
 
@@ -154,11 +176,13 @@ module Wongi::Engine
         something.install self
       when WME
         assert something
+      when Wongi::RDF::Statement
+        assert WME.new( something.subject, something.predicate, something.object, self )
       #when Wongi::RDF::Document
         #  something.statements.each do |st|
         #    assert WME.new( st.subject, st.predicate, st.object, self )
         #  end
-      when Rete
+      when Network
         something.each do |st|
           assert st.import_into( self )
         end
