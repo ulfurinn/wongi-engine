@@ -411,6 +411,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.5
+
+* fixed a bug with multiple `assert` tests following the same node
+
 ### 0.0.4
 
 * reintegrated RDF support
