@@ -21,7 +21,7 @@ module Wongi::Engine
     end
 
     def == other
-      self.class == other.class
+      false
     end
 
   end
