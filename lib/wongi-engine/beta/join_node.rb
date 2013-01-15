@@ -83,7 +83,7 @@ module Wongi
       def refresh_child child
         tmp = children
         self.children = [ child ]
-        alpha.wmes.each do |wme|
+        alpha.wmes.uniq.each do |wme|
           alpha_activate wme
         end
         self.children = tmp
