@@ -411,9 +411,13 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.6
+
+* fixed a bug caused by retracting facts from within a rule action (#4)
+
 ### 0.0.5
 
-* fixed a bug with multiple `assert` tests following the same node
+* fixed a bug with multiple `assert` tests following the same node (#2)
 
 ### 0.0.4
 
