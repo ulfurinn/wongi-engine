@@ -43,7 +43,7 @@ module Wongi::Engine
 
     def wmes
       Enumerator.new do |y|
-        @wmes.uniq.each do |wme|
+        @wmes.dup.each do |wme|
           y << wme unless wme.deleted?
         end
       end
