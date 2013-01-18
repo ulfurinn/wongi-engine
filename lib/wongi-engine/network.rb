@@ -393,14 +393,13 @@ module Wongi::Engine
     end
 
     def best_alpha template
-      raise
       candidates = alpha_hash.values.select do |alpha|
         template =~ alpha.template
       end
       result = candidates.inject do |best, alpha|
         if best.nil?
           alpha
-        elsif alpha.wmes.length < best.wmes.length
+        elsif alpha.wmes.to_a.length < best.wmes.to_a.length
           alpha
         else
           best

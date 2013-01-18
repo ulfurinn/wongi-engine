@@ -2,7 +2,7 @@ module Wongi::Engine
 
   class AlphaMemory
 
-    attr_reader :betas, :template, :rete, :wmes
+    attr_reader :betas, :template, :rete
 
     def initialize template, rete = nil
       @template = template
@@ -34,11 +34,19 @@ module Wongi::Engine
     end
 
     def inspect
-      "<Alpha #{__id__} template=#{template} wmes=#{wmes}>"
+      "<Alpha #{__id__} template=#{template} wmes=#{@wmes}>"
     end
 
     def to_s
       inspect
+    end
+
+    def wmes
+      Enumerator.new do |y|
+        @wmes.uniq.each do |wme|
+          y << wme unless wme.deleted?
+        end
+      end
     end
 
   end

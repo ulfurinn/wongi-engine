@@ -9,6 +9,7 @@ module Wongi::Engine
 
     def initialize s, p, o, r = nil
 
+      @deleted = false
       @alphas = []
       @tokens = []
       @generating_tokens = []
@@ -53,8 +54,13 @@ module Wongi::Engine
       !manual?
     end
 
+    def deleted?
+      @deleted
+    end
+
     def destroy
 
+      @deleted = true
       alphas.each { |alpha| alpha.remove self }.clear
       while tokens.first
         tokens.first.delete    # => will remove itself from the array

@@ -72,7 +72,7 @@ module Wongi
 
       def beta_activate token
         ws = '  ' * depth
-        self.alpha.wmes.uniq.each do |wme|
+        self.alpha.wmes.each do |wme|
           collected = collect_assignments( wme )
           if matches?( token, wme ) && passes_filters?( token, wme, collected )
             propagate_activation token, wme, collected
