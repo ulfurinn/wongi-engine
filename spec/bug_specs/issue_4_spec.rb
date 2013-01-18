@@ -85,11 +85,6 @@ describe "issue 4" do
     evens = engine.select :_, :is_even, true
     odds = engine.select :_, :is_odd, true
 
-    engine.each :_, :_, true do |item|
-      puts item
-    end
-
-
     numbers.should be_empty
     evens.should have(5).items
     odds.should be_empty
