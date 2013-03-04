@@ -11,7 +11,9 @@ module Wongi::Engine
     end
 
     def execute token
-      if @action.respond_to? :call
+      if @action.is_a?( Proc ) || @action.respond_to?( :to_proc )
+        rete.instance_exec token, &@action
+      elsif @action.respond_to? :call
         @action.call token
       elsif @action.respond_to? :execute
         @action.execute token
