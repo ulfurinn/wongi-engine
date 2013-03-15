@@ -15,6 +15,7 @@ module Wongi::Engine
     def initialize token, wme, assignments
       @parent, @wme, @assignments = token, wme, assignments
       @children = []
+      @deleted = false
       @neg_join_results = []
       @opt_join_results = []
       @ncc_results = []
@@ -55,13 +56,17 @@ module Wongi::Engine
 
     def delete
       delete_children
-      @node.tokens.delete self unless @node.kind_of?( NccPartner )
+      #@node.tokens.delete self unless @node.kind_of?( NccPartner )
       @wme.tokens.delete self if @wme
       @parent.children.delete self if @parent
 
       retract_generated
-
+      @deleted = true
       @node.delete_token self
+    end
+
+    def deleted?
+      @deleted
     end
 
     def delete_children

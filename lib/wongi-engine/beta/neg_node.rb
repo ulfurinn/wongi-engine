@@ -39,7 +39,7 @@ module Wongi
       end
 
       def refresh_child child
-        tokens.each do |token|
+        safe_tokens.each do |token|
           if token.neg_join_results.empty?
             child.beta_activate token, nil, {}
           end
@@ -72,6 +72,15 @@ module Wongi
         token.neg_join_results << njr
         wme.neg_join_results << njr
       end
+
+      def safe_tokens
+        Enumerator.new do |y|
+          @tokens.dup.each do |token|
+            y << token unless token.deleted?
+          end
+        end
+      end
+
     end
   end
 end
