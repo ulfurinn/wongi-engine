@@ -31,4 +31,21 @@ describe "negative rule" do
 
   end
 
+  it "should create infinite feedback loops" do
+
+    proc = lambda {
+      engine << rule('feedback') {
+        forall {
+          neg :a, :b, :_
+        }
+        make {
+          gen :a, :b, :c
+        }
+      }
+    }
+
+    proc.should raise_error( SystemStackError )
+
+  end
+
 end

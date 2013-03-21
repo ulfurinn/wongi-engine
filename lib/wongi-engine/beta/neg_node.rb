@@ -16,8 +16,9 @@ module Wongi
       def alpha_activate wme
         self.tokens.each do |token|
           if matches?( token, wme )
-            token.delete_children if token.neg_join_results.empty?
+            # order matters for proper invalidation
             make_join_result(token, wme)
+            token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things
           end
         end
       end

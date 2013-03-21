@@ -31,7 +31,8 @@ module Wongi::Engine
         @template.object
       end
 
-      wme = WME.new subject, predicate, object
+      # link to rete here to ensure proper linking with token
+      wme = WME.new subject, predicate, object, rete
 
       production.tracer.trace( action: self, wme: wme ) if production.tracer
       if existing = rete.exists?( wme )
@@ -41,9 +42,11 @@ module Wongi::Engine
           existing.generating_tokens << token
         end
       else
-        added = rete << wme
-        token.generated_wmes << added
-        added.generating_tokens << token
+        token.generated_wmes << wme
+        wme.generating_tokens << token
+        # this MUST be done after we link the wme and the token
+        # in order for neg rule invalidation to work
+        rete << wme
       end
 
     end
