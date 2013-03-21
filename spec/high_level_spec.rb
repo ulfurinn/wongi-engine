@@ -66,7 +66,7 @@ describe 'the engine' do
 
   it 'should check equality' do
 
-    rete << rule('equality') {
+    node = rete << rule('equality') {
       forall {
         fact :A, "same", :B
         same :A, :B
@@ -77,6 +77,42 @@ describe 'the engine' do
     }
 
     rete << [ 42, "same", 42 ]
+    node.should have(1).tokens
+
+  end
+
+  it 'should compare things' do
+
+    rete << rule('less') {
+      forall {
+        has :A, :age, :N1
+        has :B, :age, :N2
+        less :N1, :N2
+      }
+      make {
+        gen :A, :younger, :B
+      }
+    }
+
+    rete << rule('less') {
+      forall {
+        has :A, :age, :N1
+        has :B, :age, :N2
+        greater :N1, :N2
+      }
+      make {
+        gen :A, :older, :B
+      }
+    }
+
+    rete << ["Alice", :age, 42]
+    rete << ["Bob", :age, 43]
+
+    items = rete.select "Alice", :younger, "Bob"
+    items.should have(1).items
+
+    items = rete.select "Bob", :older, "Alice"
+    items.should have(1).items
 
   end
 

@@ -66,6 +66,12 @@ dsl {
   clause :diff, :ne
   accept Wongi::Engine::InequalityTest
 
+  clause :less
+  accept Wongi::Engine::LessThanTest
+
+  clause :greater
+  accept Wongi::Engine::GreaterThanTest
+
   clause :assert, :dynamic
   accept Wongi::Engine::AssertingTest
 
