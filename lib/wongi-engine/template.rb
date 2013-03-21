@@ -28,6 +28,10 @@ module Wongi::Engine
       subject == :_ && predicate == :_ && object == :_
     end
 
+    def variables
+      array_form.select { |e| self.class.variable? e }
+    end
+
     def contains? var
       self.class.variable?( var ) && array_form.include?( var )
     end
@@ -88,7 +92,8 @@ module Wongi::Engine
   class NegTemplate < Template
     # :arg: context => Wongi::Rete::BetaNode::CompilationContext
     def compile context
-      tests, _ = *JoinNode.compile( self, context.earlier, context.parameters )
+      tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
+      raise DefinitionError.new("Negative matches may not introduce new variables: #{assignment.variables}") unless assignment.root?
       alpha = context.rete.compile_alpha( self )
       context.node = context.node.neg_node( alpha, tests, context.alpha_deaf )
       context.node.debug = debug?
