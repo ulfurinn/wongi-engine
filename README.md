@@ -226,6 +226,8 @@ The intent here is to provide a default value for an attribute; however, how wil
 
 ...and so on until you get a stack overflow. In situations like this the engine will try to do the pragmatic thing and detect the loop, stopping after step 1. If you want to keep the "pure" behaviour, give the `unsafe: true` option to the `neg` rule and try to do the same thing with helper facts.
 
+**Note**: this is a specific use case; it is still perfectly possible to construct more elaborate infinite cascades involving several rules that will not be caught.
+
 ### Timeline
 
 Wongi::Engine has a limited concept of timed facts: time is discrete and only extends into the past. Matchers that accept a triple specification (`has`, `neg` and `maybe`) can also accept a `time` option, an integer <= 0, which will make them look at a past state of the system. "0" means the current state and is the default value, "-1" means the one just before the current, and so on.
