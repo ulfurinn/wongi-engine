@@ -210,10 +210,10 @@ Consider the following rule:
 ```ruby
 engine.rule "default value" do
 	forall {
-		neg :A, :colour, :_
+		neg :car, :colour, :_
 	}
 	make {
-		gen :A, :colour, "black"
+		gen :car, :colour, "black"
 	}
 end
 ```
