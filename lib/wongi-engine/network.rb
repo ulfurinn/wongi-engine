@@ -244,7 +244,7 @@ module Wongi::Engine
       else
         if @timeline[time+1].nil?
           # => ensure lineage from 0 to time
-          compile_alpha condition.class.new(condition.subject, condition.predicate, condition.object, time + 1)
+          compile_alpha condition.class.new(condition.subject, condition.predicate, condition.object, time: time + 1)
           @timeline.unshift Hash.new
         end
         @timeline[time+1][ hash ] = alpha

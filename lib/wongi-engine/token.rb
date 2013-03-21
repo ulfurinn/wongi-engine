@@ -75,8 +75,12 @@ module Wongi::Engine
       end
     end
 
-    protected
+    def generated? wme
+      return true if generated_wmes.any? { |w| w == wme }
+      return children.any? { |t| t.generated? wme }
+    end
 
+    protected
 
     def retract_generated
 

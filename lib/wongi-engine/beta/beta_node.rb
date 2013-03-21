@@ -77,8 +77,8 @@ module Wongi::Engine
       node
     end
 
-    def neg_node alpha, tests, alpha_deaf
-      node = NegNode.new self, tests, alpha
+    def neg_node alpha, tests, alpha_deaf, unsafe
+      node = NegNode.new self, tests, alpha, unsafe
       alpha.betas << node unless alpha_deaf
       node.refresh
       node

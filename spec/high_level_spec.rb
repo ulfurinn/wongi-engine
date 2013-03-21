@@ -185,7 +185,7 @@ describe 'the engine' do
 
       production = rete.rule {
         forall {
-          has 1, 2, 3, -1
+          has 1, 2, 3, time: -1
         }
       }
 
@@ -201,7 +201,7 @@ describe 'the engine' do
 
       production = rete.rule {
         forall {
-          has 1, 2, 3, -1
+          has 1, 2, 3, time: -1
         }
       }
 
