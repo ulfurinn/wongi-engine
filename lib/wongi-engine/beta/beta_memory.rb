@@ -44,7 +44,12 @@ module Wongi::Engine
 
     def refresh_child child
       tokens.each do |token|
-        child.beta_activate token, nil, {}
+        case child
+        when BetaMemory, NegNode
+          child.beta_activate token, nil, {}
+        else
+          child.beta_activate token
+        end
       end
     end
 

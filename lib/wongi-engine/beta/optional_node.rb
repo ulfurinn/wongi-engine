@@ -45,6 +45,7 @@ module Wongi
       def refresh_child child
         tmp = children
         self.children = [ child ]
+        refresh # do the beta part
         alpha.wmes.each do |wme|
           alpha_activate wme
         end

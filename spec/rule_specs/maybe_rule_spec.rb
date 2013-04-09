@@ -51,4 +51,24 @@ describe "MAYBE rule" do
 
   end
 
+  it "should pass with pre-added missing facts" do
+
+    engine << [1, 2, 3]
+
+    engine << rule('test') do
+      forall {
+        has 1, 2, :X
+        maybe :X, 4, :Y
+      }
+    end
+
+    prod = engine.productions['test']
+
+    prod.should have(1).tokens
+
+    prod.tokens.first[:X].should == 3
+    prod.tokens.first[:Y].should be_nil
+
+  end
+
 end
