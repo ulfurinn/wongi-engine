@@ -195,6 +195,10 @@ Passes if the arguments are equal. Alias: `eq`, `equal`.
 
 Passes if the arguments are not equal. Alias: `ne`.
 
+#### `less x, y`, `greater x, y`
+
+Should be obvious by now.
+
 #### `assert { |token| ... }`, `assert var1, var2, ... do |val1, val2, ... | ... end`
 
 Passes if the block evaluates to `true`. Having no arguments passes the entire token as an argument, listing some variables passes only their values.

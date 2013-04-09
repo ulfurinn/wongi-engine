@@ -40,8 +40,8 @@ module Wongi::Engine
     end
 
     def to_s
-      str = "TOKEN [\n"
-      all_assignments.each_pair { |key, value| str << "\t#{key} => #{value}\n" }
+      str = "TOKEN [ "
+      all_assignments.each_pair { |key, value| str << "#{key} => #{value} " }
       str << "]"
       str
     end

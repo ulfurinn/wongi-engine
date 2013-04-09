@@ -19,6 +19,7 @@ end
 
 require 'wongi-engine/version'
 require 'wongi-engine/core_ext'
+require 'wongi-engine/error'
 require 'wongi-engine/template'
 require 'wongi-engine/wme'
 require 'wongi-engine/wme_match_data'
