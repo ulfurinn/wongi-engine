@@ -37,6 +37,12 @@ engine << [ "Alice", "friend", "Bob" ]
 engine << [ "Alice", "age", 35 ]
 ```
 
+To remove facts, say:
+
+```ruby
+engine.retract [ "Alice", "age", 35 ]
+```
+
 What can we do with this information?
 
 ### Simple iteration
