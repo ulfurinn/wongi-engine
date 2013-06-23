@@ -65,7 +65,7 @@ friends = engine.rule "friends" do
 end
 ```
 
-Here's your first taste of the engine's DSL. A rule, generally speaking, consists of a number of conditions the dataset needs to meet; those are defined in the `forall` section (also spelled `for_all`, if you prefer that). `has` (or `fact`) specifies that there needs to be a fact that matches the given pattern; in this case, one with the predicate `"friends"`.
+Here's your first taste of the engine's DSL. A rule, generally speaking, consists of a number of conditions the dataset needs to meet; those are defined in the `forall` section (also spelled `for_all`, if you prefer that). `has` (or `fact`) specifies that there needs to be a fact that matches the given pattern; in this case, one with the predicate `"friend"`.
 
 When a pattern contains a symbol that starts with an uppercase letter, it introduces a variable which will be bound to an actual triple field. Their values can be retrieved from the result set:
 
@@ -147,7 +147,7 @@ The `make` section (also spelled `do!`, if you find it more agreeable English, b
 
 ### More facts!
 
-Note how our facts define relations that always go from subject to object - they form a directed graph. In a perfect world, friendships go both ways, but to specify this in out model, we need to have two facts for each couple. Instead of duplicating everything by hand, let's automate that:
+Note how our facts define relations that always go from subject to object - they form a directed graph. In a perfect world, friendships go both ways, but to specify this in our model, we need to have two facts for each couple. Instead of duplicating everything by hand, let's automate that:
 
 ```ruby
 engine.rule "symmetric predicate" do
