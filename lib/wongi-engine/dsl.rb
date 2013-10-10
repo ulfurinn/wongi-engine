@@ -80,8 +80,8 @@ dsl {
 
   clause :asserted, :added
   body { |s, p, o|
-    missing s, p, o, time: -1
     has s, p, o, time: 0
+    missing s, p, o, time: -1
   }
 
   clause :retracted, :removed

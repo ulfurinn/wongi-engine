@@ -259,8 +259,8 @@ The following matchers are nothing but syntactic sugar for a combination of prim
 Short for:
 	
 ```ruby
-neg subject, predicate, object, time: -1
 has subject, predicate, object, time: 0
+neg subject, predicate, object, time: -1
 ```
 
 That is, it passes if the fact was missing in the previous state but exists in the current one. Alias: `added`.
@@ -295,6 +295,8 @@ Short for:
 neg subject, predicate, object, time: -1
 neg subject, predicate, object, time: 0
 ```
+
+Since neg rules cannot introduce new variables, neither can this one.
 
 Alias: `still_missing`.
 
