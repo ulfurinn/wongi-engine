@@ -448,6 +448,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.9
+
+* fixed the definition of `asserted` (#16)
+
 ### 0.0.8
 
 * preventing the feedback loop introduced in 0.0.7; experimental
