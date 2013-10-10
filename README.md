@@ -446,6 +446,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.8
+
+* preventing the feedback loop introduced in 0.0.7; experimental
+
 ### 0.0.7
 
 * added a guard against introducing variables in neg clauses
