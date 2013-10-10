@@ -42,8 +42,8 @@ describe Wongi::Engine::Ruleset do
   end
 
   it 'should install creating rules into a rete' do
-    rete = mock 'rete'
-    
+    rete = double 'rete'
+
     ruleset = Wongi::Engine::Ruleset.new
     rule = ruleset.rule( 'test-rule' ) { }
 

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Wongi::Engine::WME do
 
   def capitalizing_rete
-    rete = mock 'rete'
+    rete = double 'rete'
     rete.should_receive(:import).with("a").and_return("A")
     rete.should_receive(:import).with("b").and_return("B")
     rete.should_receive(:import).with("c").and_return("C")
