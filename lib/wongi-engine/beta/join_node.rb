@@ -91,7 +91,7 @@ module Wongi
 
       def self.compile condition, earlier, parameters
         tests = []
-        assignment = Template.new
+        assignment = Template.new :_, :_, :_
         [:subject, :predicate, :object].each do |field|
           member = condition.send field
           if Template.variable?( member )

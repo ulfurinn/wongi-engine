@@ -31,12 +31,27 @@ describe "negative rule" do
 
   end
 
-  it "should create infinite feedback loops" do
+  it "should not create infinite feedback loops by default" do
+
+    engine << rule('feedback') {
+      forall {
+        neg :a, :b, :_
+      }
+      make {
+        gen :a, :b, :c
+      }
+    }
+
+    engine.should have(1).facts
+
+  end
+
+  it "should create infinite feedback loops with unsafe option" do
 
     proc = lambda {
       engine << rule('feedback') {
         forall {
-          neg :a, :b, :_
+          neg :a, :b, :_, unsafe: true
         }
         make {
           gen :a, :b, :c

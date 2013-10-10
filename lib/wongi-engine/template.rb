@@ -4,22 +4,25 @@ module Wongi::Engine
 
     include CoreExt
 
-    attr_reader :filters
+    attr_reader :filters, :unsafe
     attr_predicate debug: false
 
     def self.variable? thing
       Symbol === thing && thing =~ /^[A-Z]/
     end
 
-    def initialize s = :_, p = :_, o = :_, time = 0
+    def initialize s, p, o, options = { }
+      time = options[:time] || 0
+      unsafe = options[:unsafe] || false
       raise "Cannot work with continuous time" unless time.integer?
       raise "Cannot look into the future" if time > 0
-      super
+      super( s, p, o, time )
       @filters = []
+      @unsafe = unsafe
     end
 
     def import_into r
-      copy = self.class.new r.import( subject ), r.import( predicate ), r.import( object ), time
+      copy = self.class.new r.import( subject ), r.import( predicate ), r.import( object ), time: time, unsafe: unsafe
       @filters.each { |f| copy.filters << f }
       copy
     end
@@ -95,7 +98,7 @@ module Wongi::Engine
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
       raise DefinitionError.new("Negative matches may not introduce new variables: #{assignment.variables}") unless assignment.root?
       alpha = context.rete.compile_alpha( self )
-      context.node = context.node.neg_node( alpha, tests, context.alpha_deaf )
+      context.node = context.node.neg_node( alpha, tests, context.alpha_deaf, unsafe )
       context.node.debug = debug?
       context.earlier << self
       context

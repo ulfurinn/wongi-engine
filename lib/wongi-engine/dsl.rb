@@ -80,26 +80,26 @@ dsl {
 
   clause :asserted, :added
   body { |s, p, o|
-    missing s, p, o, -1
-    has s, p, o, 0
+    missing s, p, o, time: -1
+    has s, p, o, time: 0
   }
 
   clause :retracted, :removed
   body { |s, p, o|
-    has s, p, o, -1
-    missing s, p, o, 0
+    has s, p, o, time: -1
+    missing s, p, o, time: 0
   }
 
   clause :kept, :still_has
   body { |s, p, o|
-    has s, p, o, -1
-    has s, p, o, 0
+    has s, p, o, time: -1
+    has s, p, o, time: 0
   }
 
   clause :kept_missing, :still_missing
   body { |s, p, o|
-    missing s, p, o, -1
-    missing s, p, o, 0
+    missing s, p, o, time: -1
+    missing s, p, o, time: 0
   }
 
 

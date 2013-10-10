@@ -7,15 +7,15 @@ module Wongi
 
       attr_reader :tokens, :alpha, :tests
 
-      def initialize parent, tests, alpha
+      def initialize parent, tests, alpha, unsafe
         super(parent)
-        @tests, @alpha = tests, alpha
+        @tests, @alpha, @unsafe = tests, alpha, unsafe
         @tokens = []
       end
 
       def alpha_activate wme
         self.tokens.each do |token|
-          if matches?( token, wme )
+          if matches?( token, wme ) && ( @unsafe || ! token.generated?( wme ) )# feedback loop protection
             # order matters for proper invalidation
             make_join_result(token, wme)
             token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things

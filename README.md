@@ -213,9 +213,34 @@ Passes if the block evaluates to `true`. Having no arguments passes the entire t
 
 Not a *matcher*, strictly speaking, because it always passes. What it does instead is introduce a new variable bound to the block's return value.
 
+### Feedback loop prevention
+
+Consider the following rule:
+
+```ruby
+engine.rule "default value" do
+	forall {
+		neg :car, :colour, :_
+	}
+	make {
+		gen :car, :colour, "black"
+	}
+end
+```
+
+The intent here is to provide a default value for an attribute; however, how will it actually execute?
+
+1. The fact is missing, activate the rule, generate the fact.
+2. The fact is present, invalidate the rule, retract the generated fact.
+3. The fact is missing...
+
+...and so on until you get a stack overflow. In situations like this the engine will try to do the pragmatic thing and detect the loop, stopping after step 1. If you want to keep the "pure" behaviour, give the `unsafe: true` option to the `neg` rule and try to do the same thing with helper facts.
+
+**Note**: this is a specific use case; it is still perfectly possible to construct more elaborate infinite cascades involving several rules that will not be caught.
+
 ### Timeline
 
-Wongi::Engine has a limited concept of timed facts: time is discrete and only extends into the past. Matchers that accept a triple specification (`has`, `neg` and `maybe`) can also accept a fourth parameter, an integer <= 0, which will make them look at a past state of the system. "0" means the current state and is the default value, "-1" means the one just before the current, and so on.
+Wongi::Engine has a limited concept of timed facts: time is discrete and only extends into the past. Matchers that accept a triple specification (`has`, `neg` and `maybe`) can also accept a `time` option, an integer <= 0, which will make them look at a past state of the system. "0" means the current state and is the default value, "-1" means the one just before the current, and so on.
 
 To create past states, say:
 
@@ -234,8 +259,8 @@ The following matchers are nothing but syntactic sugar for a combination of prim
 Short for:
 	
 ```ruby
-neg subject, predicate, object, -1
-has subject, predicate, object, 0
+neg subject, predicate, object, time: -1
+has subject, predicate, object, time: 0
 ```
 
 That is, it passes if the fact was missing in the previous state but exists in the current one. Alias: `added`.
@@ -245,8 +270,8 @@ That is, it passes if the fact was missing in the previous state but exists in t
 Short for:
 
 ```ruby
-has subject, predicate, object, -1
-neg subject, predicate, object, 0
+has subject, predicate, object, time: -1
+neg subject, predicate, object, time: 0
 ```
 
 The reverse of `asserted`. Alias: `removed`.
@@ -256,8 +281,8 @@ The reverse of `asserted`. Alias: `removed`.
 Short for:
 
 ```ruby
-has subject, predicate, object, -1
-has subject, predicate, object, 0
+has subject, predicate, object, time: -1
+has subject, predicate, object, time: 0
 ```
 
 Alias: `still_has`.
@@ -267,8 +292,8 @@ Alias: `still_has`.
 Short for:
 
 ```ruby
-neg subject, predicate, object, -1
-neg subject, predicate, object, 0
+neg subject, predicate, object, time: -1
+neg subject, predicate, object, time: 0
 ```
 
 Alias: `still_missing`.
