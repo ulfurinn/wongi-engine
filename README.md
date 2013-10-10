@@ -421,6 +421,14 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.7
+
+* added a guard against introducing variables in neg clauses
+* fixed execution context of simple action block (#7)
+* fixed #4 once more, better
+* fixed a bug with OptionalNode (#12)
+* fixed behaviour of neg nodes; this will cause feedback loops when a gen action creates a fact that invalidates the action's condition
+
 ### 0.0.6
 
 * fixed a bug caused by retracting facts from within a rule action (#4)
