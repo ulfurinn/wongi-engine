@@ -25,7 +25,6 @@ module Wongi::Engine
       end
     end
 
-
     def rete
       @rete ||= if parent
         parent.rete

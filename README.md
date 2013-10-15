@@ -448,6 +448,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.10
+
+* fixed interaction of filters and optional nodes
+
 ### 0.0.9
 
 * fixed the definition of `asserted` (#16)

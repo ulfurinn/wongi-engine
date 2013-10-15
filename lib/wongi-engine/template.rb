@@ -93,6 +93,9 @@ module Wongi::Engine
   end
 
   class NegTemplate < Template
+
+    undef_method :filters
+
     # :arg: context => Wongi::Rete::BetaNode::CompilationContext
     def compile context
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
@@ -106,6 +109,8 @@ module Wongi::Engine
   end
 
   class OptionalTemplate < Template
+
+    undef_method :filters
 
     def compile context
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
