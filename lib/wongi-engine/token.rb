@@ -24,6 +24,14 @@ module Wongi::Engine
       wme.tokens << self if wme
     end
 
+    def ancestors
+      if parent
+        parent.ancestors.unshift parent
+      else
+        []
+      end
+    end
+
     def subst variable, value
       @cached_assignments = nil
       if @assignments.has_key? variable
