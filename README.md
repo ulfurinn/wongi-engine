@@ -448,6 +448,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.11
+
+* fixed cleanup of invalidated NCC branches
+
 ### 0.0.10
 
 * fixed interaction of filters and optional nodes
