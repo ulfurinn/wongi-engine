@@ -33,6 +33,7 @@ module Wongi
         t.node = self
         tokens << t
         partner.tokens.each do |ncc_token|
+          next unless ncc_token.ancestors.find { |a| a.equal? token }
           t.ncc_results << ncc_token
           ncc_token.owner = t
         end

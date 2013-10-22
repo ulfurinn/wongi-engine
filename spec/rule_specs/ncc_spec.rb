@@ -118,4 +118,62 @@ describe "NCC rule" do
 
   end
 
+  it 'should clean up correctly with a different activation order' do
+
+    engine.rule :rule1 do
+      forall {
+        has :light_kitchen, :value, :on
+      }
+      make {
+        #trace values: true, generation: true
+        gen self.name, :light_bathroom, :on
+        gen self.name, :want_action_for, :light_bathroom
+      }
+    end
+
+    prod = engine.rule "action" do
+      forall {
+        has :Requestor, :want_action_for, :Actor
+        has :Requestor, :Actor, :Value
+        has :Requestor, :priority, :Priority
+        ncc {
+          has :OtherRequestor, :want_action_for, :Actor
+          diff :OtherRequestor, :Requestor
+          has :OtherRequestor, :priority, :OtherPriority
+          greater :OtherPriority, :Priority
+        }
+      }
+      make {
+        #trace values: true, generation: true
+        gen :Actor, :value, :Value
+        gen :Actor, :last_user, :Requestor
+      }
+    end
+
+    engine << [:user, :priority, 2]
+    engine << [:rule1, :priority, 1]
+    engine << [:poweruser, :priority, 3]
+    engine << [:god, :priority, 4]
+
+    engine << [:user, :want_action_for, :light_bathroom]
+    engine << [:user, :light_bathroom, :off]
+    expect( engine.select(:light_bathroom, :value, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :value, :off) ]
+    expect( engine.select(:light_bathroom, :last_user, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :last_user, :user) ]
+
+    engine << [:light_kitchen, :value, :on]
+    expect( engine.select(:light_bathroom, :value, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :value, :off) ]
+    expect( engine.select(:light_bathroom, :last_user, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :last_user, :user) ]
+
+    engine << [:poweruser, :want_action_for, :light_bathroom]
+    engine << [:poweruser, :light_bathroom, :super_on]
+    expect( engine.select(:light_bathroom, :value, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :value, :super_on) ]
+    expect( engine.select(:light_bathroom, :last_user, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :last_user, :poweruser) ]
+
+    engine << [:god, :want_action_for, :light_bathroom]
+    engine << [:god, :light_bathroom, :let_there_be_light]
+    expect( engine.select(:light_bathroom, :value, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :value, :let_there_be_light) ]
+    expect( engine.select(:light_bathroom, :last_user, :_) ).to be == [ Wongi::Engine::WME.new(:light_bathroom, :last_user, :god) ]
+
+  end
+
 end
