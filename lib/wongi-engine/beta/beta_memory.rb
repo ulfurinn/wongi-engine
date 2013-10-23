@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class BetaMemory < BetaNode
-    attr_reader :tokens
 
     def initialize parent
       super
@@ -54,7 +53,7 @@ module Wongi::Engine
     end
 
     def delete_token token
-      tokens.delete token
+      @tokens.delete token
     end
 
     # => TODO: investigate if we really need this

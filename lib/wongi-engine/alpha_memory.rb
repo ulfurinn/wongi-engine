@@ -46,6 +46,7 @@ module Wongi::Engine
         @wmes.dup.each do |wme|
           y << wme unless wme.deleted?
         end
+        @wmes.reject! &:deleted?
       end
     end
 

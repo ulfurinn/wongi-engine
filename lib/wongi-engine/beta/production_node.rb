@@ -17,8 +17,12 @@ module Wongi
           # @tokens.each do |t|
           #  action.execute t
           # end
-          action.execute tokens.last if action.respond_to? :execute
+          action.execute @tokens.last if action.respond_to? :execute
         end
+      end
+
+      def tokens
+        super.to_a
       end
 
     end
