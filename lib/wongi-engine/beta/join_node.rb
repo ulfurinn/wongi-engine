@@ -57,25 +57,28 @@ module Wongi
       end
 
       def alpha_activate wme
-        ws = '  ' * depth
-        # puts "#{ws}JOIN #{@id} right-activated with #{wme}"
+        dp "JOIN alpha-activated with #{wme}"
         collected = collect_assignments( wme )
-        # puts "PARENT HAS #{parent.tokens.length} TOKENS"
+        dp "-TOKENS: #{self.parent.tokens.length}"
         self.parent.tokens.each do |token|
-          # puts "#{ws}matching with token"
+          dp "-MATCHING #{token}"
           if matches?( token, wme ) && passes_filters?( token, wme, collected )
-            # puts "#{ws}JOIN RIGHT-MATCHED, PROPAGATING"
+            dp "-JOIN MATCHED, PROPAGATING"
             propagate_activation token, wme, collected
           end
         end
       end
 
       def beta_activate token
-        ws = '  ' * depth
+        dp "JOIN beta-activated"
         self.alpha.wmes.each do |wme|
+          dp "-TESTING WME #{wme}"
           collected = collect_assignments( wme )
           if matches?( token, wme ) && passes_filters?( token, wme, collected )
+            dp "-WME MATCHED, PROPAGATING"
             propagate_activation token, wme, collected
+          else
+            dp "-NO MATCH"
           end
         end
       end

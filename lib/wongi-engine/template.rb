@@ -14,6 +14,7 @@ module Wongi::Engine
     def initialize s, p, o, options = { }
       time = options[:time] || 0
       unsafe = options[:unsafe] || false
+      debug! if options[:debug]
       raise "Cannot work with continuous time" unless time.integer?
       raise "Cannot look into the future" if time > 0
       super( s, p, o, time )
@@ -22,7 +23,7 @@ module Wongi::Engine
     end
 
     def import_into r
-      copy = self.class.new r.import( subject ), r.import( predicate ), r.import( object ), time: time, unsafe: unsafe
+      copy = self.class.new r.import( subject ), r.import( predicate ), r.import( object ), time: time, unsafe: unsafe, debug: debug?
       @filters.each { |f| copy.filters << f }
       copy
     end
@@ -72,6 +73,7 @@ module Wongi::Engine
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
       alpha = context.rete.compile_alpha( self )
       context.node = context.node.beta_memory.join_node( alpha, tests, assignment, @filters, context.alpha_deaf )
+      context.node.debug = debug?
       context.earlier << self
       context
     end

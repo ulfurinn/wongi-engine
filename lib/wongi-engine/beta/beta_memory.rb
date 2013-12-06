@@ -29,10 +29,17 @@ module Wongi::Engine
     end
 
     def beta_activate token, wme, assignments
-      # puts "MEMORY #{@id} left-activated with #{wme}"
+      dp "MEMORY beta-activated with #{wme} #{wme.object_id}"
       t = Token.new( token, wme, assignments)
       t.node = self
-      @tokens << t
+      existing = @tokens.find { |et| et.duplicate? t }
+      if existing
+        t = existing
+      else
+        dp "generated token #{t}"
+        t.node = self
+        @tokens << t
+      end
       self.children.each do |child|
         if child.kind_of? BetaMemory
           child.beta_activate t, nil, {}

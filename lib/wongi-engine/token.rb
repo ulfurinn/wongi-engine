@@ -47,8 +47,12 @@ module Wongi::Engine
       assignments[ var ]
     end
 
+    def duplicate? other
+      other.node.equal?(self.node) && other.parent.equal?(self.parent) && other.wme.equal?(self.wme) && other.assignments == self.assignments
+    end
+
     def to_s
-      str = "TOKEN [ "
+      str = "TOKEN [ parent=#{parent ? parent.object_id : 'nil'} "
       all_assignments.each_pair { |key, value| str << "#{key} => #{value} " }
       str << "]"
       str

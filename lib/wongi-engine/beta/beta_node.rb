@@ -38,6 +38,7 @@ module Wongi::Engine
       beta = children.find { |node| BetaMemory === node }
       if beta.nil?
         beta = BetaMemory.new self
+        beta.debug = debug?
         beta.refresh
       end
       beta
@@ -127,6 +128,16 @@ module Wongi::Engine
       self.children.each do |child|
         child.beta_activate token, wme, assignments
       end
+    end
+
+    def dp message
+      if debug?
+        puts "#{indent}#{message}"
+      end
+    end
+
+    def indent
+      '  ' * depth
     end
 
   end

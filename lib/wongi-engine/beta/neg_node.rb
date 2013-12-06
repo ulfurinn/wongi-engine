@@ -24,9 +24,16 @@ module Wongi
       end
 
       def beta_activate token, newwme, assignments
-        t = Token.new token, newwme, assignments
+        t = Token.new( token, newwme, assignments)
         t.node = self
-        self.tokens << t
+        existing = @tokens.find { |et| et.duplicate? t }
+        if existing
+          t = existing
+        else
+          dp "generated token #{t}"
+          t.node = self
+          @tokens << t
+        end
         @alpha.wmes.each do |wme|
           if matches?( t, wme )
             make_join_result(t, wme)
