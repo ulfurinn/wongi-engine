@@ -98,7 +98,11 @@ module Wongi
 
             contains = parameters.include? member
             if earlier.any? do |ec|
-                ! ec.kind_of?( NegTemplate ) and ec.contains?( member )
+                if ec.kind_of?( VariantSet )
+                  ec.introduces_variable?( member )
+                else
+                  ! ec.kind_of?( NegTemplate ) and ec.contains?( member )
+                end
               end
               contains = true
             end

@@ -37,6 +37,16 @@ module Wongi
         context
       end
 
+      def introduces_variable? var
+        children.any? { |c|
+          if c.kind_of?( VariantSet )
+            c.introduces_variable?( var )
+          else
+            ! c.kind_of?( NegTemplate ) and c.contains?( var )
+          end
+        }
+      end
+
     end
 
     class OrNode < BetaMemory
