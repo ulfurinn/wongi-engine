@@ -15,5 +15,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Wongi::Engine::VERSION
 
-  #gem.add_dependency "wongi-rdf"
+  gem.add_development_dependency 'rspec', '~> 2.14.1', '< 3.0.0'
 end
