@@ -15,7 +15,7 @@ describe Wongi::Engine::Network do
     production = ds.productions['test-rule']
     production.should_not be_nil
 
-    production.tokens.should be_empty
+    production.should be_empty
 
     ds << [1, 2, 3]
 

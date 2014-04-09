@@ -131,6 +131,10 @@ module Wongi::Engine
       end
     end
 
+    def empty?
+      @tokens.empty?
+    end
+
     private
 
     def propagate_activation token, wme, assignments
