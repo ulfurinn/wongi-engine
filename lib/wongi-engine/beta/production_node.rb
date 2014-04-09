@@ -13,16 +13,13 @@ module Wongi
 
       def beta_activate token, wme, assignments
         super
+        generated = tokens.last
         @actions.each do |action|
           # @tokens.each do |t|
           #  action.execute t
           # end
-          action.execute @tokens.last if action.respond_to? :execute
+          action.execute generated if action.respond_to? :execute
         end
-      end
-
-      def tokens
-        super.to_a
       end
 
     end

@@ -62,6 +62,28 @@ describe 'the engine' do
       rete.facts.select( &:manual? ).should have(2).items
     end
 
+    it 'should not get confused by recursive activations' do
+
+      rete << rule('reflexive') {
+        forall {
+          has :Predicate, "reflexive", true
+          has :X, :Predicate, :Y
+        }
+        make {
+          gen :X, :Predicate, :X
+          gen :Y, :Predicate, :Y
+        }
+      }
+
+      rete << [:p, "reflexive", true]
+      rete << [:x, :p, :y]
+
+      expect( rete ).to have(4).wmes
+      expect( rete.select :x, :p, :x ).to have(1).items
+      expect( rete.select :y, :p, :y ).to have(1).items
+
+    end
+
   end
 
   it 'should check equality' do

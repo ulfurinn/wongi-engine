@@ -5,7 +5,7 @@ module Wongi
 
     class NegNode < BetaNode
 
-      attr_reader :alpha, :tests
+      attr_reader :tokens, :alpha, :tests
 
       def initialize parent, tests, alpha, unsafe
         super(parent)
@@ -24,9 +24,16 @@ module Wongi
       end
 
       def beta_activate token, newwme, assignments
-        t = Token.new token, newwme, assignments
+        t = Token.new( token, newwme, assignments)
         t.node = self
-        @tokens << t
+        existing = @tokens.find { |et| et.duplicate? t }
+        if existing
+          t = existing
+        else
+          dp "generated token #{t}"
+          t.node = self
+          @tokens << t
+        end
         @alpha.wmes.each do |wme|
           if matches?( t, wme )
             make_join_result(t, wme)
@@ -40,7 +47,7 @@ module Wongi
       end
 
       def refresh_child child
-        tokens.each do |token|
+        safe_tokens.each do |token|
           if token.neg_join_results.empty?
             child.beta_activate token, nil, {}
           end
@@ -51,6 +58,7 @@ module Wongi
       end
 
       def delete_token token
+        tokens.delete token
         token.neg_join_results.each do |njr|
           njr.wme.neg_join_results.delete njr if njr.wme
         end
@@ -71,6 +79,14 @@ module Wongi
         njr = NegJoinResult.new token, wme
         token.neg_join_results << njr
         wme.neg_join_results << njr
+      end
+
+      def safe_tokens
+        Enumerator.new do |y|
+          @tokens.dup.each do |token|
+            y << token unless token.deleted?
+          end
+        end
       end
 
     end

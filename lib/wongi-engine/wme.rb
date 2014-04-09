@@ -59,7 +59,7 @@ module Wongi::Engine
     end
 
     def destroy
-
+      return if deleted?
       @deleted = true
       alphas.each { |alpha| alpha.remove self }.clear
       while tokens.first

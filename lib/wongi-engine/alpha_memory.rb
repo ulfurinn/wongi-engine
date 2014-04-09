@@ -13,11 +13,12 @@ module Wongi::Engine
     end
 
     def activate wme
+      @wmes << wme
+      wme.alphas << self
+      # TODO: it used to activate before adding to the list. mandated by the original thesis. investigate. it appears to create duplicate tokens - needs a remedy in collecting nodes
       betas.each do |beta|
         beta.alpha_activate wme
       end
-      @wmes << wme
-      wme.alphas << self
     end
 
     def remove wme
@@ -43,7 +44,9 @@ module Wongi::Engine
 
     def wmes
       Enumerator.new do |y|
-        @wmes.dup.each do |wme|
+        copy = @wmes.dup
+        @wmes.reject! &:deleted?
+        copy.each do |wme|
           y << wme unless wme.deleted?
         end
         @wmes.reject! &:deleted?

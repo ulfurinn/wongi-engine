@@ -448,6 +448,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.13
+
+* fixed a bug with recursive generations of multiple facts
+
 ### 0.0.12
 
 * fixed another NCC bug
