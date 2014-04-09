@@ -55,7 +55,7 @@ module Wongi
       def delete_token token
         tokens.delete token
         token.ncc_results.each do |nccr|
-          nccr.wme.tokens.delete nccr
+          nccr.wme.tokens.delete( nccr ) if nccr.wme
           nccr.parent.children.delete nccr
         end
         token.ncc_results.clear
