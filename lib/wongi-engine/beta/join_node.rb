@@ -59,7 +59,6 @@ module Wongi
       def alpha_activate wme
         dp "JOIN alpha-activated with #{wme}"
         collected = collect_assignments( wme )
-        dp "-TOKENS: #{self.parent.tokens.length}"
         self.parent.tokens.each do |token|
           dp "-MATCHING #{token}"
           if matches?( token, wme ) && passes_filters?( token, wme, collected )
