@@ -49,6 +49,7 @@ module Wongi::Engine
         copy.each do |wme|
           y << wme unless wme.deleted?
         end
+        @wmes.reject! &:deleted?
       end
     end
 

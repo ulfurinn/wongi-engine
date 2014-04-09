@@ -122,6 +122,15 @@ module Wongi::Engine
       # => noop
     end
 
+    def tokens
+      Enumerator.new do |y|
+        @tokens.dup.each do |token|
+          y << token unless token.deleted?
+        end
+        @tokens.reject! &:deleted?
+      end
+    end
+
     private
 
     def propagate_activation token, wme, assignments
