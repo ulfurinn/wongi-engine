@@ -13,6 +13,9 @@ module Wongi
         context
       end
 
+      def contains? var
+        children.any?{|child| child.contains? var}
+      end
     end
 
     class NccNode < BetaNode
