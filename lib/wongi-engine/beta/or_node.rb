@@ -42,7 +42,7 @@ module Wongi
           if c.kind_of?( VariantSet )
             c.introduces_variable?( var )
           else
-            ! c.kind_of?( NegTemplate ) and c.contains?( var )
+            c.respond_to?( :contains? ) and c.contains?( var )
           end
         }
       end

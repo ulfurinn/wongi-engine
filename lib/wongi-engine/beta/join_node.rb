@@ -103,7 +103,7 @@ module Wongi
                 if ec.kind_of?( VariantSet )
                   ec.introduces_variable?( member )
                 else
-                  ! ec.kind_of?( NegTemplate ) and ec.contains?( member )
+                  ec.respond_to?( :contains? ) and ec.contains?( member )
                 end
               end
               contains = true

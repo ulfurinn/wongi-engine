@@ -22,6 +22,19 @@ describe "NCC rule" do
     }
   end
 
+  def ncc_rule_post_has
+    rule('ncc post has') {
+      forall {
+        has "base", "is", :Base
+        none {
+          has :Base, 2, :X
+          has :X, 4, 5
+        }
+        has "base", "is", :Base2
+      }
+    }
+  end
+
   it 'should pass with a mismatching subchain' do
 
     engine << ncc_rule
@@ -45,6 +58,26 @@ describe "NCC rule" do
 
     engine << ncc_rule
     production = engine.productions['ncc']
+
+    engine << ["base", "is", 1]
+    engine << [1, 2, 3]
+    engine << [3, 4, 5]
+
+    production.should have(0).tokens
+
+    engine.retract [3, 4, 5]
+    production.should have(1).tokens
+
+    engine.retract ["base", "is", 1]
+    production.should have(0).tokens
+
+  end
+
+  it 'can handle an alpha node template introduced after the negative-conjunctive-condition' do
+
+    engine << ncc_rule_post_has
+
+    production = engine.productions['ncc post has']
 
     engine << ["base", "is", 1]
     engine << [1, 2, 3]
