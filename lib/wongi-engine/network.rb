@@ -405,7 +405,6 @@ module Wongi::Engine
           best
         end
       end
-      puts "Best alpha for #{template} is #{result}"
       result
     end
 
