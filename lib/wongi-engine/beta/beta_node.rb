@@ -135,6 +135,11 @@ module Wongi::Engine
       @tokens.empty?
     end
 
+    def size
+      @tokens.size
+    end
+    alias_method :length, :size
+
     private
 
     def propagate_activation token, wme, assignments
