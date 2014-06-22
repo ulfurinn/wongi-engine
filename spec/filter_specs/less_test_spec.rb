@@ -34,8 +34,8 @@ describe "LESS test" do
     }
 
     engine << ["A", "B", "C"]
-    expect( production ).to have(0).tokens
 
+    expect(@production.size).to eq(0)
   end
 
 end

@@ -19,15 +19,15 @@ describe "MAYBE rule" do
       }
     end
 
-    prod = engine.productions['test']
+    production = engine.productions['test']
 
     engine << [1, 2, 3]
     engine << [3, 4, 5]
 
-    prod.should have(1).tokens
+    expect(production.size).to eq(1)
 
-    prod.tokens.first[:X].should == 3
-    prod.tokens.first[:Y].should == 5
+    expect(production.tokens.first[:X]).to eq(3)
+    expect(production.tokens.first[:Y]).to eq(5)
 
   end
 
@@ -40,14 +40,14 @@ describe "MAYBE rule" do
       }
     end
 
-    prod = engine.productions['test']
+    production = engine.productions['test']
 
     engine << [1, 2, 3]
 
-    prod.should have(1).tokens
+    expect(production.size).to eq(1)
 
-    prod.tokens.first[:X].should == 3
-    prod.tokens.first[:Y].should be_nil
+    expect(production.tokens.first[:X]).to eq(3)
+    expect(production.tokens.first[:Y]).to be_nil
 
   end
 
@@ -62,12 +62,12 @@ describe "MAYBE rule" do
       }
     end
 
-    prod = engine.productions['test']
+    production = engine.productions['test']
 
-    prod.should have(1).tokens
+    expect(production.size).to eq(1)
 
-    prod.tokens.first[:X].should == 3
-    prod.tokens.first[:Y].should be_nil
+    expect(production.tokens.first[:X]).to eq(3)
+    expect(production.tokens.first[:Y]).to be_nil
 
   end
 

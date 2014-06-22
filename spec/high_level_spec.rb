@@ -34,9 +34,9 @@ describe 'the engine' do
 
       rete << Wongi::Engine::WME.new( "friend", "symmetric", true )
       rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
-
-      rete.should have(3).facts
-      rete.facts.select( &:manual? ).should have(2).items
+      
+      expect(rete.facts.to_a.length).to eq(3)
+      expect(rete.facts.select( &:manual? ).length).to eq(2)
       generated = rete.facts.find( &:generated? )
       generated.should == Wongi::Engine::WME.new( "Bob", "friend", "Alice" )
     end
@@ -46,7 +46,7 @@ describe 'the engine' do
       rete << Wongi::Engine::WME.new( "friend", "symmetric", true )
       rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
 
-      rete.should have(2).facts
+      expect(rete.facts.to_a.length).to eq(2)
 
       rete << rule('symmetric') {
         forall {
@@ -58,8 +58,8 @@ describe 'the engine' do
         }
       }
 
-      rete.should have(3).facts
-      rete.facts.select( &:manual? ).should have(2).items
+      expect(rete.facts.to_a.length).to eq(3)
+      expect(rete.facts.select( &:manual? ).size).to eq(2)
     end
 
     it 'should not get confused by recursive activations' do
@@ -78,9 +78,9 @@ describe 'the engine' do
       rete << [:p, "reflexive", true]
       rete << [:x, :p, :y]
 
-      expect( rete ).to have(4).wmes
-      expect( rete.select :x, :p, :x ).to have(1).items
-      expect( rete.select :y, :p, :y ).to have(1).items
+      expect(rete.wmes.to_a.length).to eq(4)
+      expect(rete.select(:x, :p, :x).length).to eq(1)
+      expect(rete.select(:y, :p, :y).length).to eq(1)
 
     end
 
@@ -99,7 +99,7 @@ describe 'the engine' do
     }
 
     rete << [ 42, "same", 42 ]
-    node.should have(1).tokens
+    expect(node.size).to eq(1)
 
   end
 
@@ -131,10 +131,10 @@ describe 'the engine' do
     rete << ["Bob", :age, 43]
 
     items = rete.select "Alice", :younger, "Bob"
-    items.should have(1).items
+    expect(items.size).to eq(1)
 
     items = rete.select "Bob", :older, "Alice"
-    items.should have(1).items
+    expect(items.size).to eq(1)
 
   end
 
@@ -153,8 +153,8 @@ describe 'the engine' do
     rete << [ "question", "is", -1 ]
 
     collection = rete.collection(:test_collector)
-    collection.should have(1).item
-    collection.first.should == "answer"
+    expect(collection.size).to eq(1)
+    expect(collection.first).to eq("answer")
 
   end
 
@@ -173,8 +173,8 @@ describe 'the engine' do
     rete << [ "question", "is", -1 ]
 
     collection = rete.collection(:things_that_are_42)
-    collection.should have(1).item
-    collection.first.should == "answer"
+    expect(collection.size).to eq(1)
+    expect(collection.first).to eq("answer")
 
   end
 
@@ -212,11 +212,11 @@ describe 'the engine' do
       }
       })
 
-    production.should have(1).tokens
+    expect(production.size).to eq(1)
 
     rete << [ "answer", "is", 42 ]
 
-    production.should have(0).tokens
+    expect(production.size).to eq(0)
 
   end
 
@@ -232,8 +232,8 @@ describe 'the engine' do
     rete << ["answer", "is", 42]
 
     rete.execute "test-query", {X: "answer"}
-    rete.results["test-query"].should have(1).tokens
-    rete.results["test-query"].tokens.first[:Y].should == 42
+    expect(rete.results["test-query"].size).to eq(1)
+    expect(rete.results["test-query"].tokens.first[:Y]).to eq(42)
 
   end
   
@@ -247,11 +247,11 @@ describe 'the engine' do
         }
       }
 
-      production.should have(0).tokens
+      expect(production.size).to eq(0)
 
       rete << [1, 2, 3]
 
-      production.should have(0).tokens
+      expect(production.size).to eq(0)
 
     end
 
@@ -266,7 +266,7 @@ describe 'the engine' do
       rete << [1, 2, 3]
       rete.snapshot!
 
-      production.should have(1).tokens
+      expect(production.size).to eq(1)
 
     end
 
@@ -280,10 +280,10 @@ describe 'the engine' do
           }
           make { action { count += 1} }
         end
-        production.should have(0).tokens
+        expect(production.size).to eq(0)
         rete.snapshot!
         rete << [1, 2, 3]
-        production.should have(1).tokens
+        expect(production.size).to eq(1)
         #puts count
       end
 
@@ -296,9 +296,9 @@ describe 'the engine' do
           make { action { count += 1} }
         end
         rete << [1, 2, 3]
-        production.should have(1).tokens
+        expect(production.size).to eq(1)
         rete.snapshot!
-        production.should have(0).tokens
+        expect(production.size).to eq(0)
         #puts count
       end
 
@@ -315,9 +315,9 @@ describe 'the engine' do
           make { action { count += 1} }
         end
         rete << [1, 2, 3]
-        production.should have(0).tokens
+        expect(production.size).to eq(0)
         rete.snapshot!
-        production.should have(1).tokens
+        expect(production.size).to eq(1)
         #puts count
       end
 
@@ -329,10 +329,10 @@ describe 'the engine' do
           }
           make { action { count += 1} }
         end
-        production.should have(0).tokens
+        expect(production.size).to eq(0)
         rete.snapshot!
         rete << [1, 2, 3]
-        production.should have(0).tokens
+        expect(production.size).to eq(0)
         #puts count
       end
 

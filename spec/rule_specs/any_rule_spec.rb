@@ -30,7 +30,7 @@ describe "ANY rule" do
         engine << [1, 2, 3]
         engine << [3, 4, 5]
 
-        production.should have(1).tokens
+        expect(production.size).to eq(1)
 
       end
 
@@ -64,7 +64,7 @@ describe "ANY rule" do
         engine << [1, 2, "three"]
         engine << ["three", "four", "five"]
 
-        production.should have(2).tokens
+        expect(production.size).to eq(2)
         engine.collection(:threes).should include(3)
         engine.collection(:threes).should include("three")
 

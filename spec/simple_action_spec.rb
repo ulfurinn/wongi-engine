@@ -25,15 +25,15 @@ describe Wongi::Engine::SimpleAction do
       }
     end
 
-    count.should == 0
+    expect(count).to eq(0)
 
     rete << [1, 2, 3]
 
-    count.should == 1
+    expect(count).to eq(1)
 
     rete << [1, 2, 4]
 
-    count.should == 2
+    expect(count).to eq(2)
 
   end
 

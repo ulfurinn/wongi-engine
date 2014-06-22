@@ -27,9 +27,8 @@ describe "ASSIGN rule" do
         end
       }
     }
-
-    production.should have(1).tokens
-    production.tokens.first[:X].should == 42
+    expect(production.size).to eq(1)
+    expect(production.tokens.first[:X]).to eq(42)
 
   end
 
@@ -45,7 +44,7 @@ describe "ASSIGN rule" do
     }
 
     engine << [1, 2, 5]
-    production.tokens.first[:Y].should == 10
+    expect(production.tokens.first[:Y]).to eq(10)
 
   end
 

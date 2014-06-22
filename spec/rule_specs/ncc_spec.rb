@@ -29,15 +29,15 @@ describe "NCC rule" do
 
     engine << ["base", "is", 1]
 
-    production.should have(1).tokens
+    expect(production.size).to eq(1)
 
     engine << [1, 2, 3]
 
-    production.should have(1).tokens
+    expect(production.size).to eq(1)
 
     engine << [3, 4, 5]
 
-    production.should have(0).tokens
+    expect(production.size).to eq(0)
 
   end
 
@@ -50,13 +50,13 @@ describe "NCC rule" do
     engine << [1, 2, 3]
     engine << [3, 4, 5]
 
-    production.should have(0).tokens
+    expect(production.size).to eq(0)
 
     engine.retract [3, 4, 5]
-    production.should have(1).tokens
+    production.size.should eq(1)
 
     engine.retract ["base", "is", 1]
-    production.should have(0).tokens
+    expect(production.size).to eq(0)
 
   end
 

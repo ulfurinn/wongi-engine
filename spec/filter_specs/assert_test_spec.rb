@@ -28,7 +28,7 @@ describe "ASSERT test" do
       }
     }
 
-    production.should have(1).tokens
+    expect(production.size).to eq(1)
     
   end
 
@@ -42,7 +42,7 @@ describe "ASSERT test" do
       }
     }
 
-    production.should have(0).tokens
+    expect(production.size).to eq(0)
 
   end
 
@@ -59,8 +59,8 @@ describe "ASSERT test" do
 
     engine << ["resistance", "is", "futile"]
 
-    production.should have(1).tokens
-    production.tokens.first[:X].should == "resistance"
+    expect(production.size).to eq(1)
+    expect(production.tokens.first[:X]).to eq("resistance")
 
   end
 
@@ -77,8 +77,8 @@ describe "ASSERT test" do
 
     engine << ["resistance", "is", "futile"]
 
-    production.should have(1).tokens
-    production.tokens.first[:X].should == "resistance"
+    expect(production.size).to eq(1)
+    expect(production.tokens.first[:X]).to eq("resistance")
 
   end
 

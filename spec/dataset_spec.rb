@@ -13,13 +13,13 @@ describe Wongi::Engine::Network do
     }
 
     production = ds.productions['test-rule']
-    production.should_not be_nil
+    expect(production).not_to be_nil
 
-    production.should be_empty
+    expect(production).to be_empty
 
     ds << [1, 2, 3]
 
-    production.should have(1).tokens
+    expect(production.size).to eq(1)
 
   end
 
