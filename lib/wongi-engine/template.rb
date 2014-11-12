@@ -8,7 +8,7 @@ module Wongi::Engine
     attr_predicate debug: false
 
     def self.variable? thing
-      Symbol === thing && thing =~ /^[A-Z]/
+      Symbol === thing && (thing =~ /^[A-Z]/) != nil
     end
 
     def initialize s, p, o, options = { }
