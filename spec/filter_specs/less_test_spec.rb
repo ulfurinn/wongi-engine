@@ -38,4 +38,22 @@ describe "LESS test" do
     expect(@production.size).to eq(0)
   end
 
+  it "should read variables" do
+
+    test_rule {
+      forall {
+        has "A", "B", :Cx
+        less :Cx,10 # This should pass
+      }
+
+      make {
+        gen ".", ".", "."
+      }
+    }
+
+    engine << ["A", "B", 5]
+
+    expect(@production.size).to eq(1)
+  end
+
 end
