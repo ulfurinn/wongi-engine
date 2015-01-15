@@ -40,7 +40,7 @@ module Wongi::Engine
 
     def =~ template
       raise "Cannot match a WME against a #{template.class}" unless Template === template
-      result = match_member( template, :subject ) & match_member( template, :predicate ) & match_member( template, :object )
+      result = match_member( self.subject, template.subject ) & match_member( self.predicate, template.predicate ) & match_member( self.object, template.object )
       if result.match?
         result
       end
@@ -122,10 +122,8 @@ module Wongi::Engine
       end.clear
     end
 
-    def match_member template, member
+    def match_member mine, theirs
       result = WMEMatchData.new
-      mine = self.send member
-      theirs = template.send member
       if theirs == :_ || mine == theirs
         result.match!
       elsif Template.variable? theirs
