@@ -38,7 +38,7 @@ describe 'the engine' do
       expect(rete.facts.to_a.length).to eq(3)
       expect(rete.facts.select( &:manual? ).length).to eq(2)
       generated = rete.facts.find( &:generated? )
-      generated.should == Wongi::Engine::WME.new( "Bob", "friend", "Alice" )
+      expect( generated ).to be == Wongi::Engine::WME.new( "Bob", "friend", "Alice" )
     end
 
     it 'should generate wmes with an added rule' do
@@ -180,7 +180,7 @@ describe 'the engine' do
 
   it 'should accept several rules' do
 
-    lambda do
+    expect {
 
       rete << rule('generic-collector') {
         forall {
@@ -200,7 +200,7 @@ describe 'the engine' do
         }
       }
 
-    end.should_not raise_error
+    }.not_to raise_error
 
   end
 

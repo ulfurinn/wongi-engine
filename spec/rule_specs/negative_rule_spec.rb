@@ -27,7 +27,7 @@ describe "negative rule" do
 
     }
 
-    proc.should raise_error( Wongi::Engine::DefinitionError )
+    expect( &proc ).to raise_error( Wongi::Engine::DefinitionError )
 
   end
 
@@ -63,7 +63,7 @@ describe "negative rule" do
       }
     }
 
-    proc.should raise_error( exception )
+    expect( &proc ).to raise_error( exception )
 
   end
 

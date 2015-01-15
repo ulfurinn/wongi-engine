@@ -53,7 +53,7 @@ describe "NCC rule" do
     expect(production.size).to eq(0)
 
     engine.retract [3, 4, 5]
-    production.size.should eq(1)
+    expect( production ).to have(1).token
 
     engine.retract ["base", "is", 1]
     expect(production.size).to eq(0)

@@ -65,8 +65,8 @@ describe "ANY rule" do
         engine << ["three", "four", "five"]
 
         expect(production.size).to eq(2)
-        engine.collection(:threes).should include(3)
-        engine.collection(:threes).should include("three")
+        expect( engine.collection(:threes) ).to include(3)
+        expect( engine.collection(:threes) ).to include("three")
 
       end
 
