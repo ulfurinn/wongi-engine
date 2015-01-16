@@ -2,19 +2,11 @@
 
 This library contains a rule engine written in Ruby. It's based on the [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm) and uses a DSL to express rules in a readable way.
 
-## Installation
+[![Build Status](https://travis-ci.org/ulfurinn/wongi-engine.svg?branch=master)](https://travis-ci.org/ulfurinn/wongi-engine) (MRI 1.9.3, 2.0, 2.1, 2.2, Rubinius, JRuby)
 
-Add this line to your application's Gemfile:
+## Word of caution
 
-    gem 'wongi-engine'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install wongi-engine
+This is complex and fragile machinery, and there may be subtle bugs that are only revealed with nontrivial usage. Please test your rules extensively and report any behaviour that is not consistent with your expectations.
 
 ## Tutorial
 
