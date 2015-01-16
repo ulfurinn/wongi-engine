@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Wongi::Engine::VERSION
 
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec', '~> 3.1', '< 3.2'
   gem.add_development_dependency 'rspec-collection_matchers', '~> 1.1'
 end
