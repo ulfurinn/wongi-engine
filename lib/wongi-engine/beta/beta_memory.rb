@@ -29,13 +29,11 @@ module Wongi::Engine
 
     def beta_activate token, wme, assignments
       dp "MEMORY beta-activated with #{wme} #{wme.object_id}"
-      t = Token.new( token, wme, assignments)
-      t.node = self
-      existing = @tokens.find { |et| et.duplicate? t }
+      existing = @tokens.reject(&:deleted?).find { |et| et.duplicate? self, token, wme, assignments }
       if existing
         t = existing
       else
-        dp "generated token #{t}"
+        t = Token.new( token, wme, assignments)
         t.node = self
         @tokens << t
       end
@@ -46,6 +44,7 @@ module Wongi::Engine
           child.beta_activate t
         end
       end
+      t
     end
 
     def refresh_child child

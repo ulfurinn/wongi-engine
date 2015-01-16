@@ -12,8 +12,7 @@ module Wongi
       end
 
       def beta_activate token, wme, assignments
-        super
-        generated = @tokens.last
+        generated = super
         @actions.each do |action|
           # @tokens.each do |t|
           #  action.execute t

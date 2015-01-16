@@ -24,13 +24,11 @@ module Wongi
       end
 
       def beta_activate token, newwme, assignments
-        t = Token.new( token, newwme, assignments)
-        t.node = self
-        existing = @tokens.find { |et| et.duplicate? t }
+        existing = @tokens.find { |et| et.duplicate? self, token, newwme, assignments }
         if existing
           t = existing
         else
-          dp "generated token #{t}"
+          t = Token.new( token, newwme, assignments)
           t.node = self
           @tokens << t
         end

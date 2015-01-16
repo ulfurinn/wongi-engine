@@ -4,8 +4,8 @@ module Wongi::Engine
 
     include CoreExt
 
-    attr_reader :parent, :wme, :children
-    attr_accessor :node, :owner
+    attr_reader :wme, :children
+    attr_accessor :node, :owner, :parent
     attr_reader :neg_join_results
     attr_reader :opt_join_results
     attr_reader :ncc_results
@@ -47,8 +47,8 @@ module Wongi::Engine
       assignments[ var ]
     end
 
-    def duplicate? other
-      other.node.equal?(self.node) && other.parent.equal?(self.parent) && other.wme.equal?(self.wme) && other.assignments == self.assignments
+    def duplicate? node, parent, wme, assignments
+      self.node.equal?(node) && self.parent.equal?(parent) && self.wme.equal?(wme) && self.assignments == assignments
     end
 
     def to_s
@@ -82,8 +82,11 @@ module Wongi::Engine
     end
 
     def delete_children
-      while @children.first
-        @children.first.delete
+      children = @children
+      @children = []
+      children.each do |token|
+        token.parent = nil
+        token.delete
       end
     end
 
@@ -95,16 +98,18 @@ module Wongi::Engine
     protected
 
     def retract_generated
+      for_retraction = []
 
-      @generated_wmes.each do |wme|
+      @generated_wmes.dup.each do |wme|
         unless wme.manual?  # => TODO: does this ever fail at all?
           wme.generating_tokens.delete self
           if wme.generating_tokens.empty?
-            wme.rete.retract wme, true
+            for_retraction << wme
           end
         end
       end
       @generated_wmes = []
+      for_retraction.each { |wme| wme.rete.retract wme, true }
 
     end
 
