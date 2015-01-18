@@ -7,7 +7,7 @@ def ruleset name = nil, &definition
   rs
 end
 
-def rule name, &definition
+def rule name = nil, &definition
   r = Wongi::Engine::ProductionRule.new name
   r.instance_eval &definition
   r

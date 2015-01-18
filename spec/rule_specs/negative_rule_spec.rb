@@ -31,6 +31,41 @@ describe "negative rule" do
 
   end
 
+  specify "variable example 1" do
+
+    prod = engine << rule {
+      forall {
+        has :x, :y, :Z
+        neg :a, :b, :Z
+      }
+    }
+
+    engine << [:x, :y, 1]
+    expect( prod ).to have(1).tokens
+
+    engine << [:a, :b, 1]
+    expect( prod ).to have(0).tokens
+
+  end
+
+  specify "variable example 1" do
+
+    prod = engine << rule {
+      forall {
+        has :x, :y, :Z
+        neg :a, :b, :Z
+      }
+    }
+
+    engine << [:a, :b, 1]
+    engine << [:x, :y, 1]
+    expect( prod ).to have(0).tokens
+
+    engine.retract [:a, :b, 1]
+    expect( prod ).to have(1).tokens
+
+  end
+
   # it "should not create infinite feedback loops by default" do
 
   #   engine << rule('feedback') {

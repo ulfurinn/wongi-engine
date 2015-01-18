@@ -169,6 +169,7 @@ module Wongi::Engine
         if something.name
           productions[ something.name ] = production
         end
+        production
       when Query
         derived = something.import_into self
         prepare_query derived.name, derived.conditions, derived.parameters, derived.actions
