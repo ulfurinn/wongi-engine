@@ -62,9 +62,9 @@ module Wongi::Engine
       return if deleted?
       @deleted = true
       alphas.each { |alpha| alpha.remove self }.clear
-      while tokens.first
-        tokens.first.delete    # => will remove itself from the array
-      end
+      tokens = @tokens
+      @tokens = []
+      tokens.each &:destroy
 
       destroy_neg_join_results
       destroy_opt_join_results

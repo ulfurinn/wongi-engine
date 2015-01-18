@@ -4,7 +4,7 @@ module Wongi::Engine
 
     include CoreExt
 
-    attr_reader :wme, :children
+    attr_reader :children
     attr_accessor :node, :owner, :parent
     attr_reader :neg_join_results
     attr_reader :opt_join_results
@@ -47,8 +47,8 @@ module Wongi::Engine
       assignments[ var ]
     end
 
-    def duplicate? node, parent, wme, assignments
-      self.node.equal?(node) && self.parent.equal?(parent) && self.wme.equal?(wme) && self.assignments == assignments
+    def duplicate? parent, wme, assignments
+      self.parent.equal?(parent) && @wme.equal?(wme) && self.assignments == assignments
     end
 
     def to_s
@@ -58,15 +58,7 @@ module Wongi::Engine
       str
     end
 
-    def wmes
-      if parent
-        parent.wmes + (wme ? [wme] : [])
-      else
-        wme ? [wme] : []
-      end
-    end
-
-    def delete
+    def destroy
       delete_children
       #@node.tokens.delete self unless @node.kind_of?( NccPartner )
       @wme.tokens.delete self if @wme
@@ -86,7 +78,7 @@ module Wongi::Engine
       @children = []
       children.each do |token|
         token.parent = nil
-        token.delete
+        token.destroy
       end
     end
 

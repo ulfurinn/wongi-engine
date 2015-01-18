@@ -44,12 +44,9 @@ module Wongi::Engine
 
     def wmes
       Enumerator.new do |y|
-        copy = @wmes.dup
-        @wmes.reject! &:deleted?
-        copy.each do |wme|
+        @wmes.dup.each do |wme|
           y << wme unless wme.deleted?
         end
-        @wmes.reject! &:deleted?
       end
     end
 

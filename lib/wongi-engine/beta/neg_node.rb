@@ -24,7 +24,7 @@ module Wongi
       end
 
       def beta_activate token, newwme, assignments
-        existing = @tokens.find { |et| et.duplicate? self, token, newwme, assignments }
+        existing = @tokens.find { |et| et.duplicate? token, newwme, assignments }
         if existing
           t = existing
         else

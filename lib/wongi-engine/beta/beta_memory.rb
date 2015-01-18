@@ -15,7 +15,7 @@ module Wongi::Engine
     end
 
     def subst valuations
-      @tokens.first.delete
+      @tokens.first.destroy
 
       token = Token.new( nil, nil, @seed )
       token.node = self
@@ -29,7 +29,7 @@ module Wongi::Engine
 
     def beta_activate token, wme, assignments
       dp "MEMORY beta-activated with #{wme} #{wme.object_id}"
-      existing = @tokens.reject(&:deleted?).find { |et| et.duplicate? self, token, wme, assignments }
+      existing = @tokens.reject(&:deleted?).find { |et| et.duplicate? token, wme, assignments }
       if existing
         t = existing
       else

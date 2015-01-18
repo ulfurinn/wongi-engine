@@ -211,8 +211,8 @@ module Wongi::Engine
       end
 
       return false if real.nil?
-      @cache.delete(real)
       raise "Cannot retract inferred statements" unless real.manual?
+      @cache.delete(real)
 
       real.destroy
 
