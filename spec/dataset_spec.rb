@@ -20,6 +20,7 @@ describe Wongi::Engine::Network do
     ds << [1, 2, 3]
 
     expect(production.size).to eq(1)
+    expect( production.size ).to be == 1
 
   end
 
