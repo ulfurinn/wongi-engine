@@ -1,6 +1,12 @@
 module Wongi
   module Engine
 
+    TokenAssignment = Struct.new(:wme, :field) do
+      def call token = nil
+        wme.send field
+      end
+    end
+
     class BetaTest
 
       attr_reader :field
@@ -142,7 +148,7 @@ module Wongi
         [:subject, :predicate, :object].each do |field|
           if self.assignment_pattern.send(field) != :_
             #puts "#{self.assignment_pattern.send(field)} = #{wme.send(field)}"
-            assignments[ self.assignment_pattern.send(field) ] = wme.send(field)
+            assignments[ self.assignment_pattern.send(field) ] = TokenAssignment.new( wme, field )
           end
         end
         assignments

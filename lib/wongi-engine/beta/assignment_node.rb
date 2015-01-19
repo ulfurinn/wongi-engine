@@ -22,7 +22,7 @@ module Wongi::Engine
     end
 
     def beta_activate token, wme = nil, assignments = { }
-      propagate_activation token, nil, { @variable => @body.call(token) }
+      propagate_activation token, nil, { @variable => @body }
     end
 
     def refresh_child child

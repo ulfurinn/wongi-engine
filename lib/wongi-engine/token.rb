@@ -35,7 +35,7 @@ module Wongi::Engine
     def subst variable, value
       @cached_assignments = nil
       if @assignments.has_key? variable
-        @assignments[ variable ] = value
+        @assignments[ variable ] = value.respond_to?(:call) ? value : Proc.new { value }
       end
     end
 
@@ -44,7 +44,9 @@ module Wongi::Engine
     end
 
     def [] var
-      assignments[ var ]
+      if a = assignments[ var ]
+        a.call( self )
+      end
     end
 
     def duplicate? parent, wme, assignments
