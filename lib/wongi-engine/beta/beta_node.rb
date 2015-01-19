@@ -34,7 +34,6 @@ module Wongi::Engine
     end
 
     def beta_memory
-      return self if BetaMemory === self # the easiest way to do this at the top
       beta = children.find { |node| BetaMemory === node }
       if beta.nil?
         beta = BetaMemory.new self

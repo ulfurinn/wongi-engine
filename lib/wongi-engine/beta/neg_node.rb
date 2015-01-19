@@ -32,7 +32,7 @@ module Wongi
           t.node = self
           @tokens << t
         end
-        @alpha.wmes.each do |wme|
+        alpha.wmes.each do |wme|
           if matches?( t, wme )
             make_join_result(t, wme)
           end

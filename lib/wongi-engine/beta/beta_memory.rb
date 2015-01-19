@@ -7,6 +7,11 @@ module Wongi::Engine
       @tokens = []
     end
 
+    # @override
+    def beta_memory
+      self
+    end
+
     def seed assignments = {}
       @seed = assignments
       t = Token.new( nil, nil, assignments )
