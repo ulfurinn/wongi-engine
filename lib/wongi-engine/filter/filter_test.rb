@@ -16,6 +16,7 @@ module Wongi::Engine
 
     def compile context
       context.node = context.node.beta_memory.filter_node( self )
+      context.node.context = context
       context.earlier << self
       context
     end

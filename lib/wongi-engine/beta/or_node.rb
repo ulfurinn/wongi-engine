@@ -18,6 +18,7 @@ module Wongi
         end
         context.earlier += added
         context.node = OrNode.new( branches )
+        context.node.context = context
         context.node.refresh
         context
       end
@@ -33,6 +34,7 @@ module Wongi
 
       def compile context
         context.node = context.node.beta_memory.network( children, context.earlier, context.parameters, false )
+        context.node.context = context
         context.earlier << self
         context
       end

@@ -33,6 +33,7 @@ require 'wongi-engine/dsl/production_rule'
 require 'wongi-engine/dsl/ncc_production_rule'
 require 'wongi-engine/dsl/any_rule'
 require 'wongi-engine/dsl/query'
+require 'wongi-engine/dsl/assuming'
 require 'wongi-engine/dsl/actions/simple_action'
 require 'wongi-engine/dsl/actions/statement_generator'
 require 'wongi-engine/dsl/actions/simple_collector'
@@ -102,6 +103,8 @@ dsl {
     missing s, p, o, time: 0
   }
 
+  clause :assuming
+  accept Wongi::Engine::AssumingClause
 
   section :make
 

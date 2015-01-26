@@ -9,6 +9,7 @@ module Wongi
 
       def compile context
         context.node = context.node.beta_memory.ncc_node( self, context.earlier, context.parameters, false )
+        context.node.context = context
         context.earlier << self
         context
       end

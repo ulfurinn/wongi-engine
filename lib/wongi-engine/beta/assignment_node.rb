@@ -8,6 +8,7 @@ module Wongi::Engine
 
     def compile context
       context.node = context.node.beta_memory.assignment_node( @variable, @body )
+      context.node.context = context
       context.earlier << self
       context
     end

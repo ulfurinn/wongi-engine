@@ -7,6 +7,7 @@ module Wongi::Engine
     attr_writer :rete
     attr_reader :parent
     attr_accessor :children
+    attr_accessor :context
     attr_predicate :debug
 
     def initialize parent = nil
@@ -101,7 +102,12 @@ module Wongi::Engine
       ncc
     end
 
-    CompilationContext = Struct.new :node, :rete, :earlier, :parameters, :alpha_deaf
+    CompilationContext = Struct.new :node, :rete, :earlier, :parameters, :alpha_deaf do
+      def dup
+        self.class.new( node, rete, earlier.dup, parameters.dup, alpha_deaf )
+      end
+    end
+    
     def network conditions, earlier, parameters, alpha_deaf
       # puts "Getting beta subnetwork"
       conditions.inject(CompilationContext.new self, self.rete, earlier, parameters, alpha_deaf) do |context, condition|

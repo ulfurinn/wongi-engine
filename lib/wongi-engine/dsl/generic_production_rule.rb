@@ -58,10 +58,10 @@ module Wongi::Engine
       end
 
       copy
-    rescue Exception => e
-      e1 = Exception.new "in rule #{name}: #{e}"
-      e1.set_backtrace e.backtrace
-      raise e1
+    # rescue Exception => e
+    #   e1 = Exception.new "in rule #{name}: #{e}"
+    #   e1.set_backtrace e.backtrace
+    #   raise e1
     end
 
     protected

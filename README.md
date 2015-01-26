@@ -197,6 +197,25 @@ Passes if the arguments are not equal. Alias: `ne`.
 
 Should be obvious by now.
 
+#### `assuming rule_name`
+
+This is a shortcut for extending a common base rule with additional matchers. `rule_name` must already be installed on the same engine instance. `assuming` must be the first clause in the extending rule.
+
+```ruby
+engine << rule( :base ) {
+  forall {
+    has :x, :y, :Z
+  }
+}
+
+engine << rule {
+  forall {
+    assuming :base
+    has :Z, :u, :W
+  }
+}
+```
+
 #### `assert { |token| ... }`, `assert var1, var2, ... do |val1, val2, ... | ... end`
 
 Passes if the block evaluates to `true`. Having no arguments passes the entire token as an argument, listing some variables passes only their values.

@@ -73,6 +73,7 @@ module Wongi::Engine
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
       alpha = context.rete.compile_alpha( self )
       context.node = context.node.beta_memory.join_node( alpha, tests, assignment, @filters, context.alpha_deaf )
+      context.node.context = context
       context.node.debug = debug?
       context.earlier << self
       context
@@ -104,6 +105,7 @@ module Wongi::Engine
       raise DefinitionError.new("Negative matches may not introduce new variables: #{assignment.variables}") unless assignment.root?
       alpha = context.rete.compile_alpha( self )
       context.node = context.node.neg_node( alpha, tests, context.alpha_deaf, unsafe )
+      context.node.context = context
       context.node.debug = debug?
       context.earlier << self
       context
@@ -118,6 +120,7 @@ module Wongi::Engine
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
       alpha = context.rete.compile_alpha( self )
       context.node = context.node.beta_memory.optional_node( alpha, tests, assignment, context.alpha_deaf )
+      context.node.context = context
       context.node.debug = debug?
       context.earlier << self
       context
