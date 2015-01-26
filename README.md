@@ -459,6 +459,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.0.17
+
+* introduced the `assuming` matcher
+
 ### 0.0.13
 
 * fixed a bug with recursive generations of multiple facts
