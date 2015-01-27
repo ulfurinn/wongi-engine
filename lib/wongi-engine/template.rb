@@ -4,7 +4,7 @@ module Wongi::Engine
 
     include CoreExt
 
-    attr_reader :filters, :unsafe
+    attr_reader :unsafe
     attr_predicate debug: false
 
     def self.variable? thing
@@ -72,7 +72,7 @@ module Wongi::Engine
     def compile context
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
       alpha = context.rete.compile_alpha( self )
-      context.node = context.node.beta_memory.join_node( alpha, tests, assignment, @filters, context.alpha_deaf )
+      context.node = context.node.beta_memory.join_node( alpha, tests, assignment, context.alpha_deaf )
       context.node.context = context
       context.node.debug = debug?
       context.earlier << self
@@ -97,8 +97,6 @@ module Wongi::Engine
 
   class NegTemplate < Template
 
-    undef_method :filters
-
     # :arg: context => Wongi::Rete::BetaNode::CompilationContext
     def compile context
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
@@ -113,8 +111,6 @@ module Wongi::Engine
   end
 
   class OptionalTemplate < Template
-
-    undef_method :filters
 
     def compile context
       tests, assignment = *JoinNode.compile( self, context.earlier, context.parameters )
