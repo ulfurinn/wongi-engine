@@ -5,6 +5,9 @@ module Wongi
       def call token = nil
         wme.send field
       end
+      def inspect
+        "subject of #{wme}"
+      end
     end
 
     class BetaTest
@@ -52,19 +55,24 @@ module Wongi
         true
       end
 
-      def alpha= a
-        @alpha = a
-        # puts "\talpha = #{alpha}"
+      def alpha_activate wme
+        assignments = collect_assignments( wme )
+        parent.tokens.each do |token|
+          if matches?( token, wme )
+            children.each do |beta|
+              beta.beta_activate Token.new( beta, token, wme, assignments )
+            end
+          end
+        end
       end
 
-      def alpha_activate wme
-        dp "JOIN alpha-activated with #{wme}"
-        collected = collect_assignments( wme )
-        self.parent.tokens.each do |token|
-          dp "-MATCHING #{token}"
-          if matches?( token, wme )
-            dp "-JOIN MATCHED, PROPAGATING"
-            propagate_activation token, wme, collected
+      def alpha_deactivate wme
+        children.each do |child|
+          child.tokens.each do |token|
+            if token.wme == wme
+              child.beta_deactivate token
+              #token.destroy
+            end
           end
         end
       end
@@ -73,23 +81,38 @@ module Wongi
         dp "JOIN beta-activated"
         self.alpha.wmes.each do |wme|
           dp "-TESTING WME #{wme}"
-          collected = collect_assignments( wme )
+          assignments = collect_assignments( wme )
           if matches?( token, wme )
             dp "-WME MATCHED, PROPAGATING"
-            propagate_activation token, wme, collected
+            children.each do |beta|
+              beta.beta_activate Token.new( beta, token, wme, assignments )
+            end
           else
             dp "-NO MATCH"
           end
         end
       end
 
-      def refresh_child child
-        tmp = children
-        self.children = [ child ]
-        alpha.wmes.each do |wme|
-          alpha_activate wme
+      def beta_deactivate token
+        children.each do |child|
+          child.tokens.each do |t|
+            if t.parent == token
+              child.beta_deactivate t
+              #token.destroy
+            end
+          end
         end
-        self.children = tmp
+      end
+
+      def refresh_child child
+        alpha.wmes.each do |wme|
+          assignments = collect_assignments( wme )
+          parent.tokens.each do |token|
+            if matches?( token, wme )
+              child.beta_activate Token.new( child, token, wme, assignments )
+            end
+          end
+        end
       end
 
       def self.compile condition, earlier, parameters

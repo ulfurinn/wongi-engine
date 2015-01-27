@@ -83,6 +83,43 @@ module Wongi::Engine
     end
 
     def assert wme
+      @next_cascade ||= []
+      @next_cascade << [:assert, wme]
+      if @current_cascade.nil?
+        @current_cascade = @next_cascade
+        @next_cascade = nil
+        process_cascade
+      end
+    end
+
+    def retract wme
+      @next_cascade ||= []
+      @next_cascade << [:retract, wme]
+      if @current_cascade.nil?
+        @current_cascade = @next_cascade
+        @next_cascade = nil
+        process_cascade
+      end
+    end
+
+    def process_cascade
+      iterations = 0
+      while @current_cascade
+        @current_cascade.each do |(operation, wme)|
+          case operation
+          when :assert
+            real_assert wme
+          when :retract
+            real_retract wme
+          end
+        end
+        @current_cascade = @next_cascade
+        @next_cascade = nil
+        iterations += 1
+      end
+    end
+
+    def real_assert wme
 
       unless wme.rete == self
         wme = wme.import_into self
@@ -98,18 +135,7 @@ module Wongi::Engine
       # puts "ASSERTING #{wme}"
       @cache[wme] = wme
 
-      s = wme.subject
-      p = wme.predicate
-      o = wme.object
-
-      alpha_activate(lookup( s,  p,  o), wme)
-      alpha_activate(lookup( s,  p, :_), wme)
-      alpha_activate(lookup( s, :_,  o), wme)
-      alpha_activate(lookup(:_,  p,  o), wme)
-      alpha_activate(lookup( s, :_, :_), wme)
-      alpha_activate(lookup(:_,  p, :_), wme)
-      alpha_activate(lookup(:_, :_,  o), wme)
-      alpha_activate(lookup(:_, :_, :_), wme)
+      alphas_for( wme ).each { |a| a.activate wme }
 
       wme
     end
@@ -192,10 +218,10 @@ module Wongi::Engine
       end
     end
 
-    def retract wme, is_real = false
+    def real_retract wme, is_real = false
 
       if wme.is_a? Array
-        return retract( WME.new(*wme), is_real )
+        return real_retract( WME.new(*wme), is_real )
       end
 
       if ! is_real
@@ -211,14 +237,11 @@ module Wongi::Engine
         @cache[wme]
       end
 
-      return false if real.nil?
+      return if real.nil?
       raise "Cannot retract inferred statements" unless real.manual?
       @cache.delete(real)
 
-      real.destroy
-
-      true
-
+      alphas_for( real ).each { |a| a.deactivate real }
     end
 
     def compile_alpha condition
@@ -360,6 +383,20 @@ module Wongi::Engine
 
     def generate_rule_name
       "rule_#{productions.length}"
+    end
+
+    def alphas_for wme
+      s, p, o = wme.subject, wme.predicate, wme.object
+      [
+        lookup( s,  p,  o),
+        lookup( s,  p, :_),
+        lookup( s, :_,  o),
+        lookup(:_,  p,  o),
+        lookup( s, :_, :_),
+        lookup(:_,  p, :_),
+        lookup(:_, :_,  o),
+        lookup(:_, :_, :_),
+      ].compact.uniq
     end
 
     def lookup s, p, o

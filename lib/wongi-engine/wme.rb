@@ -2,10 +2,13 @@ module Wongi::Engine
 
   class WME < Struct.new( :subject, :predicate, :object )
 
+    include CoreExt
+
     attr_reader :rete
 
     attr_reader :alphas, :tokens, :generating_tokens
     attr_reader :neg_join_results, :opt_join_results
+    attr_predicate :deleted
 
     def initialize s, p, o, r = nil
 
@@ -54,25 +57,21 @@ module Wongi::Engine
       !manual?
     end
 
-    def deleted?
-      @deleted
-    end
+    # def destroy
+    #   return if deleted?
+    #   @deleted = true
+    #   alphas.each { |alpha| alpha.remove self }.clear
+    #   tokens = @tokens
+    #   @tokens = []
+    #   tokens.each &:destroy
 
-    def destroy
-      return if deleted?
-      @deleted = true
-      alphas.each { |alpha| alpha.remove self }.clear
-      tokens = @tokens
-      @tokens = []
-      tokens.each &:destroy
+    #   destroy_neg_join_results
+    #   destroy_opt_join_results
 
-      destroy_neg_join_results
-      destroy_opt_join_results
-
-    end
+    # end
 
     def inspect
-      "<WME #{subject.inspect} #{predicate.inspect} #{object.inspect}>"
+      "{#{subject.inspect} #{predicate.inspect} #{object.inspect}}"
     end
 
     def to_s
@@ -89,38 +88,38 @@ module Wongi::Engine
       @array_form ||= [ subject, predicate, object ]
     end
 
-    def destroy_neg_join_results
-      neg_join_results.each do |njr|
+    # def destroy_neg_join_results
+    #   neg_join_results.each do |njr|
 
-        token = njr.owner
-        results = token.neg_join_results
-        results.delete njr
+    #     token = njr.owner
+    #     results = token.neg_join_results
+    #     results.delete njr
 
-        if results.empty? #&& !rete.in_snapshot?
-          token.node.children.each { |beta|
-            beta.beta_activate token, nil, { }
-          }
-        end
+    #     if results.empty? #&& !rete.in_snapshot?
+    #       token.node.children.each { |beta|
+    #         beta.beta_activate token, nil, { }
+    #       }
+    #     end
 
-      end.clear
-    end
+    #   end.clear
+    # end
 
-    def destroy_opt_join_results
-      opt_join_results.each do |ojr|
+    # def destroy_opt_join_results
+    #   opt_join_results.each do |ojr|
 
-        token = ojr.owner
-        results = token.opt_join_results
-        results.delete ojr
+    #     token = ojr.owner
+    #     results = token.opt_join_results
+    #     results.delete ojr
 
-        if results.empty?
-          token.delete_children
-          token.node.children.each { |beta|
-            beta.beta_activate token
-          }
-        end
+    #     if results.empty?
+    #       token.delete_children
+    #       token.node.children.each { |beta|
+    #         beta.beta_activate token
+    #       }
+    #     end
 
-      end.clear
-    end
+    #   end.clear
+    # end
 
     def match_member mine, theirs
       result = WMEMatchData.new

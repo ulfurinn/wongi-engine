@@ -10,9 +10,22 @@ module Wongi
         self.test = test
       end
 
-      def beta_activate token, wme = nil, assignments = { }
+      def beta_activate token
         if test.passes? token
-          propagate_activation token, nil, {}
+          children.each do |child|
+            child.beta_activate Token.new( child, token, nil, {} )
+          end
+        end
+      end
+
+      def beta_deactivate token
+        children.each do |child|
+          child.tokens.each do |t|
+            if t.parent == token
+              child.beta_deactivate t
+              #token.destroy
+            end
+          end
         end
       end
 

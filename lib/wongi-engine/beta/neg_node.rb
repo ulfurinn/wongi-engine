@@ -1,11 +1,16 @@
 module Wongi
   module Engine
 
-    NegJoinResult = Struct.new :owner, :wme
+    NegJoinResult = Struct.new :token, :wme do
+      def unlink
+        wme.neg_join_results.delete self
+        token.neg_join_results.delete self
+      end
+    end
 
     class NegNode < BetaNode
 
-      attr_reader :tokens, :alpha, :tests
+      attr_reader :alpha, :tests
 
       def initialize parent, tests, alpha, unsafe
         super(parent)
@@ -18,36 +23,71 @@ module Wongi
           if matches?( token, wme ) && ( @unsafe || ! token.generated?( wme ) )# feedback loop protection
             # order matters for proper invalidation
             make_join_result(token, wme)
-            token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things
+            #token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things
+            children.each do |child|
+              child.tokens.each do |t|
+                if t.parent == token
+                  child.beta_deactivate t
+                  #token.destroy
+                end
+              end
+            end
           end
         end
       end
 
-      def beta_activate token, newwme, assignments
-        existing = @tokens.find { |et| et.duplicate? token, newwme, assignments }
-        if existing
-          t = existing
-        else
-          t = Token.new( token, newwme, assignments)
-          t.node = self
-          @tokens << t
+      def alpha_deactivate wme
+        wme.neg_join_results.dup.each do |njr|
+          safe_tokens.each do |token|
+            next unless token == njr.token
+            njr.unlink
+            if token.neg_join_results.empty?
+              children.each do |child|
+                child.beta_activate Token.new( child, token, nil, {} )
+              end
+            end
+          end
         end
+      end
+
+      def beta_activate token
+        return if @tokens.find { |et| et.duplicate? token }
+        @tokens << token
         alpha.wmes.each do |wme|
-          if matches?( t, wme )
-            make_join_result(t, wme)
+          if matches?( token, wme )
+            make_join_result(token, wme)
           end
         end
-        if t.neg_join_results.empty?
-          self.children.each do |child|
-            child.beta_activate t, nil, {}
+        if token.neg_join_results.empty?
+          children.each do |child|
+            child.beta_activate Token.new( child, token, nil, {} )
           end
         end
+      end
+
+      def beta_deactivate token
+        return nil unless tokens.find token
+        @tokens.delete token
+        token.deleted!
+        if token.parent
+          token.parent.children.delete token # should this go into Token#destroy?
+        end
+        token.neg_join_results.each &:unlink
+        children.each do |child|
+          child.tokens.each do |t|
+            if t.parent == token
+              child.beta_deactivate t
+              #token.destroy
+            end
+          end
+        end
+        token
       end
 
       def refresh_child child
         safe_tokens.each do |token|
           if token.neg_join_results.empty?
-            child.beta_activate token, nil, {}
+            child.beta_activate Token.new( child, token, nil, {} )
           end
         end
         alpha.wmes.each do |wme|
@@ -55,13 +95,13 @@ module Wongi
         end
       end
 
-      def delete_token token
-        tokens.delete token
-        token.neg_join_results.each do |njr|
-          njr.wme.neg_join_results.delete njr if njr.wme
-        end
-        token.neg_join_results.clear
-      end
+      # def delete_token token
+      #   tokens.delete token
+      #   token.neg_join_results.each do |njr|
+      #     njr.wme.neg_join_results.delete njr if njr.wme
+      #   end
+      #   token.neg_join_results.clear
+      # end
 
       protected
 

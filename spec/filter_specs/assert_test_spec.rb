@@ -28,7 +28,7 @@ describe "ASSERT test" do
       }
     }
 
-    expect(production.size).to eq(1)
+    expect(production).to have(1).token
     
   end
 
@@ -42,7 +42,7 @@ describe "ASSERT test" do
       }
     }
 
-    expect(production.size).to eq(0)
+    expect(production).to have(0).tokens
 
   end
 
@@ -59,8 +59,25 @@ describe "ASSERT test" do
 
     engine << ["resistance", "is", "futile"]
 
-    expect(production.size).to eq(1)
+    expect(production).to have(1).token
     expect(production.tokens.first[:X]).to eq("resistance")
+
+  end
+
+  it "should be retractable" do
+
+    test_rule {
+      forall {
+        has :X, "is", :Y
+        assert { |token|
+          token[:X] == "resistance"
+        }
+      }
+    }
+
+    engine << ["resistance", "is", "futile"]
+    engine.retract ["resistance", "is", "futile"]
+    expect(production).to have(0).tokens
 
   end
 
@@ -77,7 +94,7 @@ describe "ASSERT test" do
 
     engine << ["resistance", "is", "futile"]
 
-    expect(production.size).to eq(1)
+    expect(production).to have(1).token
     expect(production.tokens.first[:X]).to eq("resistance")
 
   end

@@ -34,6 +34,13 @@ module Wongi::Engine
       end
     end
 
+    abstract :alpha_activate
+    abstract :alpha_deactivate
+    abstract :alpha_reactivate
+    abstract :beta_activate
+    abstract :beta_deactivate
+    abstract :beta_reactivate
+
     def beta_memory
       beta = children.find { |node| BetaMemory === node }
       if beta.nil?
@@ -56,8 +63,7 @@ module Wongi::Engine
     end
 
     def optional_node alpha, tests, assignment, alpha_deaf
-      node = OptionalNode.new self, tests, assignment
-      node.alpha = alpha
+      node = OptionalNode.new self, alpha, tests, assignment
       alpha.betas << node unless alpha_deaf
       node
     end
@@ -146,12 +152,6 @@ module Wongi::Engine
     alias_method :length, :size
 
     private
-
-    def propagate_activation token, wme, assignments
-      self.children.each do |child|
-        child.beta_activate token, wme, assignments
-      end
-    end
 
     def dp message
       if debug?

@@ -21,11 +21,11 @@ module Wongi::Engine
       end
     end
 
-    def remove wme
+    def deactivate wme
       @wmes.delete wme
-      # we don't need to unlink ourselves from the wme
-      # because this is only called from WME#destroy
-      # so the wme will take care of it itself
+      betas.each do |beta|
+        beta.alpha_deactivate wme
+      end
     end
 
     def snapshot! alpha

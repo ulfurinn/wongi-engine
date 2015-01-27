@@ -26,13 +26,10 @@ module Wongi
         @tokens = []
       end
 
-      #  def beta_activate token, wme, assignments
-      #    t = Token.new token, wme, assignments
-      #    t.node = self
-      def beta_activate token, wme = nil, assignments = { } # => FIXME: beta_activate has different signatures for storing and non-storing nodes...
-        t = Token.new token, nil, {}
-        t.node = self
-        tokens << t
+      def beta_activate token
+        return if @tokens.find { |t| t.parent == token }
+        t = Token.new self, token, nil, {}
+        @tokens << t
         partner.tokens.each do |ncc_token|
           next unless ncc_token.ancestors.find { |a| a.equal? token }
           t.ncc_results << ncc_token
@@ -40,7 +37,40 @@ module Wongi
         end
         if t.ncc_results.empty?
           children.each do |child|
-            child.beta_activate t, nil, {}
+            child.beta_activate Token.new( child, t, nil, { } )
+          end
+        end
+      end
+
+      def beta_deactivate token
+        t = @tokens.find { |tok| tok.parent == token }
+        return unless @tokens.delete t
+        t.deleted!
+        partner.tokens.select { |ncc| ncc.owner == t }.each do |ncc_token|
+          ncc_token.owner = nil
+          t.ncc_results.delete ncc_token
+        end
+        children.each do |beta|
+          beta.tokens.select { |token| token.parent == t }.each do |token|
+            beta.beta_deactivate token
+          end
+        end
+      end
+
+      def ncc_activate token
+        token.deleted = false
+        @tokens << token unless @tokens.include?( token )
+        children.each do |child|
+          child.beta_activate Token.new( child, token, nil, { } )
+        end
+      end
+
+      def ncc_deactivate token
+        return unless @tokens.delete token
+        token.deleted!
+        children.each do |beta|
+          beta.tokens.select { |t| t.parent == token }.each do |t|
+            beta.beta_deactivate t
           end
         end
       end
@@ -48,19 +78,19 @@ module Wongi
       def refresh_child child
         tokens.each do |token|
           if token.ncc_results.empty?
-            child.beta_activate token, nil, {}
+            child.beta_activate Token.new( child, t, nil, { } )
           end
         end
       end
 
-      def delete_token token
-        tokens.delete token
-        token.ncc_results.each do |nccr|
-          nccr.wme.tokens.delete( nccr ) if nccr.wme
-          nccr.parent.children.delete nccr
-        end
-        token.ncc_results.clear
-      end
+      # def delete_token token
+      #   tokens.delete token
+      #   token.ncc_results.each do |nccr|
+      #     nccr.wme.tokens.delete( nccr ) if nccr.wme
+      #     nccr.parent.children.delete nccr
+      #   end
+      #   token.ncc_results.clear
+      # end
 
     end
   end

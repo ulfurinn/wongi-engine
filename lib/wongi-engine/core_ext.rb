@@ -46,6 +46,12 @@ module Wongi::Engine
         end
       end
 
+      def abstract name
+        define_method name do |*args|
+          raise NoMethodError.new "#{name} is not implemented for #{self.class.name}", name
+        end
+      end
+
     end
 
     def self.included mod

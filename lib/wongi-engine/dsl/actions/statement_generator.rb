@@ -51,5 +51,16 @@ module Wongi::Engine
 
     end
 
+    def deexecute token
+      token.generated_wmes.reject( &:manual? ).inject( [] ) do |list, wme|
+        list.tap do |l|
+          wme.generating_tokens.delete token
+          l << wme if wme.generating_tokens.empty?
+        end
+      end.each do |wme|
+        rete.retract wme
+      end
+    end
+
   end
 end

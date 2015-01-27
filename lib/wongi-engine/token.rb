@@ -5,15 +5,18 @@ module Wongi::Engine
     include CoreExt
 
     attr_reader :children
-    attr_accessor :node, :owner, :parent
+    attr_reader :wme
+    attr_reader :node
+    attr_accessor :owner, :parent
     attr_reader :neg_join_results
     attr_reader :opt_join_results
     attr_reader :ncc_results
     attr_reader :generated_wmes
-    attr_predicate :has_optional
+    attr_predicate :optional
+    attr_predicate :deleted
 
-    def initialize token, wme, assignments
-      @parent, @wme, @assignments = token, wme, assignments
+    def initialize node, token, wme, assignments
+      @node, @parent, @wme, @assignments = node, token, wme, assignments
       @children = []
       @deleted = false
       @neg_join_results = []
@@ -49,8 +52,9 @@ module Wongi::Engine
       end
     end
 
-    def duplicate? parent, wme, assignments
-      self.parent.equal?(parent) && @wme.equal?(wme) && self.assignments == assignments
+    # TODO ignore assignments?
+    def duplicate? other
+      self.parent.equal?(other.parent) && @wme.equal?(other.wme) && self.assignments == other.assignments
     end
 
     def to_s
@@ -61,29 +65,26 @@ module Wongi::Engine
     end
 
     def destroy
-      delete_children
-      #@node.tokens.delete self unless @node.kind_of?( NccPartner )
-      @wme.tokens.delete self if @wme
-      @parent.children.delete self if @parent
+      # delete_children
+      # #@node.tokens.delete self unless @node.kind_of?( NccPartner )
+      # @wme.tokens.delete self if @wme
+      # @parent.children.delete self if @parent
 
-      retract_generated
-      @deleted = true
-      @node.delete_token self
+      # retract_generated
+      deleted!
+      # @node.delete_token self
     end
 
-    def deleted?
-      @deleted
-    end
+    # def delete_children
+    #   children = @children
+    #   @children = []
+    #   children.each do |token|
+    #     token.parent = nil
+    #     token.destroy
+    #   end
+    # end
 
-    def delete_children
-      children = @children
-      @children = []
-      children.each do |token|
-        token.parent = nil
-        token.destroy
-      end
-    end
-
+    # for neg feedback loop protection
     def generated? wme
       return true if generated_wmes.any? { |w| w == wme }
       return children.any? { |t| t.generated? wme }
@@ -91,21 +92,21 @@ module Wongi::Engine
 
     protected
 
-    def retract_generated
-      for_retraction = []
+    # def retract_generated
+    #   for_retraction = []
 
-      @generated_wmes.dup.each do |wme|
-        unless wme.manual?  # => TODO: does this ever fail at all?
-          wme.generating_tokens.delete self
-          if wme.generating_tokens.empty?
-            for_retraction << wme
-          end
-        end
-      end
-      @generated_wmes = []
-      for_retraction.each { |wme| wme.rete.retract wme, true }
+    #   @generated_wmes.dup.each do |wme|
+    #     unless wme.manual?  # => TODO: does this ever fail at all?
+    #       wme.generating_tokens.delete self
+    #       if wme.generating_tokens.empty?
+    #         for_retraction << wme
+    #       end
+    #     end
+    #   end
+    #   @generated_wmes = []
+    #   for_retraction.each { |wme| wme.rete.retract wme, true }
 
-    end
+    # end
 
     def all_assignments
       raise "Assignments is not a hash" unless @assignments.kind_of?( Hash )
