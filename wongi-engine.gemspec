@@ -1,6 +1,14 @@
 # -*- encoding: utf-8 -*-
 require File.expand_path('../lib/wongi-engine/version', __FILE__)
 
+def git?
+  File.exists?(".git")
+end
+
+def hg?
+  File.exists?(".hg")
+end
+
 Gem::Specification.new do |gem|
   gem.authors       = ["Valeri Sokolov"]
   gem.email         = ["ulfurinn@ulfurinn.net"]
@@ -9,7 +17,13 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://github.com/ulfurinn/wongi-engine"
   gem.licenses      = %w(MIT)
 
-  gem.files         = `git ls-files`.split($\)
+  if git?
+    gem.files       = `git ls-files`.split($\)
+  elsif hg?
+    gem.files       = `hg st -cn`.split($\)
+  else
+    raise "cannot enumerate files: not a git or hg repository"
+  end
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "wongi-engine"
