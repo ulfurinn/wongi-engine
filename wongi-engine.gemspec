@@ -1,12 +1,14 @@
 # -*- encoding: utf-8 -*-
 require File.expand_path('../lib/wongi-engine/version', __FILE__)
 
-def git?
-  File.exists?(".git")
-end
+module GemHelper
+  def self.git?
+    File.exists?(".git")
+  end
 
-def hg?
-  File.exists?(".hg")
+  def self.hg?
+    File.exists?(".hg")
+  end
 end
 
 Gem::Specification.new do |gem|
@@ -17,9 +19,9 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://github.com/ulfurinn/wongi-engine"
   gem.licenses      = %w(MIT)
 
-  if git?
+  if GemHelper.git?
     gem.files       = `git ls-files`.split($\)
-  elsif hg?
+  elsif GemHelper.hg?
     gem.files       = `hg st -cn`.split($\)
   else
     raise "cannot enumerate files: not a git or hg repository"
