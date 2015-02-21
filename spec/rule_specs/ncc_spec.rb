@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "NCC rule" do
+describe Wongi::Engine::NccNode do
 
   before :each do
     @engine = Wongi::Engine.create
@@ -42,15 +42,15 @@ describe "NCC rule" do
 
     engine << ["base", "is", 1]
 
-    expect(production.size).to eq(1)
+    expect(production).to have(1).token
 
     engine << [1, 2, 3]
 
-    expect(production.size).to eq(1)
+    expect(production).to have(1).token
 
     engine << [3, 4, 5]
 
-    expect(production.size).to eq(0)
+    expect(production).to have(0).token
 
   end
 
@@ -63,13 +63,13 @@ describe "NCC rule" do
     engine << [1, 2, 3]
     engine << [3, 4, 5]
 
-    expect(production.size).to eq(0)
+    expect(production).to have(0).tokens
 
     engine.retract [3, 4, 5]
     expect( production ).to have(1).token
 
     engine.retract ["base", "is", 1]
-    expect(production.size).to eq(0)
+    expect(production).to have(0).tokens
 
   end
 

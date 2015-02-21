@@ -14,31 +14,41 @@ module Wongi
       end
 
       def beta_activate token
-        t = Token.new token, nil, {}
-        t.node = self
-        # owner = ncc.tokens.find do |ncc_token|
-        #   ncc_token.parent.node == divergent
-        # end
-        divergent_token = t.ancestors.find { |a| a.node == divergent }
-        owner = ncc.tokens.find { |o| o.parent == divergent_token }
+        t = Token.new self, token, nil, {}
+        owner = owner_for( t )
+        tokens << t
         if owner
           owner.ncc_results << t
           t.owner = owner
-          owner.delete_children
-        else
-          tokens << t
+          owner.node.ncc_deactivate owner
         end
       end
 
-      def delete_token token
+      def beta_deactivate t
+        token = tokens.find { |tok| tok.parent == t }
+        return unless token
         token.owner.ncc_results.delete token
         if token.owner.ncc_results.empty?
-          ncc.children.each do |node|
-            node.beta_activate token.owner, nil, {}
-          end
+          ncc.ncc_activate token.owner
         end
-
       end
+
+      private
+
+      def owner_for token
+        divergent_token = token.ancestors.find { |t| t.node == divergent }
+        ncc.tokens.find { |t| t.ancestors.include? divergent_token }
+      end
+
+      # def delete_token token
+      #   token.owner.ncc_results.delete token
+      #   if token.owner.ncc_results.empty?
+      #     ncc.children.each do |node|
+      #       node.beta_activate token.owner, nil, {}
+      #     end
+      #   end
+
+      # end
     end
   end
 end

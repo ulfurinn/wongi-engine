@@ -14,16 +14,14 @@ module Wongi::Engine
 
     def seed assignments = {}
       @seed = assignments
-      t = Token.new( nil, nil, assignments )
-      t.node = self
+      t = Token.new( self, nil, nil, assignments )
       @tokens << t
     end
 
     def subst valuations
       @tokens.first.destroy
 
-      token = Token.new( nil, nil, @seed )
-      token.node = self
+      token = Token.new( self, nil, nil, @seed )
       @tokens << token
 
       valuations.each { |variable, value| token.subst variable, value }
@@ -32,40 +30,38 @@ module Wongi::Engine
       end
     end
 
-    def beta_activate token, wme, assignments
-      dp "MEMORY beta-activated with #{wme} #{wme.object_id}"
-      existing = @tokens.reject(&:deleted?).find { |et| et.duplicate? token, wme, assignments }
-      if existing
-        t = existing
-      else
-        t = Token.new( token, wme, assignments)
-        t.node = self
-        @tokens << t
+    def beta_activate token
+      existing = @tokens.reject(&:deleted?).find { |et| et.duplicate? token }
+      return if existing # TODO really?
+      @tokens << token
+      children.each do |child|
+        child.beta_activate token
       end
-      self.children.each do |child|
-        if child.kind_of? BetaMemory
-          child.beta_activate t, nil, {}
-        else
-          child.beta_activate t
-        end
+      token
+    end
+
+    def beta_deactivate token
+      return nil unless tokens.find token
+      @tokens.delete token
+      token.deleted!
+      if token.parent
+        token.parent.children.delete token # should this go into Token#destroy?
       end
-      t
+      children.each do |child|
+        child.beta_deactivate token
+      end
+      token
     end
 
     def refresh_child child
       tokens.each do |token|
-        case child
-        when BetaMemory, NegNode
-          child.beta_activate token, nil, {}
-        else
-          child.beta_activate token
-        end
+        child.beta_activate token
       end
     end
 
-    def delete_token token
-      @tokens.delete token
-    end
+    # def delete_token token
+    #   @tokens.delete token
+    # end
 
     # => TODO: investigate if we really need this
     #def beta_memory

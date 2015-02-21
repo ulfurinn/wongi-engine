@@ -56,7 +56,8 @@ describe "issue 4" do
 
   end
 
-  it "should correctly retract later items from within a rule" do
+  # cascaded processing affects this
+  it "should not retract later items from within a rule", :debug do
 
     engine = Wongi::Engine.create
 
@@ -74,7 +75,7 @@ describe "issue 4" do
             engine.retract [number, :is_number, true]
             engine.retract [number + 1, :is_number, true]
           else
-            # this should never be reached
+            # this is not reached without cascades
             engine << [number, :is_odd, true]
           end
         }
@@ -86,8 +87,8 @@ describe "issue 4" do
     odds = engine.select :_, :is_odd, true
 
     expect(numbers).to be_empty
-    expect(evens.length).to eq(5)
-    expect(odds).to be_empty
+    expect(evens).to have(5).items
+    expect(odds).to have(5).items
 
   end
 

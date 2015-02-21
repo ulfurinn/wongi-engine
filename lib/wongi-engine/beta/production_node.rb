@@ -7,17 +7,20 @@ module Wongi
 
       def initialize parent, actions
         super(parent)
-        @actions = actions
-        @actions.each { |action| action.production = self }
+        @actions = actions.each { |action| action.production = self }
       end
 
-      def beta_activate token, wme, assignments
-        generated = super
+      def beta_activate token
+        return unless super
         @actions.each do |action|
-          # @tokens.each do |t|
-          #  action.execute t
-          # end
-          action.execute generated if action.respond_to? :execute
+          action.execute token if action.respond_to? :execute
+        end
+      end
+
+      def beta_deactivate token
+        return unless super
+        @actions.each do |action|
+          action.deexecute token if action.respond_to? :deexecute
         end
       end
 
