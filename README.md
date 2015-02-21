@@ -459,6 +459,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.1.0
+
+* massively rewritten rule activation; this simplifies development and debugging and opens the road for useful features such as fully reversible custom actions
+
 ### 0.0.17
 
 * introduced the `assuming` matcher
