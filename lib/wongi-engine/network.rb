@@ -92,9 +92,9 @@ module Wongi::Engine
       end
     end
 
-    def retract wme
+    def retract wme, options = { }
       @next_cascade ||= []
-      @next_cascade << [:retract, wme]
+      @next_cascade << [:retract, wme, options]
       if @current_cascade.nil?
         @current_cascade = @next_cascade
         @next_cascade = nil
@@ -105,12 +105,12 @@ module Wongi::Engine
     def process_cascade
       iterations = 0
       while @current_cascade
-        @current_cascade.each do |(operation, wme)|
+        @current_cascade.each do |(operation, wme, options)|
           case operation
           when :assert
             real_assert wme
           when :retract
-            real_retract wme
+            real_retract wme, options
           end
         end
         @current_cascade = @next_cascade
@@ -130,7 +130,10 @@ module Wongi::Engine
         wme.context = @current_context
       end
 
-      return if @cache.has_key?(wme)
+      if existing = @cache[wme]
+        existing.manual! if wme.manual?
+        return
+      end
 
       # puts "ASSERTING #{wme}"
       @cache[wme] = wme
@@ -218,27 +221,31 @@ module Wongi::Engine
       end
     end
 
-    def real_retract wme, is_real = false
+    def real_retract wme, options
 
       if wme.is_a? Array
-        return real_retract( WME.new(*wme), is_real )
+        return real_retract( WME.new(*wme), options )
       end
 
-      if ! is_real
-        if @current_context
-          @current_context.retracted_wmes << wme
+      real = @cache[wme]
+
+      return if real.nil?
+      if real.generated? # still some generator tokens left
+        if real.manual?
+          real.manual = false
+        else
+          raise "cannot retract automatic facts"
+        end
+      else
+        if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
+          return
         end
       end
 
-      real = if is_real
-        wme
-      else
-        #find(wme.subject, wme.predicate, wme.object)
-        @cache[wme]
+      if @current_context
+        @current_context.retracted_wmes << wme
       end
 
-      return if real.nil?
-      raise "Cannot retract inferred statements" unless real.manual?
       @cache.delete(real)
 
       alphas_for( real ).each { |a| a.deactivate real }
@@ -323,6 +330,7 @@ module Wongi::Engine
       end
     end
 
+    # TODO: contexts are probably broken with the new improved handling of manual & generated
     def retract_context name
       return unless @contexts.has_key?(name)
 

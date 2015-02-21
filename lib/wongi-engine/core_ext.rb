@@ -18,12 +18,12 @@ module Wongi::Engine
         names_hash.each do |name, def_value|
 
           varname = "@#{name}".to_sym
-          getname = "#{name}?".to_sym
+          predname = "#{name}?".to_sym
           setname = "#{name}=".to_sym
           exclname = "#{name}!".to_sym
           noexclname = "no_#{name}!".to_sym
 
-          define_method getname do
+          define_method predname do
             if instance_variable_defined?( varname )
               instance_variable_get( varname )
             else

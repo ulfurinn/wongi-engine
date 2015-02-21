@@ -33,6 +33,7 @@ module Wongi::Engine
 
       # link to rete here to ensure proper linking with token
       wme = WME.new subject, predicate, object, rete
+      wme.manual = false
 
       production.tracer.trace( action: self, wme: wme ) if production.tracer
       if existing = rete.exists?( wme )
@@ -58,7 +59,7 @@ module Wongi::Engine
           l << wme if wme.generating_tokens.empty?
         end
       end.each do |wme|
-        rete.retract wme
+        rete.retract wme, automatic: true
       end
     end
 

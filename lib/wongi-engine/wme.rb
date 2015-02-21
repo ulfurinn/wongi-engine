@@ -9,8 +9,11 @@ module Wongi::Engine
     attr_reader :alphas, :tokens, :generating_tokens
     attr_reader :neg_join_results, :opt_join_results
     attr_predicate :deleted
+    attr_predicate :manual
 
     def initialize s, p, o, r = nil
+
+      manual!
 
       @deleted = false
       @alphas = []
@@ -30,11 +33,15 @@ module Wongi::Engine
     end
 
     def import_into r
-      self.class.new subject, predicate, object, r
+      self.class.new( subject, predicate, object, r ).tap do |wme|
+        wme.manual = self.manual?
+      end
     end
 
     def dup
-      self.class.new subject, predicate, object, rete
+      self.class.new( subject, predicate, object, rete ).tap do |wme|
+        wme.manual = self.manual?
+      end
     end
 
     def == other
@@ -49,12 +56,8 @@ module Wongi::Engine
       end
     end
 
-    def manual?
-      generating_tokens.empty?
-    end
-
     def generated?
-      !manual?
+      !generating_tokens.empty?
     end
 
     # def destroy
