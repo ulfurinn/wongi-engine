@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Wongi-engine : A rule engine written in Ruby.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Wongi-engine</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ulfurinn/wongi-engine">View on GitHub</a>
+
+          <h1 id="project_title">Wongi-engine</h1>
+          <h2 id="project_tagline">A rule engine written in Ruby.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ulfurinn/wongi-engine/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ulfurinn/wongi-engine/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="wongiengine" class="anchor" href="#wongiengine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Wongi::Engine</h1>
+
+<p>This library contains a rule engine written in Ruby. It's based on the <a href="http://en.wikipedia.org/wiki/Rete_algorithm">Rete algorithm</a> and uses a DSL to express rules in a readable way.</p>
+
+<p><a href="https://travis-ci.org/ulfurinn/wongi-engine"><img src="https://travis-ci.org/ulfurinn/wongi-engine.svg?branch=master" alt="Build Status"></a> (MRI 1.9.3, 2.0, 2.1, 2.2, Rubinius, JRuby)</p>
+
+<h2>
+<a id="word-of-caution" class="anchor" href="#word-of-caution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Word of caution</h2>
+
+<p>This is complex and fragile machinery, and there may be subtle bugs that are only revealed with nontrivial usage. Be conservative with upgrades, test your rules extensively, and please report any behaviour that is not consistent with your expectations.</p>
+
+<h2>
+<a id="tutorial" class="anchor" href="#tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tutorial</h2>
+
+<p>To begin, say</p>
+
+<pre><code>engine = Wongi::Engine.create
+</code></pre>
+
+<p>Now let's add some facts to the system.</p>
+
+<h3>
+<a id="facts" class="anchor" href="#facts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Facts</h3>
+
+<p>All knowledge in Wongi::Engine is represented by triples of { subject, predicate, object }. Predicates usually stand for subjects' properties, and objects for values of those properties. More complex types can always be decomposed into such triples.</p>
+
+<p>Triples can contain any Ruby object that defines the <code>==</code> comparison in a meaningful way, but some symbols have special meaning, as we will see.</p>
+
+<p>Try this:</p>
+
+<div class="highlight highlight-ruby"><pre>engine <span class="pl-k">&lt;&lt;</span> [ <span class="pl-s1"><span class="pl-pds">"</span>Alice<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>Bob<span class="pl-pds">"</span></span> ]
+engine <span class="pl-k">&lt;&lt;</span> [ <span class="pl-s1"><span class="pl-pds">"</span>Alice<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-c1">35</span> ]</pre></div>
+
+<p>To remove facts, say:</p>
+
+<div class="highlight highlight-ruby"><pre>engine.retract [ <span class="pl-s1"><span class="pl-pds">"</span>Alice<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-c1">35</span> ]</pre></div>
+
+<p>What can we do with this information?</p>
+
+<h3>
+<a id="simple-iteration" class="anchor" href="#simple-iteration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple iteration</h3>
+
+<p>Suppose we want to list all we know about Alice. You could, for instance, do:</p>
+
+<div class="highlight highlight-ruby"><pre>engine.each <span class="pl-s1"><span class="pl-pds">"</span>Alice<span class="pl-pds">"</span></span>, <span class="pl-c1">:_</span>, <span class="pl-c1">:_</span> <span class="pl-k">do </span>|<span class="pl-vo">item</span>|
+    puts <span class="pl-s1"><span class="pl-pds">"</span>Alice's <span class="pl-pse">#{</span><span class="pl-s2">item.predicate</span><span class="pl-pse"><span class="pl-s2">}</span></span> is <span class="pl-pse">#{</span><span class="pl-s2">item.object</span><span class="pl-pse"><span class="pl-s2">}</span></span><span class="pl-pds">"</span></span>
+<span class="pl-k">end</span></pre></div>
+
+<p><code>each</code> takes three arguments for every field of a triple and tries to match the resulting template against the known facts. <code>:_</code> is the special value that matches anything. This kind of pattern matching plays a large role in Wongi::Engine; more on that later.</p>
+
+<p>In a similar way, you can use <code>select</code> to get an array of matching facts and <code>find</code> to get the first matching one. Both methods take three arguments.</p>
+
+<h3>
+<a id="simple-rules" class="anchor" href="#simple-rules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple rules</h3>
+
+<p>It's not very interesting to use the engine like that, though. Rule engines are supposed to be declarative. Let's try this:</p>
+
+<div class="highlight highlight-ruby"><pre>friends <span class="pl-k">=</span> engine.rule <span class="pl-s1"><span class="pl-pds">"</span>friends<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    forall {
+        has <span class="pl-c1">:PersonA</span>, <span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-c1">:PersonB</span>
+    }
+<span class="pl-k">end</span></pre></div>
+
+<p>Here's your first taste of the engine's DSL. A rule, generally speaking, consists of a number of conditions the dataset needs to meet; those are defined in the <code>forall</code> section (also spelled <code>for_all</code>, if you prefer that). <code>has</code> (or <code>fact</code>) specifies that there needs to be a fact that matches the given pattern; in this case, one with the predicate <code>"friend"</code>.</p>
+
+<p>When a pattern contains a symbol that starts with an uppercase letter, it introduces a variable which will be bound to an actual triple field. Their values can be retrieved from the result set:</p>
+
+<div class="highlight highlight-ruby"><pre>friends.tokens.each <span class="pl-k">do </span>|<span class="pl-vo">token</span>|
+    puts <span class="pl-s1"><span class="pl-pds">"</span>%s and %s are friends<span class="pl-pds">"</span></span> <span class="pl-k">%</span> [ token[ <span class="pl-c1">:PersonA</span> ], token[ <span class="pl-c1">:PersonB</span> ] ]
+<span class="pl-k">end</span></pre></div>
+
+<p>A <strong>token</strong> represents all facts that passed the rule's conditions. If you think of the dataset as of a long SQL table being joined with itself, then a token is like a row in the resulting table.</p>
+
+<p>If you don't care about a specific field's value, you can use the all-matcher <code>:_</code> in its place so as not to introduce unnecessary variables.</p>
+
+<p>Once a variable is bound, it can be used to match further facts within a rule. Let's add another friendship:</p>
+
+<div class="highlight highlight-ruby"><pre>engine <span class="pl-k">&lt;&lt;</span> [ <span class="pl-s1"><span class="pl-pds">"</span>Bob<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>Claire<span class="pl-pds">"</span></span> ]</pre></div>
+
+<p>and another rule:</p>
+
+<div class="highlight highlight-ruby"><pre>remote <span class="pl-k">=</span> engine.rule <span class="pl-s1"><span class="pl-pds">"</span>remote friends<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    forall {
+        has <span class="pl-c1">:PersonA</span>, <span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-c1">:PersonB</span>
+        has <span class="pl-c1">:PersonB</span>, <span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-c1">:PersonC</span>
+    }
+<span class="pl-k">end</span>
+
+remote.tokens.each <span class="pl-k">do </span>|<span class="pl-vo">token</span>|
+    puts <span class="pl-s1"><span class="pl-pds">"</span>%s and %s are friends through %s<span class="pl-pds">"</span></span> <span class="pl-k">%</span> [ token[ <span class="pl-c1">:PersonA</span> ], token[ <span class="pl-c1">:PersonC</span> ], token[ <span class="pl-c1">:PersonB</span> ] ]
+<span class="pl-k">end</span></pre></div>
+
+<p>(<code>engine.rule</code> returns the created <strong>production node</strong> - an object that accumulates the rule's result set. You don't have to carry it around if you don't want to - it is always possible to retrieve it later as <code>engine.productions["remote friends"]</code>.)</p>
+
+<h3>
+<a id="stored-queries" class="anchor" href="#stored-queries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stored queries</h3>
+
+<p>Taking the SQL metaphor further, you can use the engine to do fancy searches:</p>
+
+<div class="highlight highlight-ruby"><pre>q <span class="pl-k">=</span> engine.query <span class="pl-s1"><span class="pl-pds">"</span>friends<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    search_on <span class="pl-c1">:Name</span>
+    forall {
+        has <span class="pl-c1">:Name</span>, <span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-c1">:Friend</span>
+    }
+<span class="pl-k">end</span>
+
+engine.execute <span class="pl-s1"><span class="pl-pds">"</span>friends<span class="pl-pds">"</span></span>, { <span class="pl-c1">Name:</span> <span class="pl-s1"><span class="pl-pds">"</span>Alice<span class="pl-pds">"</span></span> }
+q.tokens.each <span class="pl-k">do </span>|<span class="pl-vo">token</span>|
+    ... <span class="pl-c"># you know the drill</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>Not that this is a particularly fancy search, but you get the idea.</p>
+
+<p>Queries work the same way as normal rules, but they come with some variables already bound by the time matching starts.</p>
+
+<p>You can also retrieve the query's production node from <code>engine.results["friends"]</code> (they are intentionally kept separate from regular productions).</p>
+
+<h3>
+<a id="taking-an-action" class="anchor" href="#taking-an-action" aria-hidden="true"><span class="octicon octicon-link"></span></a>Taking an action</h3>
+
+<p>There's more to rules than passive accumulation:</p>
+
+<div class="highlight highlight-ruby"><pre>engine.rule <span class="pl-s1"><span class="pl-pds">"</span>self-printer<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    forall {
+        has <span class="pl-c1">:PersonA</span>, <span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-c1">:PersonB</span>
+    }
+    make {
+        action { |<span class="pl-vo">token</span>|
+            puts <span class="pl-s1"><span class="pl-pds">"</span>%s and %s are friends<span class="pl-pds">"</span></span> <span class="pl-k">%</span> [ token[ <span class="pl-c1">:PersonA</span> ], token[ <span class="pl-c1">:PersonB</span> ] ]
+        }
+    }
+<span class="pl-k">end</span></pre></div>
+
+<p>The <code>make</code> section (also spelled <code>do!</code>, if you find it more agreeable English, because <code>do</code> is a keyword in Ruby) lists everything that happens when a rule's conditions are fully matched (we say "the production node is <strong>activated</strong>"). Wongi::Engine provides only a small amount of built-in actions, but you can define your own ones, and the simplest one is just <code>action</code> with a block. The block will be executed in the engine's context.</p>
+
+<h3>
+<a id="more-facts" class="anchor" href="#more-facts" aria-hidden="true"><span class="octicon octicon-link"></span></a>More facts!</h3>
+
+<p>Note how our facts define relations that always go from subject to object - they form a directed graph. In a perfect world, friendships go both ways, but to specify this in our model, we need to have two facts for each couple. Instead of duplicating everything by hand, let's automate that:</p>
+
+<div class="highlight highlight-ruby"><pre>engine.rule <span class="pl-s1"><span class="pl-pds">"</span>symmetric predicate<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    forall {
+        has <span class="pl-c1">:Predicate</span>, <span class="pl-s1"><span class="pl-pds">"</span>symmetric<span class="pl-pds">"</span></span>, <span class="pl-c1">true</span>
+        has <span class="pl-c1">:X</span>, <span class="pl-c1">:Predicate</span>, <span class="pl-c1">:Y</span>
+    }
+    make {
+        gen <span class="pl-c1">:Y</span>, <span class="pl-c1">:Predicate</span>, <span class="pl-c1">:X</span>
+    }
+<span class="pl-k">end</span>
+
+engine <span class="pl-k">&lt;&lt;</span> [<span class="pl-s1"><span class="pl-pds">"</span>friend<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>symmetric<span class="pl-pds">"</span></span>, <span class="pl-c1">true</span>]</pre></div>
+
+<p>If you still have the "self-printer" rule installed, you will see some new friendships pop up immediately!</p>
+
+<p>The built-in <code>gen</code> action creates new facts, taking either fixed values or variables as arguments. (It will complain if you provide a variable that isn't bound by the time it's activated.) Here, it takes all relations we've defined to be <a href="http://en.wikipedia.org/wiki/Symmetric_relation">symmetric</a>, finds all couples in those sorts of relations and turns them around.</p>
+
+<h3>
+<a id="matchers" class="anchor" href="#matchers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Matchers</h3>
+
+<p>It wouldn't be very useful if <code>has</code> were the only sort of condition that could be used. Here are some more:</p>
+
+<h4>
+<a id="neg-subject-predicate-object" class="anchor" href="#neg-subject-predicate-object" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>neg subject, predicate, object</code>
+</h4>
+
+<p>Passes if the specified template does <em>not</em> match anything in the dataset. Alias: <code>missing</code>.</p>
+
+<h4>
+<a id="maybe-subject-predicate-object" class="anchor" href="#maybe-subject-predicate-object" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>maybe subject, predicate, object</code>
+</h4>
+
+<p>Passes whether or not the template matches anything. It's only useful if it introduces a new variable; you can think of <code>LEFT JOIN</code>. Alias: <code>optional</code>.</p>
+
+<h4>
+<a id="none---" class="anchor" href="#none---" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>none { ... }</code>
+</h4>
+
+<p>The <code>none</code> block contains other matchers and passes if that <em>entire subchain</em> returns an empty set. In other words, it corresponds to an expression <code>not ( a and b and ... )</code>.</p>
+
+<h4>
+<a id="any--option-----" class="anchor" href="#any--option-----" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>any { option { ... } ... }</code>
+</h4>
+
+<p>The <code>any</code> block contains several <code>option</code> blocks, each of them containing other matchers. It passes if any of the <code>option</code> subchains matches. It's a shame that disjunction has to be so much more verbose than conjunction, but life is cruel.</p>
+
+<h4>
+<a id="same-x-y" class="anchor" href="#same-x-y" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>same x, y</code>
+</h4>
+
+<p>Passes if the arguments are equal. Alias: <code>eq</code>, <code>equal</code>.</p>
+
+<h4>
+<a id="diff-x-y" class="anchor" href="#diff-x-y" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>diff x, y</code>
+</h4>
+
+<p>Passes if the arguments are not equal. Alias: <code>ne</code>.</p>
+
+<h4>
+<a id="less-x-y-greater-x-y" class="anchor" href="#less-x-y-greater-x-y" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>less x, y</code>, <code>greater x, y</code>
+</h4>
+
+<p>Should be obvious by now.</p>
+
+<h4>
+<a id="assuming-rule_name" class="anchor" href="#assuming-rule_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>assuming rule_name</code>
+</h4>
+
+<p>This is a shortcut for extending a common base rule with additional matchers. <code>rule_name</code> must already be installed on the same engine instance. <code>assuming</code> must be the first clause in the extending rule.</p>
+
+<div class="highlight highlight-ruby"><pre>engine <span class="pl-k">&lt;&lt;</span> rule( <span class="pl-c1">:base</span> ) {
+  forall {
+    has <span class="pl-c1">:x</span>, <span class="pl-c1">:y</span>, <span class="pl-c1">:Z</span>
+  }
+}
+
+engine <span class="pl-k">&lt;&lt;</span> rule {
+  forall {
+    assuming <span class="pl-c1">:base</span>
+    has <span class="pl-c1">:Z</span>, <span class="pl-c1">:u</span>, <span class="pl-c1">:W</span>
+  }
+}</pre></div>
+
+<h4>
+<a id="assert--token---assert-var1-var2--do-val1-val2----end" class="anchor" href="#assert--token---assert-var1-var2--do-val1-val2----end" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>assert { |token| ... }</code>, <code>assert var1, var2, ... do |val1, val2, ... | ... end</code>
+</h4>
+
+<p>Passes if the block evaluates to <code>true</code>. Having no arguments passes the entire token as an argument, listing some variables passes only their values.</p>
+
+<h4>
+<a id="assign-variable-do-token--end" class="anchor" href="#assign-variable-do-token--end" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>assign variable do |token| ... end</code>
+</h4>
+
+<p>Not a <em>matcher</em>, strictly speaking, because it always passes. What it does instead is introduce a new variable bound to the block's return value.</p>
+
+<h3>
+<a id="feedback-loop-prevention" class="anchor" href="#feedback-loop-prevention" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feedback loop prevention</h3>
+
+<p>Consider the following rule:</p>
+
+<div class="highlight highlight-ruby"><pre>engine.rule <span class="pl-s1"><span class="pl-pds">"</span>default value<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    forall {
+        neg <span class="pl-c1">:car</span>, <span class="pl-c1">:colour</span>, <span class="pl-c1">:_</span>
+    }
+    make {
+        gen <span class="pl-c1">:car</span>, <span class="pl-c1">:colour</span>, <span class="pl-s1"><span class="pl-pds">"</span>black<span class="pl-pds">"</span></span>
+    }
+<span class="pl-k">end</span></pre></div>
+
+<p>The intent here is to provide a default value for an attribute; however, how will it actually execute?</p>
+
+<ol>
+<li>The fact is missing, activate the rule, generate the fact.</li>
+<li>The fact is present, invalidate the rule, retract the generated fact.</li>
+<li>The fact is missing...</li>
+</ol>
+
+<p>...and so on until you get a stack overflow. In situations like this the engine will try to do the pragmatic thing and detect the loop, stopping after step 1. If you want to keep the "pure" behaviour, give the <code>unsafe: true</code> option to the <code>neg</code> rule and try to do the same thing with helper facts.</p>
+
+<p><strong>Note</strong>: this is a specific use case; it is still perfectly possible to construct more elaborate infinite cascades involving several rules that will not be caught.</p>
+
+<h3>
+<a id="timeline" class="anchor" href="#timeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Timeline</h3>
+
+<p>Wongi::Engine has a limited concept of timed facts: time is discrete and only extends into the past. Matchers that accept a triple specification (<code>has</code>, <code>neg</code> and <code>maybe</code>) can also accept a <code>time</code> option, an integer &lt;= 0, which will make them look at a past state of the system. "0" means the current state and is the default value, "-1" means the one just before the current, and so on.</p>
+
+<p>To create past states, say:</p>
+
+<div class="highlight highlight-ruby"><pre>engine.snapshot!</pre></div>
+
+<p>This will shift all facts one step into the past. The new current state will be a copy of the last one. You can only insert new facts into the current state, "retroactive" facts are not allowed.</p>
+
+<h3>
+<a id="time-aware-matchers" class="anchor" href="#time-aware-matchers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time-aware matchers</h3>
+
+<p>The following matchers are nothing but syntactic sugar for a combination of primitives.</p>
+
+<h4>
+<a id="asserted-subject-predicate-object" class="anchor" href="#asserted-subject-predicate-object" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>asserted subject, predicate, object</code>
+</h4>
+
+<p>Short for:</p>
+
+<div class="highlight highlight-ruby"><pre>has subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-c1">0</span>
+neg subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-k">-</span><span class="pl-c1">1</span></pre></div>
+
+<p>That is, it passes if the fact was missing in the previous state but exists in the current one. Alias: <code>added</code>.</p>
+
+<h4>
+<a id="retracted-subject-predicate-object" class="anchor" href="#retracted-subject-predicate-object" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>retracted subject, predicate, object</code>
+</h4>
+
+<p>Short for:</p>
+
+<div class="highlight highlight-ruby"><pre>has subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-k">-</span><span class="pl-c1">1</span>
+neg subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-c1">0</span></pre></div>
+
+<p>The reverse of <code>asserted</code>. Alias: <code>removed</code>.</p>
+
+<h4>
+<a id="kept-subject-predicate-object" class="anchor" href="#kept-subject-predicate-object" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>kept subject, predicate, object</code>
+</h4>
+
+<p>Short for:</p>
+
+<div class="highlight highlight-ruby"><pre>has subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-k">-</span><span class="pl-c1">1</span>
+has subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-c1">0</span></pre></div>
+
+<p>Alias: <code>still_has</code>.</p>
+
+<h4>
+<a id="kept_missing-subject-predicate-object" class="anchor" href="#kept_missing-subject-predicate-object" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>kept_missing subject, predicate, object</code>
+</h4>
+
+<p>Short for:</p>
+
+<div class="highlight highlight-ruby"><pre>neg subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-k">-</span><span class="pl-c1">1</span>
+neg subject, predicate, object, <span class="pl-c1">time:</span> <span class="pl-c1">0</span></pre></div>
+
+<p>Since neg rules cannot introduce new variables, neither can this one.</p>
+
+<p>Alias: <code>still_missing</code>.</p>
+
+<h3>
+<a id="other-built-in-actions" class="anchor" href="#other-built-in-actions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other built-in actions</h3>
+
+<h4>
+<a id="collect-variable-collector_name" class="anchor" href="#collect-variable-collector_name" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>collect variable, collector_name</code>
+</h4>
+
+<p>If you use this action, <code>engine.collection( collector_name )</code> will provide a <code>uniq</code>'ed array of all values <code>variable</code> has been bound to. It's a bit shorter than iterating over the tokens by hand.</p>
+
+<h4>
+<a id="error-message-error--hash_of_variable_assignments--" class="anchor" href="#error-message-error--hash_of_variable_assignments--" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>error message</code>, <code>error { |hash_of_variable_assignments| ... }</code>
+</h4>
+
+<p>Useful when you want to detect contradictory facts. <code>engine.errors</code> will give an array of all error messages produced when this action is activated. If you use the block form, the block needs to return a message.</p>
+
+<h4>
+<a id="trace-options" class="anchor" href="#trace-options" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>trace options</code>
+</h4>
+
+<p>The debugging action that will print a message every time it's activated. Possible options are:</p>
+
+<ul>
+<li>
+<code>values</code> (boolean = false): whether to print variable assignments as well</li>
+<li>
+<code>io</code> (IO = $stdout): which IO object to use</li>
+<li>
+<code>generation</code> (boolean = false): whether this rule's <code>gen</code> action should print messages too. <code>trace</code> must come before any <code>gen</code> actions in this case.</li>
+<li>
+<code>tracer</code>, <code>tracer_class</code>: a custom tracer that must respond to <code>trace</code> and accept a hash argument. Hash contents will vary depending on the action being traced.</li>
+</ul>
+
+<h3>
+<a id="custom-actions" class="anchor" href="#custom-actions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom actions</h3>
+
+<p>We've seen one way to specify custom actions: using <code>action</code> with a block. Another way to use it is to say:</p>
+
+<div class="highlight highlight-ruby"><pre>action <span class="pl-k">class</span>, ... <span class="pl-k">do</span>
+    ...
+<span class="pl-k">end</span></pre></div>
+
+<p>Any additional arguments or blocks will be given to <code>initialize</code>, and the class must define an <code>execute</code> method taking a token. Passing any object with an <code>execute</code> method also works.</p>
+
+<p>If your action class inherits from <code>Wongi::Engine::Action</code>, you'll have the following (more or less useful) attributes:</p>
+
+<ul>
+<li>
+<code>rete</code>: the engine instance</li>
+<li>
+<code>rule</code>: the rule object that is using this action</li>
+<li>
+<code>name</code>: the extension clause used to define this action (read more under <a href="#dsl-extensions">DSL extensions</a>)</li>
+<li>
+<code>production</code>: the production node</li>
+</ul>
+
+<p>If you can't or don't want to inherit, you can define the accessors yourself. Having just the ones you need is fine.</p>
+
+<h3>
+<a id="organising-rules" class="anchor" href="#organising-rules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Organising rules</h3>
+
+<p>Using <code>engine.rule</code> and <code>engine.query</code> is fine if you want to experiment, but to make rules and queries more manageable, you will probably want to keep them separate from the engine instance. One way to do that is to just say:</p>
+
+<div class="highlight highlight-ruby"><pre>my_rule <span class="pl-k">=</span> rule <span class="pl-s1"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    ...
+<span class="pl-k">end</span>
+
+engine <span class="pl-k">&lt;&lt;</span> my_rule</pre></div>
+
+<p>For even more convenience, why not group rules together:</p>
+
+<div class="highlight highlight-ruby"><pre>my_ruleset <span class="pl-k">=</span> ruleset {
+    rule <span class="pl-s1"><span class="pl-pds">"</span>rule 1<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+        ...
+    <span class="pl-k">end</span>
+    rule <span class="pl-s1"><span class="pl-pds">"</span>rule 2<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+        ...
+    <span class="pl-k">end</span>
+}
+
+engine <span class="pl-k">&lt;&lt;</span> my_ruleset</pre></div>
+
+<p>Again, you don't need to hold on to object references if you don't want to:</p>
+
+<div class="highlight highlight-ruby"><pre>ruleset <span class="pl-s1"><span class="pl-pds">"</span>my set<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+    ...
+<span class="pl-k">end</span>
+
+engine <span class="pl-k">&lt;&lt;</span> <span class="pl-s3">Wongi</span>::<span class="pl-s3">Engine</span>::<span class="pl-s3">Ruleset</span>[ <span class="pl-s1"><span class="pl-pds">"</span>my set<span class="pl-pds">"</span></span> ]</pre></div>
+
+<h3>
+<a id="dsl-extensions" class="anchor" href="#dsl-extensions" aria-hidden="true"><span class="octicon octicon-link"></span></a>DSL extensions</h3>
+
+<p>This is a more advanced method of customising. In general, DSL extensions have the form:</p>
+
+<div class="highlight highlight-ruby"><pre>dsl {
+    section [ <span class="pl-c1">:forall</span> <span class="pl-k">|</span> <span class="pl-c1">:make</span> ]
+    clause <span class="pl-c1">:my_action</span>
+    [ action <span class="pl-k">|</span> accept <span class="pl-k">|</span> body ] ...
+}</pre></div>
+
+<p>which is then used in a rule like this:</p>
+
+<div class="highlight highlight-ruby"><pre>make {
+    my_action ...
+}</pre></div>
+
+<p>DSL extensions are globally visible to all engine instances.</p>
+
+<p>Let's have a look at the three ways to define a clause's implementation.</p>
+
+<h4>
+<a id="body----" class="anchor" href="#body----" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>body { |...| ... }</code>
+</h4>
+
+<p>This simply allows you to group several other actions or matchers. It is perhaps the only way you have to extend the <code>forall</code> section, as any non-trivial matchers will require special support from the engine itself.</p>
+
+<h4>
+<a id="action-class-action-do-token--end" class="anchor" href="#action-class-action-do-token--end" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>action class</code>, <code>action do |token| ... end</code>
+</h4>
+
+<p>This works almost exactly like using the <code>action</code> action directly in a rule, but gives it a more meaningful alias. Arguments to <code>initialize</code>, however, are taken from the action's invocation in <code>make</code>, not the definition.</p>
+
+<p>A useful pattern is having specialised named collectors, defined like this:</p>
+
+<div class="highlight highlight-ruby"><pre>dsl {
+    section <span class="pl-c1">:make</span>
+    clause <span class="pl-c1">:my_collection</span>
+    action <span class="pl-s3">Wongi</span>::<span class="pl-s3">Engine</span>::<span class="pl-s3">SimpleCollector</span>.collector
+}</pre></div>
+
+<p>installed like this:</p>
+
+<div class="highlight highlight-ruby"><pre>rule(<span class="pl-s1"><span class="pl-pds">'</span>collecting<span class="pl-pds">'</span></span>) {
+    ...
+    make {
+        my_collection <span class="pl-c1">:X</span>
+    }
+}</pre></div>
+
+<p>and accessed like this:</p>
+
+<div class="highlight highlight-ruby"><pre>collection <span class="pl-k">=</span> engine.collection <span class="pl-c1">:my_collection</span></pre></div>
+
+<h4>
+<a id="accept-class" class="anchor" href="#accept-class" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>accept class</code>
+</h4>
+
+<p>Most library users probably won't need this, but it's here for completion. Acceptors represent an intermediate state. They allow you to have some shared data that you customize for a given engine instance. The class needs to respond to <code>import_into( engine_instance )</code> and return something usable as an action, or to be usable as an action itself.</p>
+
+<p>The class also gets arguments to <code>initialize</code> from the action's invocation.</p>
+
+<h2>
+<a id="acknowledgements" class="anchor" href="#acknowledgements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Acknowledgements</h2>
+
+<p>The Rete implementation in this library largely follows the outline presented in <a href="http://reports-archive.adm.cs.cmu.edu/anon/1995/CMU-CS-95-113.pdf">[Doorenbos, 1995]</a>.</p>
+
+<h2>
+<a id="changelog" class="anchor" href="#changelog" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changelog</h2>
+
+<h3>
+<a id="010" class="anchor" href="#010" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.1.0</h3>
+
+<ul>
+<li>massively rewritten rule activation; this simplifies development and debugging and opens the road for useful features such as fully reversible custom actions</li>
+</ul>
+
+<h3>
+<a id="0017" class="anchor" href="#0017" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.17</h3>
+
+<ul>
+<li>introduced the <code>assuming</code> matcher</li>
+</ul>
+
+<h3>
+<a id="0013" class="anchor" href="#0013" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.13</h3>
+
+<ul>
+<li>fixed a bug with recursive generations of multiple facts</li>
+</ul>
+
+<h3>
+<a id="0012" class="anchor" href="#0012" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.12</h3>
+
+<ul>
+<li>fixed another NCC bug</li>
+</ul>
+
+<h3>
+<a id="0011" class="anchor" href="#0011" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.11</h3>
+
+<ul>
+<li>fixed cleanup of invalidated NCC branches</li>
+</ul>
+
+<h3>
+<a id="0010" class="anchor" href="#0010" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.10</h3>
+
+<ul>
+<li>fixed interaction of filters and optional nodes</li>
+</ul>
+
+<h3>
+<a id="009" class="anchor" href="#009" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.9</h3>
+
+<ul>
+<li>fixed the definition of <code>asserted</code> (#16)</li>
+</ul>
+
+<h3>
+<a id="008" class="anchor" href="#008" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.8</h3>
+
+<ul>
+<li>preventing the feedback loop introduced in 0.0.7; experimental</li>
+</ul>
+
+<h3>
+<a id="007" class="anchor" href="#007" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.7</h3>
+
+<ul>
+<li>added a guard against introducing variables in neg clauses</li>
+<li>fixed execution context of simple action block (#7)</li>
+<li>fixed #4 once more, better</li>
+<li>fixed a bug with OptionalNode (#12)</li>
+<li>fixed behaviour of neg nodes; this will cause feedback loops when a gen action creates a fact that invalidates the action's condition</li>
+</ul>
+
+<h3>
+<a id="006" class="anchor" href="#006" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.6</h3>
+
+<ul>
+<li>fixed a bug caused by retracting facts from within a rule action (#4)</li>
+</ul>
+
+<h3>
+<a id="005" class="anchor" href="#005" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.5</h3>
+
+<ul>
+<li>fixed a bug with multiple <code>assert</code> tests following the same node (#2)</li>
+</ul>
+
+<h3>
+<a id="004" class="anchor" href="#004" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.4</h3>
+
+<ul>
+<li>reintegrated RDF support</li>
+<li>collapsible filter matchers</li>
+</ul>
+
+<h3>
+<a id="003" class="anchor" href="#003" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.3</h3>
+
+<ul>
+<li>bug fixes</li>
+<li>
+<code>assert</code>, <code>assign</code>
+</li>
+</ul>
+
+<h3>
+<a id="001" class="anchor" href="#001" aria-hidden="true"><span class="octicon octicon-link"></span></a>0.0.1</h3>
+
+<ul>
+<li>initial repackaged release</li>
+</ul>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Added some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Wongi-engine maintained by <a href="https://github.com/ulfurinn">ulfurinn</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
