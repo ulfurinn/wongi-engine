@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Wongi::Engine::BetaNode do
 
+  include Wongi::Engine::DSL
+
   let( :engine ) { Wongi::Engine.create }
 
   describe '#tokens' do
