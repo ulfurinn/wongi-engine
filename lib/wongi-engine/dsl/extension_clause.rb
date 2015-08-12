@@ -18,8 +18,8 @@ module Wongi::Engine
         a.rete = rete if a.respond_to? :rete=
         a
       end
-    rescue Exception => e
-      e1 = Exception.new "error defining clause #{name} handled by #{action}: #{e}"
+    rescue StandardError => e
+      e1 = StandardError.new "error defining clause #{name} handled by #{action}: #{e}"
       e1.set_backtrace e.backtrace
       raise e1
     end

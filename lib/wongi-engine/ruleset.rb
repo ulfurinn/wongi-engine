@@ -36,8 +36,8 @@ module Wongi
       def install rete
         # puts "Installing ruleset #{name}"
         @rules.each { |rule| rete << rule }
-      rescue Exception => e
-        e1 = Exception.new "error installing ruleset '#{name||'<unnamed>'}': #{e}"
+      rescue StandardError => e
+        e1 = StandardError.new "error installing ruleset '#{name||'<unnamed>'}': #{e}"
         e1.set_backtrace e.backtrace
         raise e1
       end
