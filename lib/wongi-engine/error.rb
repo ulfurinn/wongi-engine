@@ -1,6 +1,6 @@
 module Wongi::Engine
 
-  class Error < ::Exception
+  class Error < StandardError
 
   end
 
