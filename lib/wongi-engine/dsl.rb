@@ -1,28 +1,3 @@
-def ruleset name = nil, &definition
-  rs = Wongi::Engine::Ruleset.new
-  if ! name.nil?
-    rs.name name
-  end
-  rs.instance_eval &definition if block_given?
-  rs
-end
-
-def rule name = nil, &definition
-  r = Wongi::Engine::ProductionRule.new name
-  r.instance_eval &definition
-  r
-end
-
-def query name, &definition
-  q = Wongi::Engine::Query.new name
-  q.instance_eval &definition
-  q
-end
-
-def dsl &definition
-  Wongi::Engine::DSLBuilder.new.build &definition
-end
-
 require 'wongi-engine/dsl/dsl_extensions'
 require 'wongi-engine/dsl/dsl_builder'
 require 'wongi-engine/dsl/action'
@@ -40,88 +15,124 @@ require 'wongi-engine/dsl/actions/simple_collector'
 require 'wongi-engine/dsl/actions/trace_action'
 require 'wongi-engine/dsl/actions/error_generator'
 
+module Wongi::Engine
 
+  module DSL
 
-dsl {
+    extend self
 
-  section :forall
+    def ruleset name = nil, &definition
+      rs = Wongi::Engine::Ruleset.new
+      if ! name.nil?
+        rs.name name
+      end
+      rs.instance_eval &definition if block_given?
+      rs
+    end
 
-  clause :has, :fact
-  accept Wongi::Engine::Template
+    def rule name = nil, &definition
+      r = Wongi::Engine::ProductionRule.new name
+      r.instance_eval &definition
+      r
+    end
 
-  clause :missing, :neg
-  accept Wongi::Engine::NegTemplate
+    def query name, &definition
+      q = Wongi::Engine::Query.new name
+      q.instance_eval &definition
+      q
+    end
 
-  clause :none, :ncc
-  accept Wongi::Engine::NccProductionRule
+    def dsl &definition
+      Wongi::Engine::DSLBuilder.new.build &definition
+    end
 
-  clause :any
-  accept Wongi::Engine::AnyRule
+    dsl {
 
-  clause :maybe, :optional
-  accept Wongi::Engine::OptionalTemplate
+      section :forall
 
-  clause :same, :eq, :equal
-  accept Wongi::Engine::EqualityTest
+      clause :has, :fact
+      accept Wongi::Engine::Template
 
-  clause :diff, :ne
-  accept Wongi::Engine::InequalityTest
+      clause :missing, :neg
+      accept Wongi::Engine::NegTemplate
 
-  clause :less
-  accept Wongi::Engine::LessThanTest
+      clause :none, :ncc
+      accept Wongi::Engine::NccProductionRule
 
-  clause :greater
-  accept Wongi::Engine::GreaterThanTest
+      clause :any
+      accept Wongi::Engine::AnyRule
 
-  clause :assert, :dynamic
-  accept Wongi::Engine::AssertingTest
+      clause :maybe, :optional
+      accept Wongi::Engine::OptionalTemplate
 
-  clause :assign, :introduce
-  accept Wongi::Engine::Assignment
+      clause :same, :eq, :equal
+      accept Wongi::Engine::EqualityTest
 
-  clause :asserted, :added
-  body { |s, p, o|
-    has s, p, o, time: 0
-    missing s, p, o, time: -1
-  }
+      clause :diff, :ne
+      accept Wongi::Engine::InequalityTest
 
-  clause :retracted, :removed
-  body { |s, p, o|
-    has s, p, o, time: -1
-    missing s, p, o, time: 0
-  }
+      clause :less
+      accept Wongi::Engine::LessThanTest
 
-  clause :kept, :still_has
-  body { |s, p, o|
-    has s, p, o, time: -1
-    has s, p, o, time: 0
-  }
+      clause :greater
+      accept Wongi::Engine::GreaterThanTest
 
-  clause :kept_missing, :still_missing
-  body { |s, p, o|
-    missing s, p, o, time: -1
-    missing s, p, o, time: 0
-  }
+      clause :assert, :dynamic
+      accept Wongi::Engine::AssertingTest
 
-  clause :assuming
-  accept Wongi::Engine::AssumingClause
+      clause :assign, :introduce
+      accept Wongi::Engine::Assignment
 
-  section :make
+      clause :asserted, :added
+      body { |s, p, o|
+        has s, p, o, time: 0
+        missing s, p, o, time: -1
+      }
 
-  clause :gen
-  accept Wongi::Engine::GenerationClause
+      clause :retracted, :removed
+      body { |s, p, o|
+        has s, p, o, time: -1
+        missing s, p, o, time: 0
+      }
 
-  clause :trace
-  action Wongi::Engine::TraceAction
+      clause :kept, :still_has
+      body { |s, p, o|
+        has s, p, o, time: -1
+        has s, p, o, time: 0
+      }
 
-  clause :error
-  action Wongi::Engine::ErrorGenerator
+      clause :kept_missing, :still_missing
+      body { |s, p, o|
+        missing s, p, o, time: -1
+        missing s, p, o, time: 0
+      }
 
-  clause :collect
-  action Wongi::Engine::SimpleCollector
+      clause :assuming
+      accept Wongi::Engine::AssumingClause
 
-  clause :action
-  action Wongi::Engine::SimpleAction
+      section :make
 
-}
+      clause :gen
+      accept Wongi::Engine::GenerationClause
 
+      clause :trace
+      action Wongi::Engine::TraceAction
+
+      clause :error
+      action Wongi::Engine::ErrorGenerator
+
+      clause :collect
+      action Wongi::Engine::SimpleCollector
+
+      clause :action
+      action Wongi::Engine::SimpleAction
+
+    }
+  end
+
+end
+
+class Object
+  warn "[DEPRECATION] Future versions of wongi-engine will not define dsl on Object. Please `include Wongi::Engine::DSL` going forward."
+  include Wongi::Engine::DSL
+end

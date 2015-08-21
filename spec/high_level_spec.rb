@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+include Wongi::Engine::DSL
+
 dsl {
 
   section :make
