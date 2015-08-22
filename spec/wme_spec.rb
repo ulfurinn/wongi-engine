@@ -69,7 +69,7 @@ describe Wongi::Engine::WME do
   end
 
   it 'should not match against non-templates' do
-    expect { subject =~ [1, 2, 3] }.to raise_error
+    expect { subject =~ [1, 2, 3] }.to raise_error( Wongi::Engine::Error )
   end
 
   it 'should match against templates' do
