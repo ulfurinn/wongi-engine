@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Wongi::Engine::SimpleAction do
+describe Wongi::Engine::DSL::Action::SimpleAction do
 
   before :each do
     @rete = Wongi::Engine::Network.new

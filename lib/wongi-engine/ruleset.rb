@@ -5,12 +5,12 @@ module Wongi
       class << self
 
         def [] name
-          raise "undefined ruleset #{name}" unless rulesets.has_key?( name )
+          raise Error, "undefined ruleset #{name}" unless rulesets.has_key?( name )
           rulesets[ name ]
         end
 
         def register name, ruleset
-          raise "ruleset #{name} already exists" if rulesets.has_key?( name )
+          raise Error, "ruleset #{name} already exists" if rulesets.has_key?( name )
           rulesets[ name ] = ruleset
         end
 
@@ -37,7 +37,7 @@ module Wongi
         # puts "Installing ruleset #{name}"
         @rules.each { |rule| rete << rule }
       rescue StandardError => e
-        e1 = StandardError.new "error installing ruleset '#{name||'<unnamed>'}': #{e}"
+        e1 = Error.new "error installing ruleset '#{name||'<unnamed>'}': #{e}"
         e1.set_backtrace e.backtrace
         raise e1
       end
@@ -56,14 +56,14 @@ module Wongi
       #    end
 
       def rule name, &definition
-        r = ProductionRule.new name
+        r = DSL::Rule.new name
         r.instance_eval &definition
         @rules << r
         r
       end
 
       def query name, &definition
-        r = Query.new name
+        r = DSL::Query.new name
         r.instance_eval &definition
         @rules << r
         r

@@ -56,6 +56,7 @@ describe "ANY rule" do
             collect :X, :threes
           }
         }
+        File.open("debug.dot", "w") { |io| Wongi::Engine::Graph.new(engine).dot(io) }
 
         production = engine.productions['two-options']
 

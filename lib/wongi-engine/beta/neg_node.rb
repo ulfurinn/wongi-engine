@@ -19,7 +19,7 @@ module Wongi
       end
 
       def alpha_activate wme
-        self.tokens.each do |token|
+        tokens.each do |token|
           if matches?( token, wme ) && ( @unsafe || ! token.generated?( wme ) )# feedback loop protection
             # order matters for proper invalidation
             make_join_result(token, wme)
@@ -38,7 +38,7 @@ module Wongi
 
       def alpha_deactivate wme
         wme.neg_join_results.dup.each do |njr|
-          safe_tokens.each do |token|
+          tokens.each do |token|
             next unless token == njr.token
             njr.unlink
             if token.neg_join_results.empty?
@@ -85,7 +85,7 @@ module Wongi
       end
 
       def refresh_child child
-        safe_tokens.each do |token|
+        tokens.each do |token|
           if token.neg_join_results.empty?
             child.beta_activate Token.new( child, token, nil, {} )
           end
@@ -118,15 +118,6 @@ module Wongi
         token.neg_join_results << njr
         wme.neg_join_results << njr
       end
-
-      def safe_tokens
-        Enumerator.new do |y|
-          @tokens.dup.each do |token|
-            y << token unless token.deleted?
-          end
-        end
-      end
-
     end
   end
 end

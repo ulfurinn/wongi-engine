@@ -46,7 +46,7 @@ module Wongi::Engine
     def initialize
       @timeline = []
       self.alpha_top = AlphaMemory.new( Template.new( :_, :_, :_ ), self )
-      self.alpha_hash = { Template.hash_for( :_, :_, :_ ) => self.alpha_top }
+      self.alpha_hash = { alpha_top.template.hash => alpha_top }
       self.beta_top = BetaMemory.new(nil)
       self.beta_top.rete = self
       self.beta_top.seed
@@ -71,16 +71,16 @@ module Wongi::Engine
       alpha_hash.values
     end
 
-    def import thing
-      case thing
-      when String, Numeric, TrueClass, FalseClass, NilClass, Wongi::RDF::Node
-        thing
-      when Symbol
-        thing
-      else
-        thing
-      end
-    end
+    # def import thing
+    #   case thing
+    #   when String, Numeric, TrueClass, FalseClass, NilClass, Wongi::RDF::Node
+    #     thing
+    #   when Symbol
+    #     thing
+    #   else
+    #     thing
+    #   end
+    # end
 
     def assert wme
       @next_cascade ||= []
@@ -93,6 +93,9 @@ module Wongi::Engine
     end
 
     def retract wme, options = { }
+      if wme.is_a? Array
+        wme = WME.new(*wme)
+      end
       @next_cascade ||= []
       @next_cascade << [:retract, wme, options]
       if @current_cascade.nil?
@@ -100,47 +103,6 @@ module Wongi::Engine
         @next_cascade = nil
         process_cascade
       end
-    end
-
-    def process_cascade
-      iterations = 0
-      while @current_cascade
-        @current_cascade.each do |(operation, wme, options)|
-          case operation
-          when :assert
-            real_assert wme
-          when :retract
-            real_retract wme, options
-          end
-        end
-        @current_cascade = @next_cascade
-        @next_cascade = nil
-        iterations += 1
-      end
-    end
-
-    def real_assert wme
-
-      unless wme.rete == self
-        wme = wme.import_into self
-      end
-
-      if @current_context
-        @current_context.asserted_wmes << wme
-        wme.context = @current_context
-      end
-
-      if existing = @cache[wme]
-        existing.manual! if wme.manual?
-        return
-      end
-
-      # puts "ASSERTING #{wme}"
-      @cache[wme] = wme
-
-      alphas_for( wme ).each { |a| a.activate wme }
-
-      wme
     end
 
     def wmes
@@ -173,82 +135,52 @@ module Wongi::Engine
     end
 
     def rule name = nil, &block
-      r = ProductionRule.new( name || generate_rule_name )
+      r = DSL::Rule.new( name || generate_rule_name )
       r.instance_eval &block
       self << r
     end
 
     def query name, &block
-      q = Query.new name
+      q = DSL::Query.new name
       q.instance_eval &block
       self << q
     end
 
     def << something
-      case something
-      when Array
-        if something.length == 3
-          assert WME.new( *something )
-        else
-          raise "Arrays must have 3 elements"
-        end
-      when ProductionRule
-        derived = something.import_into self
-        production = add_production derived.conditions, derived.actions
-        if something.name
-          productions[ something.name ] = production
-        end
-        production
-      when Query
-        derived = something.import_into self
-        prepare_query derived.name, derived.conditions, derived.parameters, derived.actions
-      when Ruleset
-        something.install self
-      when WME
-        assert something
-      when Wongi::RDF::Statement
-        assert WME.new( something.subject, something.predicate, something.object, self )
-      #when Wongi::RDF::Document
-        #  something.statements.each do |st|
-        #    assert WME.new( st.subject, st.predicate, st.object, self )
-        #  end
-      when Network
-        something.each do |st|
-          assert st.import_into( self )
-        end
+      if something.respond_to?( :install )
+        something.install( self )
       else
-        raise "I don't know how to accept a #{something.class}"
+        case something
+        when Array
+          assert WME.new( *something )
+        when WME
+          assert something
+        when Wongi::RDF::Statement
+          assert WME.new( something.subject, something.predicate, something.object, self )
+        #when Wongi::RDF::Document
+          #  something.statements.each do |st|
+          #    assert WME.new( st.subject, st.predicate, st.object, self )
+          #  end
+        when Network
+          something.wmes.each { |wme| assert( wme ) }
+        else
+          raise Error, "I don't know how to accept a #{something.class}"
+        end
       end
     end
 
-    def real_retract wme, options
-
-      if wme.is_a? Array
-        return real_retract( WME.new(*wme), options )
+    def install_rule( rule )
+      derived = rule.import_into self
+      production = build_production beta_top, derived.conditions, [], derived.actions, false
+      if rule.name
+        productions[ rule.name ] = production
       end
+      production
+    end
 
-      real = @cache[wme]
-
-      return if real.nil?
-      if real.generated? # still some generator tokens left
-        if real.manual?
-          real.manual = false
-        else
-          raise "cannot retract automatic facts"
-        end
-      else
-        if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
-          return
-        end
-      end
-
-      if @current_context
-        @current_context.retracted_wmes << wme
-      end
-
-      @cache.delete(real)
-
-      alphas_for( real ).each { |a| a.deactivate real }
+    def install_query( query )
+      derived = query.import_into self
+      prepare_query derived.name, derived.conditions, derived.parameters, derived.actions
     end
 
     def compile_alpha condition
@@ -284,21 +216,14 @@ module Wongi::Engine
     end
 
     def cache s, p, o
-      compile_alpha Template.new(s, p, o).import_into( self )
+      compile_alpha Template.new(s, p, o)
     end
 
+    # TODO: pick an alpha with fewer candidates to go through
     def initial_fill alpha
-      tpl = alpha.template
-      source = more_generic_alpha(tpl)
-      # puts "more efficient by #{alpha_top.wmes.size - source.wmes.size}" unless source ==
-      # alpha_top
-      source.wmes.each do |wme|
-        alpha.activate wme if wme =~ tpl
+      alpha_top.wmes.each do |wme|
+        alpha.activate wme if wme =~ alpha.template
       end
-    end
-
-    def add_production conditions, actions = []
-      real_add_production self.beta_top, conditions, [], actions, false
     end
 
     def remove_production pnode
@@ -308,39 +233,18 @@ module Wongi::Engine
     def prepare_query name, conditions, parameters, actions = []
       query = self.queries[ name ] = BetaMemory.new( nil )
       query.rete = self
-      transformed = {}
-      parameters.each { |param| transformed[param] = nil }
-      query.seed transformed
-      self.results[ name ] = real_add_production query, conditions, parameters, actions, true
+      query.seed(Hash[parameters.map{ |param| [param, nil]}])
+      self.results[ name ] = build_production query, conditions, parameters, actions, true
     end
 
     def execute name, valuations
       beta = self.queries[name]
-      raise "Undefined query #{name}; known queries are #{queries.keys}" unless beta
+      raise Error, "Undefined query #{name}; known queries are #{queries.keys}" unless beta
       beta.subst valuations
     end
 
     def inspect
       "<Rete>"
-    end
-
-    def context= name
-      if name && !@contexts.has_key?(name)
-        @current_context = (@contexts[name] ||= ModelContext.new name)
-      end
-    end
-
-    # TODO: contexts are probably broken with the new improved handling of manual & generated
-    def retract_context name
-      return unless @contexts.has_key?(name)
-
-      if @current_context && @current_context.name == name
-        @current_context = nil
-      end
-      ctx = @contexts[name]
-      ctx.asserted_wmes.select { |wme| wme.generating_tokens.empty?  }.each { |wme| retract(wme, true) }
-      ctx.retracted_wmes.each { |wme| assert(wme) }
-      @contexts.delete name
     end
 
     def exists? wme
@@ -350,7 +254,7 @@ module Wongi::Engine
     def each *args
       return unless block_given?
       unless args.length == 0 || args.length == 3
-        raise "Document#each expects a pattern or nothing at all"
+        raise Error, "Network#each expects a pattern or nothing at all"
       end
       s, p, o = if args.empty?
         [:_, :_, :_]
@@ -365,7 +269,7 @@ module Wongi::Engine
     end
 
     def select s, p, o
-      template = Template.new(s, p, o).import_into self
+      template = Template.new(s, p, o)
       matching = alpha_top.wmes.select { |wme| wme =~ template }
       if block_given?
         matching.each { |st| yield st.subject, st.predicate, st.object }
@@ -374,13 +278,78 @@ module Wongi::Engine
     end
 
     def find s, p, o
-      template = Template.new(s, p, o).import_into self
+      template = Template.new(s, p, o)
       source = best_alpha(template)
       # puts "looking for #{template} among #{source.wmes.size} triples of #{source.template}"
       source.wmes.detect { |wme| wme =~ template }
     end
 
     protected
+
+    def process_cascade
+      while @current_cascade
+        @current_cascade.each do |(operation, wme, options)|
+          case operation
+          when :assert
+            real_assert wme
+          when :retract
+            real_retract wme, options
+          end
+        end
+        @current_cascade = @next_cascade
+        @next_cascade = nil
+      end
+    end
+
+    def real_assert( wme )
+
+      unless wme.rete == self
+        wme = wme.import_into self
+      end
+
+      if @current_context
+        @current_context.asserted_wmes << wme
+        wme.context = @current_context
+      end
+
+      if existing = @cache[wme]
+        existing.manual! if wme.manual?
+        return
+      end
+
+      # puts "ASSERTING #{wme}"
+      @cache[wme] = wme
+
+      alphas_for( wme ).each { |a| a.activate wme }
+
+      wme
+    end
+
+    def real_retract wme, options
+
+      real = @cache[wme]
+
+      return if real.nil?
+      if real.generated? # still some generator tokens left
+        if real.manual?
+          real.manual = false
+        else
+          raise Error, "cannot retract automatic facts"
+        end
+      else
+        if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
+          return
+        end
+      end
+
+      if @current_context
+        @current_context.retracted_wmes << wme
+      end
+
+      @cache.delete(real)
+
+      alphas_for( real ).each { |a| a.deactivate real }
+    end
 
     def in_snapshot
       @in_snapshot = true
@@ -404,7 +373,7 @@ module Wongi::Engine
         lookup(:_,  p, :_),
         lookup(:_, :_,  o),
         lookup(:_, :_, :_),
-      ].compact.uniq
+      ].compact!.tap(&:uniq!)
     end
 
     def lookup s, p, o
@@ -417,49 +386,28 @@ module Wongi::Engine
       alpha.activate(wme) if alpha
     end
 
-    def more_generic_alpha template
-      return alpha_top    # OPTIMISE => temporary; may use later or not use at all
-      return alpha_top if template.root?
-      more_generic_templates(template).reduce alpha_top do |best, template|
-        alpha = alpha_hash[template.hash]
-        if alpha && alpha.wmes.size < best.wmes.size
-          alpha
-        else
-          best
-        end
-      end
-    end
-
-    def more_generic_templates template
-      set = []
-      set << template.with_subject( :_ ) unless template.subject == :_
-      set << template.with_predicate( :_ ) unless template.predicate == :_
-      set << template.with_object( :_ ) unless template.object == :_
-      set.select { |item| not item.root? }
-    end
-
     def best_alpha template
-      candidates = alpha_hash.values.select do |alpha|
-        template =~ alpha.template
-      end
-      result = candidates.inject do |best, alpha|
-        if best.nil?
-          alpha
-        elsif alpha.wmes.to_a.length < best.wmes.to_a.length
-          alpha
+      alpha_hash.inject(nil) do |best, (_, alpha)|
+        if template =~ alpha.template
+          if best.nil?
+            alpha
+          elsif alpha.size < best.size
+            alpha
+          else
+            best
+          end
         else
           best
         end
       end
-      result
     end
 
-    def real_add_production root, conditions, parameters, actions, alpha_deaf
-      beta = root.network conditions, [], parameters, alpha_deaf
-
-      production = ProductionNode.new( beta, actions )
-      production.refresh
-      production
+    def build_production root, conditions, parameters, actions, alpha_deaf
+      compiler = Compiler.new(self, root, conditions, parameters, alpha_deaf)
+      ProductionNode.new(compiler.compile, actions).tap do |production|
+        production.compilation_context = compiler
+        production.refresh
+      end
     end
 
     def delete_node_with_ancestors node

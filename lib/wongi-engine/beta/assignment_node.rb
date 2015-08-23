@@ -1,20 +1,5 @@
 module Wongi::Engine
 
-  class Assignment
-
-    def initialize variable, &body
-      @variable, @body = variable, body
-    end
-
-    def compile context
-      context.node = context.node.beta_memory.assignment_node( @variable, @body )
-      context.node.context = context
-      context.earlier << self
-      context
-    end
-
-  end
-
   class AssignmentNode < BetaNode
 
     def initialize parent, variable, body

@@ -2,13 +2,13 @@ require 'spec_helper'
 
 describe Wongi::Engine::WME do
 
-  def capitalizing_rete
-    rete = double 'rete'
-    expect( rete ).to receive(:import).with("b").and_return("B")
-    expect( rete ).to receive(:import).with("a").and_return("A")
-    expect( rete ).to receive(:import).with("c").and_return("C")
-    rete
-  end
+  # def capitalizing_rete
+  #   rete = double 'rete'
+  #   expect( rete ).to receive(:import).with("b").and_return("B")
+  #   expect( rete ).to receive(:import).with("a").and_return("A")
+  #   expect( rete ).to receive(:import).with("c").and_return("C")
+  #   rete
+  # end
 
   subject {
     Wongi::Engine::WME.new "a", "b", "c"
@@ -22,17 +22,17 @@ describe Wongi::Engine::WME do
       expect( subject.object ).to be == "c"
     end
 
-    it 'should use the rete to import members' do
+    # it 'should use the rete to import members' do
 
-      rete = capitalizing_rete
+    #   rete = capitalizing_rete
 
-      wme = Wongi::Engine::WME.new "a", "b", "c", rete
+    #   wme = Wongi::Engine::WME.new "a", "b", "c", rete
 
-      expect( wme.subject ).to be == "A"
-      expect( wme.predicate ).to be == "B"
-      expect( wme.object ).to be == "C"
+    #   expect( wme.subject ).to be == "A"
+    #   expect( wme.predicate ).to be == "B"
+    #   expect( wme.object ).to be == "C"
 
-    end
+    # end
 
 
   it {
@@ -45,17 +45,17 @@ describe Wongi::Engine::WME do
 
   end
 
-  it 'should be able to import into rete' do
+  # it 'should be able to import into rete' do
 
-    rete = capitalizing_rete
+  #   rete = capitalizing_rete
 
-    imported = subject.import_into rete
+  #   imported = subject.import_into rete
 
-    expect( imported.subject ).to be == "A"
-    expect( imported.predicate ).to be == "B"
-    expect( imported.object ).to be == "C"
+  #   expect( imported.subject ).to be == "A"
+  #   expect( imported.predicate ).to be == "B"
+  #   expect( imported.object ).to be == "C"
 
-  end
+  # end
 
   it 'should compare instances' do
 

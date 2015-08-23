@@ -6,7 +6,10 @@ module Wongi
         wme.send field
       end
       def inspect
-        "subject of #{wme}"
+        "#{field} of #{wme}"
+      end
+      def to_s
+        inspect
       end
     end
 
@@ -71,24 +74,18 @@ module Wongi
           child.tokens.each do |token|
             if token.wme == wme
               child.beta_deactivate token
-              #token.destroy
             end
           end
         end
       end
 
       def beta_activate token
-        dp "JOIN beta-activated"
         self.alpha.wmes.each do |wme|
-          dp "-TESTING WME #{wme}"
-          assignments = collect_assignments( wme )
           if matches?( token, wme )
-            dp "-WME MATCHED, PROPAGATING"
+            assignments = collect_assignments( wme )
             children.each do |beta|
               beta.beta_activate Token.new( beta, token, wme, assignments )
             end
-          else
-            dp "-NO MATCH"
           end
         end
       end
@@ -98,7 +95,6 @@ module Wongi
           child.tokens.each do |t|
             if t.parent == token
               child.beta_deactivate t
-              #token.destroy
             end
           end
         end
@@ -115,36 +111,6 @@ module Wongi
         end
       end
 
-      def self.compile condition, earlier, parameters
-        tests = []
-        assignment = Template.new :_, :_, :_
-        [:subject, :predicate, :object].each do |field|
-          member = condition.send field
-          if Template.variable?( member )
-
-            contains = parameters.include? member
-            if earlier.any? do |ec|
-                if ec.kind_of?( VariantSet )
-                  ec.introduces_variable?( member )
-                else
-                  ec.respond_to?( :contains? ) and ec.contains?( member )
-                end
-              end
-              contains = true
-            end
-
-            if contains
-              tests << BetaTest.new( field, member )
-            else
-              method = (field.to_s + "=").to_sym
-              assignment.send method, member
-            end
-
-          end
-        end
-        return tests, assignment
-      end
-
       protected
 
       def matches? token, wme
@@ -156,13 +122,15 @@ module Wongi
 
       def collect_assignments wme
         assignments = {}
-        return assignments if self.assignment_pattern.nil?
-        # puts "more assignments"
-        [:subject, :predicate, :object].each do |field|
-          if self.assignment_pattern.send(field) != :_
-            #puts "#{self.assignment_pattern.send(field)} = #{wme.send(field)}"
-            assignments[ self.assignment_pattern.send(field) ] = TokenAssignment.new( wme, field )
-          end
+        return assignments if assignment_pattern.nil?
+        if assignment_pattern.subject != :_
+          assignments[ assignment_pattern.subject ] = TokenAssignment.new(wme, :subject)
+        end
+        if assignment_pattern.predicate != :_
+          assignments[ assignment_pattern.predicate ] = TokenAssignment.new(wme, :predicate)
+        end
+        if assignment_pattern.object != :_
+          assignments[ assignment_pattern.object ] = TokenAssignment.new(wme, :object)
         end
         assignments
       end

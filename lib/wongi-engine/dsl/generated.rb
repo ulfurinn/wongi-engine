@@ -1,7 +1,7 @@
-module Wongi::Engine
-  module DSLExtensions
+module Wongi::Engine::DSL
+  module Generated
 
-    def self.create_extension extension
+    def self.create_dsl_method extension
 
       section = extension[:section]
       clause = extension[:clause]
@@ -11,7 +11,7 @@ module Wongi::Engine
 
       define_method clause.first do |*args, &block|
 
-        raise "#{clause.first} can only be used in section #{section}, currently in #{@current_section}" if section != @current_section
+        raise "#{clause.first} can only be invoke in section #{section}, currently in #{@current_section}" if section != @current_section
 
         if body
 
@@ -23,7 +23,7 @@ module Wongi::Engine
 
         elsif action
 
-          c = ExtensionClause.new *args, &block
+          c = Clause::Generic.new *args, &block
           c.name = clause.first
           c.action = action
           c.rule = self

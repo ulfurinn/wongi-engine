@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Wongi::Engine::StatementGenerator do
+describe Wongi::Engine::DSL::Action::StatementGenerator do
 
   let( :engine ) { Wongi::Engine.create }
 

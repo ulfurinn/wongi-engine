@@ -1,22 +1,21 @@
 module Wongi::Engine
 
-  class Query < GenericProductionRule
-
-    attr_reader :parameters
-
-    def initialize name
-      super
-      @parameters = []
-    end
+  class DSL::Query < DSL::Rule
 
     def search_on *terms
-      terms.each { |term| @parameters << term }
+      terms.each { |term| parameters << term }
     end
 
     def import_into model
-      copy = super
-      copy.search_on *@parameters
-      copy
+      super.tap { |copy| copy.search_on *parameters }
+    end
+
+    def parameters
+      @parameters ||= []
+    end
+
+    def install( rete )
+      rete.install_query( self )
     end
 
   end

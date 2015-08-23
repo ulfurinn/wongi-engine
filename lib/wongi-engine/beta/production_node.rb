@@ -4,6 +4,7 @@ module Wongi
     class ProductionNode < BetaMemory
 
       attr_accessor :tracer
+      attr_accessor :compilation_context
 
       def initialize parent, actions
         super(parent)

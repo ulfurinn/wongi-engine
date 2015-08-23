@@ -58,31 +58,15 @@ module Wongi::Engine
     end
 
     def to_s
-      str = "TOKEN [ parent=#{parent ? parent.object_id : 'nil'} "
+      str = "TOKEN [ #{object_id} parent=#{parent ? parent.object_id : 'nil'} "
       all_assignments.each_pair { |key, value| str << "#{key} => #{value} " }
       str << "]"
       str
     end
 
     def destroy
-      # delete_children
-      # #@node.tokens.delete self unless @node.kind_of?( NccPartner )
-      # @wme.tokens.delete self if @wme
-      # @parent.children.delete self if @parent
-
-      # retract_generated
       deleted!
-      # @node.delete_token self
     end
-
-    # def delete_children
-    #   children = @children
-    #   @children = []
-    #   children.each do |token|
-    #     token.parent = nil
-    #     token.destroy
-    #   end
-    # end
 
     # for neg feedback loop protection
     def generated? wme
@@ -91,22 +75,6 @@ module Wongi::Engine
     end
 
     protected
-
-    # def retract_generated
-    #   for_retraction = []
-
-    #   @generated_wmes.dup.each do |wme|
-    #     unless wme.manual?  # => TODO: does this ever fail at all?
-    #       wme.generating_tokens.delete self
-    #       if wme.generating_tokens.empty?
-    #         for_retraction << wme
-    #       end
-    #     end
-    #   end
-    #   @generated_wmes = []
-    #   for_retraction.each { |wme| wme.rete.retract wme, true }
-
-    # end
 
     def all_assignments
       raise "Assignments is not a hash" unless @assignments.kind_of?( Hash )

@@ -42,6 +42,10 @@ module Wongi::Engine
       inspect
     end
 
+    def size
+      @wmes.count { |wme| not wme.deleted? }
+    end
+
     def wmes
       Enumerator.new do |y|
         @wmes.dup.each do |wme|

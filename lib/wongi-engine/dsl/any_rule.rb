@@ -1,5 +1,5 @@
 module Wongi::Engine
-  class AnyRule
+  class DSL::AnyRule
 
     attr_reader :variants
 
@@ -16,33 +16,16 @@ module Wongi::Engine
       variants << var
     end
 
-    def import_into rete
-      AnySet.new variants.map { |variant|
-        if variant.respond_to? :import_into
-          variant.import_into(rete)
-        else
-          variant
-        end
-      }
+    def compile context
+      context.tap { |c| c.or_node(variants) }
     end
 
   end
 
-  class VariantRule < GenericProductionRule
-
+  class DSL::VariantRule < DSL::Rule
     def initialize name = nil
       super
       @current_section = :forall
-    end
-
-    def import_into rete
-      VariantSet.new @acceptors[:forall].map { |condition|
-        if condition.respond_to? :import_into
-          condition.import_into(rete)
-        else
-          condition
-        end
-      }
     end
   end
 end

@@ -39,16 +39,6 @@ module Wongi
         divergent_token = token.ancestors.find { |t| t.node == divergent }
         ncc.tokens.find { |t| t.ancestors.include? divergent_token }
       end
-
-      # def delete_token token
-      #   token.owner.ncc_results.delete token
-      #   if token.owner.ncc_results.empty?
-      #     ncc.children.each do |node|
-      #       node.beta_activate token.owner, nil, {}
-      #     end
-      #   end
-
-      # end
     end
   end
 end

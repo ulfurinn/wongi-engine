@@ -24,7 +24,7 @@ module Wongi::Engine
       dump_alphas(opts) unless opts[:alpha] == false
       dump_betas(opts)
 
-      @io.puts "};"
+      @io.puts "}"
 
     ensure
       @io = nil
@@ -39,7 +39,7 @@ module Wongi::Engine
     def dump_alphas opts
       @io.puts "subgraph cluster_alphas {"
       @rete.alphas.select { |alpha| not alpha.betas.empty? }.each do |alpha|
-        @io.puts "node#{print_hash alpha.hash} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"
+        @io.puts "node#{print_hash alpha.object_id} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"
       end
       @io.puts "};"
     end
@@ -51,19 +51,19 @@ module Wongi::Engine
     def dump_beta beta, opts
       return if @seen_betas.include? beta
       @seen_betas << beta
-      @io.puts "node#{print_hash beta.hash} [label=\"#{beta.class.name.split('::').last}\"];"
+      @io.puts "node#{print_hash beta.object_id} [label=\"#{beta.class.name.split('::').last}\"];"
       if beta.is_a? NccNode
-        @io.puts "node#{print_hash beta.partner.hash} -> node#{print_hash beta.hash};"
-        @io.puts "{ rank=same; node#{print_hash beta.partner.hash} node#{print_hash beta.hash} }"
+        @io.puts "node#{print_hash beta.partner.object_id} -> node#{print_hash beta.object_id};"
+        @io.puts "{ rank=same; node#{print_hash beta.partner.object_id} node#{print_hash beta.object_id} }"
       end
       if beta.respond_to? :alpha and opts[:alpha] != false
         alpha = beta.alpha
         if alpha
-          @io.puts "node#{print_hash alpha.hash} -> node#{print_hash beta.hash};"
+          @io.puts "node#{print_hash alpha.object_id} -> node#{print_hash beta.object_id};"
         end
       end
       beta.children.each do |child|
-        @io.puts "node#{print_hash beta.hash} -> node#{print_hash child.hash};"
+        @io.puts "node#{print_hash beta.object_id} -> node#{print_hash child.object_id};"
         dump_beta child, opts
       end
     end

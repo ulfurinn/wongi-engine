@@ -1,17 +1,6 @@
-module Wongi
-  module Engine
-    class ReteError
-
-      attr_reader :token, :message
-      def initialize token, message, literate
-        @token, @message, @literate = token, message, literate
-      end
-      def literate?
-        @literate
-      end
-    end
-
-    class ErrorGenerator < Wongi::Engine::Action
+module Wongi::Engine
+  module DSL::Action
+    class ErrorGenerator < Base
 
       def initialize message = nil, &messenger
         @message, @messenger = message, messenger

@@ -7,11 +7,6 @@ module Wongi::Engine
       @tokens = []
     end
 
-    # @override
-    def beta_memory
-      self
-    end
-
     def seed assignments = {}
       @seed = assignments
       t = Token.new( self, nil, nil, assignments )
@@ -58,16 +53,5 @@ module Wongi::Engine
         child.beta_activate token
       end
     end
-
-    # def delete_token token
-    #   @tokens.delete token
-    # end
-
-    # => TODO: investigate if we really need this
-    #def beta_memory
-    #  self
-    #end
-
   end
-
 end

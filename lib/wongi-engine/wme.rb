@@ -1,6 +1,6 @@
 module Wongi::Engine
 
-  class WME < Struct.new( :subject, :predicate, :object )
+  WME = Struct.new( :subject, :predicate, :object ) do
 
     include CoreExt
 
@@ -24,11 +24,8 @@ module Wongi::Engine
 
       @rete = r
 
-      if r
-        super( r.import(s), r.import(p), r.import(o) )
-      else
-        super( s, p, o )
-      end
+    # TODO: reintroduce Network#import when bringing back RDF support
+      super( s, p, o )
 
     end
 
@@ -82,14 +79,10 @@ module Wongi::Engine
     end
 
     def hash
-      @hash ||= array_form.map( &:hash ).hash
+      @hash ||= [subject.hash, predicate.hash, object.hash].hash
     end
 
     protected
-
-    def array_form
-      @array_form ||= [ subject, predicate, object ]
-    end
 
     # def destroy_neg_join_results
     #   neg_join_results.each do |njr|

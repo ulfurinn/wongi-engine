@@ -6,7 +6,7 @@ dsl {
 
   section :make
   clause :test_collector
-  action Wongi::Engine::SimpleCollector.collector
+  action Wongi::Engine::DSL::Action::SimpleCollector.collector
 
 }
 

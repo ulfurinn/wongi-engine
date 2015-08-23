@@ -10,13 +10,13 @@ module Wongi
 
     class OptionalNode < BetaNode
 
-      attr_reader :alpha, :tests, :assignments, :tokens
+      attr_reader :alpha, :tests, :assignment_pattern
 
       def initialize parent, alpha, tests, assignments
         super( parent )
         @alpha = alpha
         @tests = tests
-        @assignments = assignments
+        @assignment_pattern = assignments
         @tokens = []
       end
 
@@ -28,13 +28,13 @@ module Wongi
 
       def alpha_activate wme
         assignments = collect_assignments( wme )
-        self.tokens.each do |token|
+        tokens.each do |token|
           if matches? token, wme
             children.each do |child|
               if token.optional?
                 token.no_optional!
-                child.tokens.select { |ct| ct.parent == token }.each do |ct|
-                  child.beta_deactivate ct
+                child.tokens.each do |ct|
+                  child.beta_deactivate(ct) if ct.parent == token
                 end
               end
               child.beta_activate Token.new( child, token, wme, assignments )
@@ -46,12 +46,13 @@ module Wongi
 
       def alpha_deactivate wme
         wme.opt_join_results.dup.each do |ojr|
-          safe_tokens.select { |token| token == ojr.token }.each do |token|
+          tokens.each do |token|
+            next unless token == ojr.token
             ojr.unlink
             if token.opt_join_results.empty?
               children.each do |child|
-                child.tokens.select { |ct| ct.parent == token }.each do |ct|
-                  child.beta_deactivate ct
+                child.tokens.each do |ct|
+                  child.beta_deactivate(ct) if ct.parent == token
                 end
                 token.optional!
                 child.beta_activate Token.new( child, token, nil, { } )
@@ -85,7 +86,7 @@ module Wongi
       end
 
       def beta_deactivate t
-        token = @tokens.find { |token| token.parent == t }
+        token = tokens.find { |token| token.parent == t }
         return unless token
         return unless @tokens.delete token
         token.deleted!
@@ -97,7 +98,6 @@ module Wongi
           child.tokens.each do |t|
             if t.parent == token
               child.beta_deactivate t
-              #token.destroy
             end
           end
         end
@@ -133,25 +133,18 @@ module Wongi
 
       def collect_assignments wme
         assignments = {}
-        return assignments if self.assignments.nil?
-        # puts "more assignments"
-        [:subject, :predicate, :object].each do |field|
-          if self.assignments.send(field) != :_
-            #puts "#{self.assignments.send(field)} = #{wme.send(field)}"
-            assignments[ self.assignments.send(field) ] = TokenAssignment.new( wme, field )
-          end
+        return assignments if assignment_pattern.nil?
+        if assignment_pattern.subject != :_
+          assignments[ assignment_pattern.subject ] = TokenAssignment.new(wme, :subject)
+        end
+        if assignment_pattern.predicate != :_
+          assignments[ assignment_pattern.predicate ] = TokenAssignment.new(wme, :predicate)
+        end
+        if assignment_pattern.object != :_
+          assignments[ assignment_pattern.object ] = TokenAssignment.new(wme, :object)
         end
         assignments
       end
-
-      def safe_tokens
-        Enumerator.new do |y|
-          @tokens.dup.each do |token|
-            y << token unless token.deleted?
-          end
-        end
-      end
-
     end
   end
 end
