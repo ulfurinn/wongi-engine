@@ -18,7 +18,7 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
-### 0.1.1
+### 0.1.2
 
 * deprecated global DSL
 
