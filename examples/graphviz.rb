@@ -1,6 +1,7 @@
 require 'wongi-engine'
 
 include Wongi::Engine
+include Wongi::Engine::DSL
 
 ds = Network.new
 ds << rule('demo') {

@@ -1,4 +1,5 @@
 include Wongi::Engine
+include Wongi::Engine::DSL
 
 ds = Network.new
 
@@ -26,11 +27,11 @@ ds << WME.new( "Alice", "friend", "Bob" )
 puts "Asserted facts:"
 
 puts "Should print 3 facts:"
-puts ds.wmes
+puts ds.wmes.to_a
 
 
 ds.retract WME.new( "Alice", "friend", "Bob" )
 
 puts "Should print 1 fact:"
-puts ds.wmes
+puts ds.wmes.to_a
 

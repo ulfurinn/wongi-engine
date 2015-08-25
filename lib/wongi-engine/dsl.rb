@@ -131,6 +131,3 @@ module Wongi::Engine
   end
 
 end
-
-warn "[DEPRECATION] Future versions of wongi-engine will not define global DSL methods. Please `include Wongi::Engine::DSL` going forward."
-self.extend Wongi::Engine::DSL
