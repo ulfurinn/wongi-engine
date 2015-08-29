@@ -54,7 +54,6 @@ module Wongi::Engine
       self.results = {}
       @cache = {}
       @revns = {}
-      @contexts = {}
 
       @productions = { }
 
@@ -103,6 +102,47 @@ module Wongi::Engine
         @next_cascade = nil
         process_cascade
       end
+    end
+
+    # @private
+    def real_assert( wme )
+      unless wme.rete == self
+        wme = wme.import_into self
+      end
+
+      if existing = @cache[wme]
+        existing.manual! if wme.manual?
+        return
+      end
+
+      # puts "ASSERTING #{wme}"
+      @cache[wme] = wme
+
+      alphas_for( wme ).each { |a| a.activate wme }
+
+      wme
+    end
+
+    # @private
+    def real_retract wme, options
+      real = @cache[wme]
+
+      return if real.nil?
+      if real.generated? # still some generator tokens left
+        if real.manual?
+          real.manual = false
+        else
+          raise Error, "cannot retract automatic facts"
+        end
+      else
+        if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
+          return
+        end
+      end
+
+      @cache.delete(real)
+
+      alphas_for( real ).each { |a| a.deactivate real }
     end
 
     def wmes
@@ -301,55 +341,6 @@ module Wongi::Engine
       end
     end
 
-    def real_assert( wme )
-
-      unless wme.rete == self
-        wme = wme.import_into self
-      end
-
-      if @current_context
-        @current_context.asserted_wmes << wme
-        wme.context = @current_context
-      end
-
-      if existing = @cache[wme]
-        existing.manual! if wme.manual?
-        return
-      end
-
-      # puts "ASSERTING #{wme}"
-      @cache[wme] = wme
-
-      alphas_for( wme ).each { |a| a.activate wme }
-
-      wme
-    end
-
-    def real_retract wme, options
-
-      real = @cache[wme]
-
-      return if real.nil?
-      if real.generated? # still some generator tokens left
-        if real.manual?
-          real.manual = false
-        else
-          raise Error, "cannot retract automatic facts"
-        end
-      else
-        if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
-          return
-        end
-      end
-
-      if @current_context
-        @current_context.retracted_wmes << wme
-      end
-
-      @cache.delete(real)
-
-      alphas_for( real ).each { |a| a.deactivate real }
-    end
 
     def in_snapshot
       @in_snapshot = true
@@ -383,19 +374,13 @@ module Wongi::Engine
     end
 
     def alpha_activate alpha, wme
-      alpha.activate(wme) if alpha
+      alpha.activate(wme)
     end
 
     def best_alpha template
       alpha_hash.inject(nil) do |best, (_, alpha)|
-        if template =~ alpha.template
-          if best.nil?
-            alpha
-          elsif alpha.size < best.size
-            alpha
-          else
-            best
-          end
+        if template =~ alpha.template && (best.nil? || alpha.size < best.size)
+          alpha
         else
           best
         end
