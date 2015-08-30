@@ -1,8 +1,12 @@
 # Wongi::Engine
 
-This library contains a rule engine written in Ruby. It's based on the [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm) and uses a DSL to express rules in a readable way.
-
 [![Build Status](https://travis-ci.org/ulfurinn/wongi-engine.svg?branch=master)](https://travis-ci.org/ulfurinn/wongi-engine) (MRI 1.9.3, 2.0, 2.1, 2.2, Rubinius, JRuby)
+
+[Feature annoucements](https://github.com/ulfurinn/wongi-engine/issues?q=is%3Aopen+is%3Aissue+label%3Aannoucement)
+
+[Open discussions](https://github.com/ulfurinn/wongi-engine/issues?q=is%3Aopen+is%3Aissue+label%3Adiscussion)
+
+This library contains a rule engine written in Ruby. It's based on the [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm) and uses a DSL to express rules in a readable way.
 
 ## Word of caution
 
@@ -17,6 +21,11 @@ This is complex and fragile machinery, and there may be subtle bugs that are onl
 The Rete implementation in this library largely follows the outline presented in [\[Doorenbos, 1995\]](http://reports-archive.adm.cs.cmu.edu/anon/1995/CMU-CS-95-113.pdf).
 
 ## Changelog
+
+### 0.2.0 [upcoming version]
+
+* refactored compilation code
+* [data overlays](https://github.com/ulfurinn/wongi-engine/issues/45)
 
 ### 0.1.0
 
