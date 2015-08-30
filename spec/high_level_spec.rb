@@ -222,20 +222,36 @@ describe 'the engine' do
 
   end
 
-  it 'should support prepared queries' do
+  context 'queries' do
 
-    rete << query("test-query") {
-      search_on :X
-      forall {
-        has :X, "is", :Y
+    before :each do
+      rete << query("test-query") {
+        search_on :X
+        forall {
+          has :X, "is", :Y
+        }
       }
-    }
+    end
 
-    rete << ["answer", "is", 42]
+    it 'should run' do
+      rete << ["answer", "is", 42]
+      rete.execute "test-query", {X: "answer"}
+      expect(rete.results["test-query"].size).to eq(1)
+      expect(rete.results["test-query"].tokens.first[:Y]).to eq(42)
+    end
 
-    rete.execute "test-query", {X: "answer"}
-    expect(rete.results["test-query"].size).to eq(1)
-    expect(rete.results["test-query"].tokens.first[:Y]).to eq(42)
+    it 'should run several times' do
+      rete << ["answer", "is", 42]
+      rete << ['question', 'is', '6x9']
+      rete.execute "test-query", {X: "answer"}
+      rete.execute "test-query", {X: "question"}
+      expect(rete.results["test-query"].tokens.to_a.last[:Y]).to eq('6x9')
+      expect(rete.results["test-query"].size).to eq(1)
+    end
+
+  end
+
+  it 'should correctly execute a query several times' do
 
   end
   

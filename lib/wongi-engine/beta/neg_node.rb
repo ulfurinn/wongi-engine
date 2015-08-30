@@ -9,13 +9,13 @@ module Wongi
     end
 
     class NegNode < BetaNode
+      include TokenContainer
 
       attr_reader :alpha, :tests
 
       def initialize parent, tests, alpha, unsafe
         super(parent)
         @tests, @alpha, @unsafe = tests, alpha, unsafe
-        @tokens = []
       end
 
       def alpha_activate wme
@@ -51,8 +51,8 @@ module Wongi
       end
 
       def beta_activate token
-        return if @tokens.find { |et| et.duplicate? token }
-        @tokens << token
+        return if tokens.find { |et| et.duplicate? token }
+        token.overlay.add_token(token, self)
         alpha.wmes.each do |wme|
           if matches?( token, wme )
             make_join_result(token, wme)
@@ -67,7 +67,7 @@ module Wongi
 
       def beta_deactivate token
         return nil unless tokens.find token
-        @tokens.delete token
+        token.overlay.remove_token(token, self)
         token.deleted!
         if token.parent
           token.parent.children.delete token # should this go into Token#destroy?

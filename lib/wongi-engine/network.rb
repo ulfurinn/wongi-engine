@@ -7,6 +7,7 @@ module Wongi::Engine
     attr_reader :alpha_top, :beta_top
     attr_reader :queries, :results
     attr_reader :productions
+    attr_reader :overlays
 
     include NetworkParts::Collectable
 
@@ -66,6 +67,10 @@ module Wongi::Engine
       beta_top.dump
     end
 
+    def with_overlay(&block)
+      default_overlay.with_child(&block)
+    end
+
     def alphas
       alpha_hash.values
     end
@@ -81,27 +86,31 @@ module Wongi::Engine
     #   end
     # end
 
-    def assert wme
-      @next_cascade ||= []
-      @next_cascade << [:assert, wme]
-      if @current_cascade.nil?
-        @current_cascade = @next_cascade
-        @next_cascade = nil
-        process_cascade
-      end
+    def default_overlay
+      @default_overlay ||= DataOverlay.new(self)
     end
 
-    def retract wme, options = { }
-      if wme.is_a? Array
-        wme = WME.new(*wme)
-      end
-      @next_cascade ||= []
-      @next_cascade << [:retract, wme, options]
-      if @current_cascade.nil?
-        @current_cascade = @next_cascade
-        @next_cascade = nil
-        process_cascade
-      end
+    # @private
+    def add_overlay(o)
+      overlays << o
+    end
+
+    # @private
+    def remove_overlay(o)
+      overlays.delete(o) unless o == default_overlay
+    end
+
+    # @private
+    def overlays
+      @overlays ||= []
+    end
+
+    def assert(wme)
+      default_overlay.assert(wme)
+    end
+
+    def retract(wme, options = {})
+      default_overlay.retract(wme, options)
     end
 
     # @private
@@ -195,8 +204,8 @@ module Wongi::Engine
           assert WME.new( *something )
         when WME
           assert something
-        when Wongi::RDF::Statement
-          assert WME.new( something.subject, something.predicate, something.object, self )
+        # when Wongi::RDF::Statement
+        #   assert WME.new( something.subject, something.predicate, something.object, self )
         #when Wongi::RDF::Document
           #  something.statements.each do |st|
           #    assert WME.new( st.subject, st.predicate, st.object, self )
@@ -325,21 +334,6 @@ module Wongi::Engine
     end
 
     protected
-
-    def process_cascade
-      while @current_cascade
-        @current_cascade.each do |(operation, wme, options)|
-          case operation
-          when :assert
-            real_assert wme
-          when :retract
-            real_retract wme, options
-          end
-        end
-        @current_cascade = @next_cascade
-        @next_cascade = nil
-      end
-    end
 
 
     def in_snapshot

@@ -2,6 +2,27 @@ module Wongi::Engine
 
   class BetaNode
 
+    module TokenContainer
+      def tokens
+        Enumerator.new do |y|
+          rete.overlays.each do |overlay|
+            overlay.raw_tokens(self).dup.each do |token|
+              y << token unless token.deleted?
+            end
+            overlay.raw_tokens(self).reject! &:deleted?
+          end
+        end
+      end
+
+      def empty?
+        tokens.first.nil?
+      end
+
+      def size
+        tokens.count
+      end
+    end
+
     include CoreExt
 
     attr_writer :rete
@@ -55,24 +76,6 @@ module Wongi::Engine
     def delete_token token
       # => noop
     end
-
-    def tokens
-      Enumerator.new do |y|
-        @tokens.dup.each do |token|
-          y << token unless token.deleted?
-        end
-        @tokens.reject! &:deleted?
-      end
-    end
-
-    def empty?
-      @tokens.empty?
-    end
-
-    def size
-      @tokens.count { |t| not t.deleted? }
-    end
-    alias_method :length, :size
 
     private
 

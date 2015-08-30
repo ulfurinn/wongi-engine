@@ -9,6 +9,7 @@ module Wongi
     end
 
     class OptionalNode < BetaNode
+      include TokenContainer
 
       attr_reader :alpha, :tests, :assignment_pattern
 
@@ -17,7 +18,6 @@ module Wongi
         @alpha = alpha
         @tests = tests
         @assignment_pattern = assignments
-        @tokens = []
       end
 
       def make_opt_result token, wme
@@ -63,9 +63,9 @@ module Wongi
       end
 
       def beta_activate t
-        return if @tokens.find { |token| token.parent == t }
+        return if tokens.find { |token| token.parent == t }
         token = Token.new( self, t, nil, { } )
-        @tokens << token
+        token.overlay.add_token(token, self)
         match = false
         alpha.wmes.each do |wme|
           assignments = collect_assignments(wme)
@@ -88,7 +88,7 @@ module Wongi
       def beta_deactivate t
         token = tokens.find { |token| token.parent == t }
         return unless token
-        return unless @tokens.delete token
+        token.overlay.remove_token(token, self)
         token.deleted!
         if token.parent
           token.parent.children.delete token

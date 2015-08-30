@@ -1,22 +1,15 @@
 module Wongi
   module Engine
     class NccPartner < BetaNode
+      include TokenContainer
 
-      attr_reader :tokens
-      #  attr_accessor :conjuncts
       attr_accessor :ncc
       attr_accessor :divergent
-
-      def initialize parent
-        super
-        #    @conjuncts = 0
-        @tokens = []
-      end
 
       def beta_activate token
         t = Token.new self, token, nil, {}
         owner = owner_for( t )
-        tokens << t
+        t.overlay.add_token(t, self)
         if owner
           owner.ncc_results << t
           t.owner = owner
@@ -27,6 +20,7 @@ module Wongi
       def beta_deactivate t
         token = tokens.find { |tok| tok.parent == t }
         return unless token
+        token.overlay.remove_token(token, self)
         token.owner.ncc_results.delete token
         if token.owner.ncc_results.empty?
           ncc.ncc_activate token.owner

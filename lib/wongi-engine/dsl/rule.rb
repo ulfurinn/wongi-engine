@@ -30,7 +30,7 @@ module Wongi::Engine
     def initialize name
       @name = name
       @current_section = nil
-      Rule.sections.each { |section| acceptors[section] ||= [] }
+      DSL::Rule.sections.each { |section| acceptors[section] ||= [] }
     end
 
     def acceptors

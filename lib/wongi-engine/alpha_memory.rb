@@ -13,8 +13,7 @@ module Wongi::Engine
     end
 
     def activate wme
-      @wmes << wme
-      wme.alphas << self
+      wme.overlay.add_wme(wme, self)
       # TODO: it used to activate before adding to the list. mandated by the original thesis. investigate. it appears to create duplicate tokens - needs a remedy in collecting nodes
       betas.each do |beta|
         beta.alpha_activate wme
@@ -22,7 +21,7 @@ module Wongi::Engine
     end
 
     def deactivate wme
-      @wmes.delete wme
+      wme.overlay.remove_wme(wme, self)
       betas.each do |beta|
         beta.alpha_deactivate wme
       end
@@ -35,7 +34,7 @@ module Wongi::Engine
     end
 
     def inspect
-      "<Alpha #{__id__} template=#{template} wmes=#{@wmes}>"
+      "<Alpha #{__id__} template=#{template}>"
     end
 
     def to_s
@@ -43,13 +42,15 @@ module Wongi::Engine
     end
 
     def size
-      @wmes.count { |wme| not wme.deleted? }
+      wmes.count
     end
 
     def wmes
       Enumerator.new do |y|
-        @wmes.dup.each do |wme|
-          y << wme unless wme.deleted?
+        rete.overlays.each do |overlay|
+          overlay.raw_wmes(self).dup.each do |wme|
+            y << wme
+          end
         end
       end
     end

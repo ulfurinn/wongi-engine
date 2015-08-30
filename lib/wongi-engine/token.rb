@@ -7,6 +7,7 @@ module Wongi::Engine
     attr_reader :children
     attr_reader :wme
     attr_reader :node
+    attr_reader :overlay
     attr_accessor :owner, :parent
     attr_reader :neg_join_results
     attr_reader :opt_join_results
@@ -17,6 +18,7 @@ module Wongi::Engine
 
     def initialize node, token, wme, assignments
       @node, @parent, @wme, @assignments = node, token, wme, assignments
+      @overlay = wme ? wme.overlay.highest(token.overlay) : node.rete.default_overlay
       @children = []
       @deleted = false
       @neg_join_results = []
@@ -24,7 +26,6 @@ module Wongi::Engine
       @ncc_results = []
       @generated_wmes = []
       token.children << self if token
-      wme.tokens << self if wme
     end
 
     def ancestors

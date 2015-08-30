@@ -6,8 +6,9 @@ module Wongi::Engine
 
     attr_reader :rete
 
-    attr_reader :alphas, :tokens, :generating_tokens
+    attr_reader :generating_tokens
     attr_reader :neg_join_results, :opt_join_results
+    attr_accessor :overlay
     attr_predicate :deleted
     attr_predicate :manual
 
@@ -17,7 +18,6 @@ module Wongi::Engine
 
       @deleted = false
       @alphas = []
-      @tokens = []
       @generating_tokens = []
       @neg_join_results = []
       @opt_join_results = []
@@ -31,12 +31,14 @@ module Wongi::Engine
 
     def import_into r
       self.class.new( subject, predicate, object, r ).tap do |wme|
+        wme.overlay = overlay
         wme.manual = self.manual?
       end
     end
 
     def dup
       self.class.new( subject, predicate, object, rete ).tap do |wme|
+        wme.overlay = overlay
         wme.manual = self.manual?
       end
     end
@@ -57,19 +59,6 @@ module Wongi::Engine
       !generating_tokens.empty?
     end
 
-    # def destroy
-    #   return if deleted?
-    #   @deleted = true
-    #   alphas.each { |alpha| alpha.remove self }.clear
-    #   tokens = @tokens
-    #   @tokens = []
-    #   tokens.each &:destroy
-
-    #   destroy_neg_join_results
-    #   destroy_opt_join_results
-
-    # end
-
     def inspect
       "{#{subject.inspect} #{predicate.inspect} #{object.inspect}}"
     end
@@ -83,39 +72,6 @@ module Wongi::Engine
     end
 
     protected
-
-    # def destroy_neg_join_results
-    #   neg_join_results.each do |njr|
-
-    #     token = njr.owner
-    #     results = token.neg_join_results
-    #     results.delete njr
-
-    #     if results.empty? #&& !rete.in_snapshot?
-    #       token.node.children.each { |beta|
-    #         beta.beta_activate token, nil, { }
-    #       }
-    #     end
-
-    #   end.clear
-    # end
-
-    # def destroy_opt_join_results
-    #   opt_join_results.each do |ojr|
-
-    #     token = ojr.owner
-    #     results = token.opt_join_results
-    #     results.delete ojr
-
-    #     if results.empty?
-    #       token.delete_children
-    #       token.node.children.each { |beta|
-    #         beta.beta_activate token
-    #       }
-    #     end
-
-    #   end.clear
-    # end
 
     def match_member mine, theirs
       result = WMEMatchData.new

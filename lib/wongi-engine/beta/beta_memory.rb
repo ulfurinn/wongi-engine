@@ -1,34 +1,25 @@
 module Wongi::Engine
 
   class BetaMemory < BetaNode
-
-    def initialize parent
-      super
-      @tokens = []
-    end
+    include TokenContainer
 
     def seed assignments = {}
       @seed = assignments
       t = Token.new( self, nil, nil, assignments )
-      @tokens << t
+      rete.default_overlay.add_token(t, self)
     end
 
     def subst valuations
-      @tokens.first.destroy
-
+      beta_deactivate(tokens.first)
       token = Token.new( self, nil, nil, @seed )
-      @tokens << token
-
       valuations.each { |variable, value| token.subst variable, value }
-      self.children.each do |child|
-        child.beta_activate token
-      end
+      beta_activate(token)
     end
 
     def beta_activate token
-      existing = @tokens.reject(&:deleted?).find { |et| et.duplicate? token }
+      existing = tokens.find { |et| et.duplicate? token }
       return if existing # TODO really?
-      @tokens << token
+      token.overlay.add_token(token, self)
       children.each do |child|
         child.beta_activate token
       end
@@ -37,7 +28,7 @@ module Wongi::Engine
 
     def beta_deactivate token
       return nil unless tokens.find token
-      @tokens.delete token
+      token.overlay.remove_token(token, self)
       token.deleted!
       if token.parent
         token.parent.children.delete token # should this go into Token#destroy?
@@ -53,5 +44,6 @@ module Wongi::Engine
         child.beta_activate token
       end
     end
+
   end
 end
