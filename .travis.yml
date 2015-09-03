@@ -12,3 +12,6 @@ notifications:
   hipchat:
     rooms:
       secure: OwpsmGlIxlSbLUWVZZI+xBErDkFc5XO2vmjs+ddQkNiL1E9N5SG35x75113S6EZ3qhqeNMPFBfZYDqem6jkhNOWsmH3EIH+QT1lWxnosrr0LgyJpvFosvjQaryvqJHVhT5tdBqzaWEYB6ObRLOUt7A5YrbtWHyTScB6ThpXCiR4=
+  webhooks:
+    urls:
+      secure: Xm+R/3O6iG2sDbfrR8D5Y9AYJkB7DDjLBcKZEn+xaTVjuX/XFLF7p+v9n9v7Qs/v0VtU75pVX4Z++OmNJZJzJKB3Owgb4c1rMOGmctza2JPL+1yovmhpG0/S0hjMkO5g4CsAKKcQoaDXNrubUVHpEchLPP/aCx7/F4twCan9bfc=
