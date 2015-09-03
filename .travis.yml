@@ -1,10 +1,14 @@
 language: ruby
 rvm:
-  - 1.9.3
-  - 2.0.0
-  - 2.1.7
-  - 2.2.3
-  - rbx-2.4.1
-  - rbx-2.5.8
-  - jruby-19mode
+- 1.9.3
+- 2.0.0
+- 2.1.7
+- 2.2.3
+- rbx-2.4.1
+- rbx-2.5.8
+- jruby-19mode
 sudo: false
+notifications:
+  hipchat:
+    rooms:
+      secure: OwpsmGlIxlSbLUWVZZI+xBErDkFc5XO2vmjs+ddQkNiL1E9N5SG35x75113S6EZ3qhqeNMPFBfZYDqem6jkhNOWsmH3EIH+QT1lWxnosrr0LgyJpvFosvjQaryvqJHVhT5tdBqzaWEYB6ObRLOUt7A5YrbtWHyTScB6ThpXCiR4=
