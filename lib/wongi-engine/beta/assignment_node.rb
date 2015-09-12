@@ -24,7 +24,7 @@ module Wongi::Engine
 
     def beta_activate token, wme = nil, assignments = { }
       children.each do |child|
-        child.beta_activate Token.new( child, token, nil, { @variable => @body } )
+        child.beta_activate Token.new( child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body } )
       end
     end
 
@@ -44,7 +44,7 @@ module Wongi::Engine
       self.children = [ child ]
       parent.tokens.each do |token|
         children.each do |child|
-          child.beta_activate Token.new( child, token, nil, { @variable => @body } )
+          child.beta_activate Token.new( child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call : @body } )
         end
       end
       self.children = tmp
