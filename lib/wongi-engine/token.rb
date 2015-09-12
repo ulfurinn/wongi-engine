@@ -39,7 +39,7 @@ module Wongi::Engine
     def subst variable, value
       @cached_assignments = nil
       if @assignments.has_key? variable
-        @assignments[ variable ] = value.respond_to?(:call) ? value : Proc.new { value }
+        @assignments[ variable ] = value
       end
     end
 
@@ -49,7 +49,7 @@ module Wongi::Engine
 
     def [] var
       if a = assignments[ var ]
-        a.call( self )
+        a.respond_to?(:call) ? a.call( self ) : a
       end
     end
 

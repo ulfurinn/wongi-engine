@@ -52,4 +52,22 @@ describe "ASSIGN rule" do
 
   end
 
+  it 'should be evaluated once' do
+    x = 0
+    prod = engine << rule {
+      forall {
+        has :a, :b, :c
+        assign :T do
+          x += 1
+        end
+      }
+      make {
+        gen :d, :e, :T
+        gen :f, :g, :T
+      }
+    }
+    engine << [:a, :b, :c]
+    expect(x).to be == 1
+  end
+
 end
