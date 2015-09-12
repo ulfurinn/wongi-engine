@@ -29,6 +29,10 @@ The Rete implementation in this library largely follows the outline presented in
 * refactored compilation code
 * [data overlays](https://github.com/ulfurinn/wongi-engine/issues/45)
 
+### 0.1.3
+
+* fixed a bug in evaluation of `assign` nodes
+
 ### 0.1.0
 
 * massively rewritten rule activation; this simplifies development and debugging and opens the road for useful features such as fully reversible custom actions
