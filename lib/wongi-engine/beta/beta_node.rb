@@ -38,6 +38,10 @@ module Wongi::Engine
       end
     end
 
+    def root?
+      parent.nil?
+    end
+
     def depth
       @depth ||= if parent.nil?
         0
