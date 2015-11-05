@@ -24,10 +24,11 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
-### 0.2.0 [upcoming version]
+### 0.2.0
 
 * refactored compilation code
 * [data overlays](https://github.com/ulfurinn/wongi-engine/issues/45)
+* DSL methods are removed from `Object` and are available by including `Wongi::Engine::DSL` instead
 
 ### 0.1.4
 
