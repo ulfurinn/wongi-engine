@@ -18,7 +18,7 @@ module Wongi::Engine
 
     def initialize node, token, wme, assignments
       @node, @parent, @wme, @assignments = node, token, wme, assignments
-      @overlay = wme ? wme.overlay.highest(token.overlay) : node.rete.default_overlay
+      @overlay = wme ? wme.overlay.highest(token.overlay) : (token ? token.overlay : node.rete.default_overlay)
       @children = []
       @deleted = false
       @neg_join_results = []

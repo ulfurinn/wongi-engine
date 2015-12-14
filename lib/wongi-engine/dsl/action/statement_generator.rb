@@ -12,6 +12,7 @@ module Wongi::Engine
         # link to rete here to ensure proper linking with token
         wme = WME.new subject, predicate, object, rete
         wme.manual = false
+        wme.overlay = token.overlay
 
         production.tracer.trace( action: self, wme: wme ) if production.tracer
         if existing = rete.exists?( wme )
@@ -25,7 +26,7 @@ module Wongi::Engine
           wme.generating_tokens << token
           # this MUST be done after we link the wme and the token
           # in order for neg rule invalidation to work
-          rete << wme
+          wme.overlay.assert wme
         end
 
       end
@@ -37,7 +38,7 @@ module Wongi::Engine
             l << wme if wme.generating_tokens.empty?
           end
         end.each do |wme|
-          rete.retract wme, automatic: true
+          wme.overlay.retract wme, automatic: true
         end
       end
     end

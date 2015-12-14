@@ -101,6 +101,11 @@ module Wongi::Engine
     end
 
     # @private
+    def current_overlay
+      overlays.last
+    end
+
+    # @private
     def overlays
       @overlays ||= []
     end
@@ -312,14 +317,16 @@ module Wongi::Engine
       end
       no_check = s == :_ && p == :_ && o == :_
       template = Template.new(s, p, o).import_into self
-      alpha_top.wmes.each do |wme|
+      source = best_alpha(template)
+      current_overlay.wmes(source).each do |wme|
         yield wme if (no_check || wme =~ template)
       end
     end
 
     def select s, p, o
       template = Template.new(s, p, o)
-      matching = alpha_top.wmes.select { |wme| wme =~ template }
+      source = best_alpha(template)
+      matching = current_overlay.wmes(source).select { |wme| wme =~ template }
       if block_given?
         matching.each { |st| yield st.subject, st.predicate, st.object }
       end
@@ -330,7 +337,7 @@ module Wongi::Engine
       template = Template.new(s, p, o)
       source = best_alpha(template)
       # puts "looking for #{template} among #{source.wmes.size} triples of #{source.template}"
-      source.wmes.detect { |wme| wme =~ template }
+      current_overlay.wmes(source).find { |wme| wme =~ template }
     end
 
     protected
