@@ -53,7 +53,6 @@ module Wongi::Engine
       self.beta_top.seed
       self.queries = {}
       self.results = {}
-      @cache = {}
       @revns = {}
 
       @productions = { }
@@ -124,13 +123,11 @@ module Wongi::Engine
         wme = wme.import_into self
       end
 
-      if existing = @cache[wme]
+      source = best_alpha(wme)
+      if existing = find(wme.subject, wme.predicate, wme.object)
         existing.manual! if wme.manual?
         return
       end
-
-      # puts "ASSERTING #{wme}"
-      @cache[wme] = wme
 
       alphas_for( wme ).each { |a| a.activate wme }
 
@@ -139,8 +136,7 @@ module Wongi::Engine
 
     # @private
     def real_retract wme, options
-      real = @cache[wme]
-
+      real = find(wme.subject, wme.predicate, wme.object)
       return if real.nil?
       if real.generated? # still some generator tokens left
         if real.manual?
@@ -153,8 +149,6 @@ module Wongi::Engine
           return
         end
       end
-
-      @cache.delete(real)
 
       alphas_for( real ).each { |a| a.deactivate real }
     end
@@ -206,7 +200,7 @@ module Wongi::Engine
       else
         case something
         when Array
-          assert WME.new( *something )
+          assert WME.new( *something ).tap { |wme| wme.overlay = default_overlay }
         when WME
           assert something
         # when Wongi::RDF::Statement
@@ -302,7 +296,7 @@ module Wongi::Engine
     end
 
     def exists? wme
-      @cache[ wme ]
+      find(wme.subject, wme.predicate, wme.object)
     end
 
     def each *args

@@ -40,7 +40,7 @@ module Wongi::Engine
     def <<(thing)
       case thing
       when Array
-        assert WME.new(*thing)
+        assert WME.new(*thing).tap { |wme| wme.overlay = self }
       when WME
         assert(thing)
       else
