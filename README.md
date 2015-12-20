@@ -24,6 +24,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.2.1
+
+* data overlay fixes
+
 ### 0.2.0
 
 * refactored compilation code
