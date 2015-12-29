@@ -24,6 +24,10 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
+### 0.2.3
+
+* fixed the error collector
+
 ### 0.2.2
 
 * fixed retention of WMEs added to an overlay
