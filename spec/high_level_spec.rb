@@ -160,6 +160,23 @@ describe 'the engine' do
 
   end
 
+  it "should properly show error messages" do
+    rete << rule("Error rule") {
+      forall {
+        has :_, :_, :TestNumber
+        greater :TestNumber, 0
+      }
+      make {
+        error "An error has occurred"
+      }
+    }
+
+    rete << [ "A", "B", 1 ]
+
+    error_messages = rete.errors.map(&:message)
+    expect(error_messages).to eq(["An error has occurred"])
+  end
+
   it 'should use generic collectors' do
 
     rete << rule('generic-collector') {
