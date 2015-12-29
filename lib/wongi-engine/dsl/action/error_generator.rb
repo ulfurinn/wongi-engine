@@ -6,9 +6,9 @@ module Wongi::Engine
         @message, @messenger = message, messenger
       end
 
-      def rete=
+      def rete=(*)
         super
-        rete.add_collector :error, self
+        rete.add_collector self, :error
       end
 
       def errors
