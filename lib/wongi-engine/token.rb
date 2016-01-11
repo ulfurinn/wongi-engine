@@ -69,6 +69,12 @@ module Wongi::Engine
       deleted!
     end
 
+    def dispose!
+      parent.children.delete(self) if parent
+      @parent = nil
+      @wme = nil
+    end
+
     # for neg feedback loop protection
     def generated? wme
       return true if generated_wmes.any? { |w| w == wme }

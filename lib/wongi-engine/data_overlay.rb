@@ -7,6 +7,8 @@ module Wongi::Engine
     def initialize(rete, parent = nil)
       @rete = rete
       @parent = parent
+      @raw_wmes = Hash.new { |h, k| h[k] = [] }
+      @raw_tokens = Hash.new { |h, k| h[k] = [] }
       rete.add_overlay(self)
     end
 
@@ -35,6 +37,10 @@ module Wongi::Engine
     def dispose
       return if self == rete.default_overlay
       rete.remove_overlay(self)
+      @raw_tokens.values.each do |tokens|
+        tokens.each(&:dispose!)
+      end
+      @raw_tokens.clear
     end
 
     def <<(thing)
@@ -128,12 +134,10 @@ module Wongi::Engine
     end
 
     def raw_wmes(alpha)
-      @raw_wmes ||= Hash.new { |h, k| h[k] = [] }
       @raw_wmes[alpha.object_id]
     end
 
     def raw_tokens(beta)
-      @raw_tokens ||= Hash.new { |h, k| h[k] = [] }
       @raw_tokens[beta.object_id]
     end
   end
