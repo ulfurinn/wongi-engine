@@ -77,10 +77,6 @@ module Wongi::Engine
       raise "#{self.class} must implement refresh_child"
     end
 
-    def delete_token token
-      # => noop
-    end
-
     private
 
     def dp message

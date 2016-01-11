@@ -24,9 +24,9 @@ The Rete implementation in this library largely follows the outline presented in
 
 ## Changelog
 
-### 0.2.4
+### 0.2.5
 
-* fixed an overlay-related memory leak
+* fixed some overlay-related memory leaks
 
 ### 0.2.3
 

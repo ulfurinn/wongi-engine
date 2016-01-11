@@ -71,6 +71,8 @@ module Wongi::Engine
 
     def dispose!
       parent.children.delete(self) if parent
+      neg_join_results.dup.each(&:unlink)
+      opt_join_results.dup.each(&:unlink)
       @parent = nil
       @wme = nil
     end

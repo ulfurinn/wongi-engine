@@ -95,14 +95,6 @@ module Wongi
         end
       end
 
-      # def delete_token token
-      #   tokens.delete token
-      #   token.neg_join_results.each do |njr|
-      #     njr.wme.neg_join_results.delete njr if njr.wme
-      #   end
-      #   token.neg_join_results.clear
-      # end
-
       protected
 
       def matches? token, wme
