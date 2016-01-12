@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.6
+
+* fixed `Network#each`
+
 ## 0.2.5
 
 * fixed some overlay-related memory leaks
