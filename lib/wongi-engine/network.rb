@@ -299,21 +299,21 @@ module Wongi::Engine
       find(wme.subject, wme.predicate, wme.object)
     end
 
-    def each *args
-      return unless block_given?
-      unless args.length == 0 || args.length == 3
-        raise Error, "Network#each expects a pattern or nothing at all"
-      end
-      s, p, o = if args.empty?
-        [:_, :_, :_]
+    def each *args, &block
+      template = case args.length
+      when 0
+        Template.new(:_, :_, :_)
+      when 3
+        Template.new(*args)
       else
-        args
+        raise Error, "Network#each expect a template or nothing at all"
       end
-      no_check = s == :_ && p == :_ && o == :_
-      template = Template.new(s, p, o).import_into self
       source = best_alpha(template)
-      current_overlay.wmes(source).each do |wme|
-        yield wme if (no_check || wme =~ template)
+      matching = current_overlay.wmes(source).select { |wme| wme =~ template }
+      if block_given?
+        matching.each(&block)
+      else
+        matching.each
       end
     end
 
