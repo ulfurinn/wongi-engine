@@ -52,7 +52,7 @@ describe "MAYBE rule" do
 
   end
 
-  it 'should pass with retracted facts', :debug do
+  it 'should pass with retracted facts' do
 
     prod = engine << maybe_rule
 

@@ -47,7 +47,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
         engine << %w( Claire relative Dwight )
       end
 
-      it 'should be created', :debug do
+      it 'should be created' do
         expect( production ).to have(2).tokens
         expect( engine.find *%w( Alice relative Dwight ) ).not_to be_nil
       end

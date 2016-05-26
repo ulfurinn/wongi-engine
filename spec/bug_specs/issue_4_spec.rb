@@ -57,7 +57,7 @@ describe "issue 4" do
   end
 
   # cascaded processing affects this
-  it "should not retract later items from within a rule", :debug do
+  it "should not retract later items from within a rule" do
 
     engine = Wongi::Engine.create
 

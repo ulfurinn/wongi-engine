@@ -34,7 +34,7 @@ describe "ASSIGN rule" do
 
   end
 
-  it 'should be deactivatable', :debug do
+  it 'should be deactivatable' do
 
     prod = engine << rule {
       forall {
