@@ -21,9 +21,11 @@ module Wongi
         token = tokens.find { |tok| tok.parent == t }
         return unless token
         token.overlay.remove_token(token, self)
-        token.owner.ncc_results.delete token
-        if token.owner.ncc_results.empty?
-          ncc.ncc_activate token.owner
+        if owner = token.owner
+          owner.ncc_results.delete token
+          if owner.ncc_results.empty?
+            ncc.ncc_activate owner
+          end
         end
       end
 

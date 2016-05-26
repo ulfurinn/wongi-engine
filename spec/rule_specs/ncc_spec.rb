@@ -209,4 +209,55 @@ describe Wongi::Engine::NccNode do
 
   end
 
+  it 'should ncc-deactivate without destroying tokens' do
+    engine << rule {
+      forall {
+        has :Student, :is_a, :student
+        has :Course, :is_a, :course
+        none {
+          has :Requirement, :is_a, :requirement
+          has :Course, :Requirement, :RequiredGrade
+          any {
+            option {
+              neg :Student, :Requirement, :_
+            }
+            option {
+              has :Student, :Requirement, :ReceivedGrade
+              less :ReceivedGrade, :RequiredGrade
+            }
+          }
+        }
+      }
+      make {
+        gen :Student, :passes_for, :Course
+      }
+    }
+
+    File.open "rete.dot", "w" do |io|
+      Wongi::Engine::Graph.new( engine ).dot( io )
+    end
+
+
+    %w( math science english bio ).each { |req| engine << [ req, :is_a, :requirement ] }
+    %w( CourseA CourseB CourseC ).each  { |course| engine << [ course, :is_a, :course ] }
+    engine << [ "StudentA", :is_a, :student ]
+
+    engine << ["CourseA", "math", 50]
+    engine << ["CourseA", "science", 50]
+
+    engine << ["CourseB", "math", 50]
+    engine << ["CourseB", "english", 50]
+
+    engine << ["CourseC", "math", 50]
+    engine << ["CourseC", "bio", 50]
+
+    engine << ["StudentA", "math", 60]
+    engine << ["StudentA", "science", 60]
+    engine << ["StudentA", "bio", 40]
+
+    expect(engine.find "StudentA", :passes_for, "CourseA").not_to be_nil
+    expect(engine.find "StudentA", :passes_for, "CourseB").to be_nil
+    expect(engine.find "StudentA", :passes_for, "CourseC").to be_nil
+  end
+
 end

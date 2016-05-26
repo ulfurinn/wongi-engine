@@ -42,16 +42,12 @@ module Wongi
       end
 
       def ncc_activate token
-        token.deleted = false
-        token.overlay.add_token(token, self)
         children.each do |child|
           child.beta_activate Token.new( child, token, nil, { } )
         end
       end
 
       def ncc_deactivate token
-        token.overlay.remove_token(token, self)
-        token.deleted!
         children.each do |beta|
           beta.tokens.select { |t| t.parent == token }.each do |t|
             beta.beta_deactivate t
