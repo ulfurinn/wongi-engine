@@ -233,11 +233,6 @@ describe Wongi::Engine::NccNode do
       }
     }
 
-    File.open "rete.dot", "w" do |io|
-      Wongi::Engine::Graph.new( engine ).dot( io )
-    end
-
-
     %w( math science english bio ).each { |req| engine << [ req, :is_a, :requirement ] }
     %w( CourseA CourseB CourseC ).each  { |course| engine << [ course, :is_a, :course ] }
     engine << [ "StudentA", :is_a, :student ]
