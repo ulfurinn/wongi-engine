@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.7
+
+* fixed an NCC deactivation bug
+
 ## 0.2.6
 
 * fixed `Network#each`
