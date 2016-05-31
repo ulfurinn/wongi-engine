@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.8
+
+* fixed a namespacing bug affecting code not including the DSL module
+
 ## 0.2.7
 
 * fixed an NCC deactivation bug
