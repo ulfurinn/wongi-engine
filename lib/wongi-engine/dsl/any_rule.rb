@@ -1,5 +1,6 @@
 module Wongi::Engine
-  class DSL::AnyRule
+  module DSL
+    class AnyRule
 
     attr_reader :variants
 
@@ -22,10 +23,11 @@ module Wongi::Engine
 
   end
 
-  class DSL::VariantRule < DSL::Rule
+    class VariantRule < Rule
     def initialize name = nil
       super
       @current_section = :forall
     end
+  end
   end
 end

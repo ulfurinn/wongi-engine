@@ -1,9 +1,10 @@
 module Wongi::Engine
-  class DSL::Rule
+  module DSL
+    class Rule
 
     attr_reader :name
 
-    include DSL::Generated
+      include Generated
 
     class << self
 
@@ -30,7 +31,7 @@ module Wongi::Engine
     def initialize name
       @name = name
       @current_section = nil
-      DSL::Rule.sections.each { |section| acceptors[section] ||= [] }
+        Rule.sections.each { |section| acceptors[section] ||= [] }
     end
 
     def acceptors
@@ -79,6 +80,5 @@ module Wongi::Engine
 
 
   end
-
-
+  end
 end

@@ -1,6 +1,6 @@
 module Wongi::Engine
-
-  class DSL::Query < DSL::Rule
+  module DSL
+    class Query < Rule
 
     def search_on *terms
       terms.each { |term| parameters << term }
@@ -20,4 +20,5 @@ module Wongi::Engine
 
   end
 
+  end
 end

@@ -1,5 +1,6 @@
 module Wongi::Engine
-  class DSL::NccSubrule < DSL::Rule
+  module DSL
+    class NccSubrule < Rule
 
     def initialize name = nil, &block
       super
@@ -11,5 +12,6 @@ module Wongi::Engine
     def compile context
       context.tap { |c| c.ncc_node(self, false) }
     end
+  end
   end
 end
