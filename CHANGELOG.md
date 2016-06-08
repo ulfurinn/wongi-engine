@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.9
+
+* fixed a bug preventing variables being bound to `false` and `nil`
+
 ## 0.2.8
 
 * fixed a namespacing bug affecting code not including the DSL module
