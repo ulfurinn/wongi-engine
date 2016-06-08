@@ -70,4 +70,19 @@ describe "ASSIGN rule" do
     expect(x).to be == 1
   end
 
+  it 'should handle booleans' do
+    engine << rule do
+      for_all {
+        has :a, :b, :c
+        assign :X do |token|
+          false
+        end
+      }
+      make {
+        gen :d, :e, :X
+      }
+    end
+    engine << [:a, :b, :c]
+  end
+
 end

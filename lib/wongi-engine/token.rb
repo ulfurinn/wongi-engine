@@ -53,6 +53,10 @@ module Wongi::Engine
       end
     end
 
+    def has_var? x
+      assignments.has_key? x
+    end
+
     # TODO ignore assignments?
     def duplicate? other
       self.parent.equal?(other.parent) && @wme.equal?(other.wme) && self.assignments == other.assignments
