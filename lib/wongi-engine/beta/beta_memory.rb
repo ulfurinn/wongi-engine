@@ -19,6 +19,7 @@ module Wongi::Engine
     def beta_activate token
       existing = tokens.find { |et| et.duplicate? token }
       return if existing # TODO really?
+      return unless token.overlay
       token.overlay.add_token(token, self)
       children.each do |child|
         child.beta_activate token
