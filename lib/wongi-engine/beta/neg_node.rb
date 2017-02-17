@@ -52,6 +52,7 @@ module Wongi
 
       def beta_activate token
         return if tokens.find { |et| et.duplicate? token }
+        return unless token.overlay
         token.overlay.add_token(token, self)
         alpha.wmes.each do |wme|
           if matches?( token, wme )
