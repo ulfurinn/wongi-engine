@@ -2,71 +2,71 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/01-index.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/01-index.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/02-facts.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/02-facts.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/03-simple-iteration.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/03-simple-iteration.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/04-simple-rules.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/04-simple-rules.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/05-taking-an-action.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/05-taking-an-action.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/06-two-phase-execution.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/06-two-phase-execution.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/07-more-facts.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/07-more-facts.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/08-chain-of-causality.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/08-chain-of-causality.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/09-queries.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/09-queries.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//01-basics/10-rulesets.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/01-basics/10-rulesets.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//02-matchers.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/02-matchers.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//03-actions.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/03-actions.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//04-overlays.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/04-overlays.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//05-advanced-topics/01-timelines.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/05-advanced-topics/01-timelines.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//05-advanced-topics/02-dsl-extensions.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/05-advanced-topics/02-dsl-extensions.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//404.html</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/404.html</loc>
       <priority>0.5</priority>
     </url>
     <url>
-      <loc>http://ulfurinn.github.io/wongi-engine//</loc>
+      <loc>http://ulfurinn.github.io/wongi-engine//wongi-engine/</loc>
       <priority>0.5</priority>
     </url>
 </urlset>
