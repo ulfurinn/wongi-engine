@@ -39,6 +39,17 @@
             <div class="main-content-source">
               <h1 id="overlays">Overlays</h1>
 
+<p>Overlays create scopes of facts. You can use them, for example, to quickly reset the engine to a pristine state, since compiling a large ruleset may be an expensive operation, and you may want to reuse the prepared engine between several independent sets of data.</p>
+
+<pre class="highlight ruby"><code><span class="n">engine</span><span class="p">.</span><span class="nf">with_overlay</span> <span class="k">do</span> <span class="o">|</span><span class="n">overlay</span><span class="o">|</span>
+  <span class="c1"># overlay &lt;&lt; [x, y, z]</span>
+  <span class="c1"># overlay.retract [x, y, z]</span>
+<span class="k">end</span>
+
+<span class="c1"># the engine state is reset here</span>
+</code></pre>
+<p>Overlays may be nested if necessary, creating nested scopes. Facts in the outer overlay are visible in inner overlays.</p>
+
             </div>
             <nav class="main-content-nav clearfix" role="navigation">
               <ul>
