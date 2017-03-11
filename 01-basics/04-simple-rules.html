@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Simple rules</title>
+
+    <!-- Styles and fonts -->
+    <link href="../themes/glide/stylesheets/glide-df938af1.css" rel="stylesheet" />
+    <link href="../themes/glide/stylesheets/syntax-e33ab3a1.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Bree+Serif&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <script src="../themes/glide/javascripts/modernizr-16671e9f.js"></script>
+  </head>
+
+  <body class="x01-basics x01-basics_04-simple-rules glide">
+    <div class="page-wrapper">
+
+      <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+
+      <header class="page-header" role="banner">
+<a href="/" class="invisilink">            <span class="book-title">Wongi::Engine</span>
+</a>        <span class="book-author visuallyhidden">by úlfurinn</span>
+      </header>
+
+        <div class="content-wrapper clearfix">
+
+          <section class="main-content" role="main">
+            <div class="main-content-source">
+              <h1 id="simple-rules">Simple rules</h1>
+
+<p>This is not a very interesting way to use a rule engine, though. It's supposed to do the searching and matching part for you.</p>
+
+<p>Let's try this:</p>
+
+<pre class="highlight ruby"><code><span class="n">friends</span> <span class="o">=</span> <span class="n">engine</span><span class="p">.</span><span class="nf">rule</span> <span class="s2">"friends"</span> <span class="k">do</span>
+  <span class="n">forall</span> <span class="p">{</span>
+    <span class="n">has</span> <span class="ss">:A</span><span class="p">,</span> <span class="ss">:friend</span><span class="p">,</span> <span class="ss">:B</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre>
+<p>This is the most basic kind of rule. A rule needs to have a <code>forall</code> section, describing the conditions for the rule. The conditions will be composed of a number of <em>matchers</em>, like <code>has</code> in this example. Matchers will be triggered sequentially top to bottom, and the rule will <em>activate</em> when they all pass successfully.</p>
+
+<p>In this example we're matching against all facts that say someone is someone else's friend. The predicate of the matcher is <code>:friend</code>, which will match any fact with the same literal predicate. The subject and the object, however, are special. Symbols starting with capital letters are interpreted as <em>variables</em>. The first time a variable is encountered, it is <em>bound</em> to the corresponding element of the matching fact.</p>
+
+<p><code>:_</code> is available as a placeholder for values you don't care about and don't want to waste a variable on.</p>
+
+<p>An easy way to investigate what own rule found is this:</p>
+
+<pre class="highlight ruby"><code><span class="n">friends</span><span class="p">.</span><span class="nf">tokens</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">token</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">"%s and %s are friends"</span> <span class="o">%</span> <span class="p">[</span> <span class="n">token</span><span class="p">[</span><span class="ss">:A</span><span class="p">],</span> <span class="n">token</span><span class="p">[</span><span class="ss">:B</span><span class="p">]</span> <span class="p">]</span>
+<span class="k">end</span>
+</code></pre>
+<p>Tokens are built up as execution flows through all the matchers, collecting all the encountered variables.</p>
+
+<p>We can do more with variables. When you use a previously bound variable, its value will be used instead. Let's add another fact:</p>
+
+<pre class="highlight ruby"><code><span class="n">engine</span> <span class="o">&lt;&lt;</span> <span class="p">[</span><span class="s2">"Bob"</span><span class="p">,</span> <span class="ss">:friend</span><span class="p">,</span> <span class="s2">"Claire"</span><span class="p">]</span>
+</code></pre>
+<p>and another rule:</p>
+
+<pre class="highlight ruby"><code><span class="n">second_degree</span> <span class="o">=</span> <span class="n">engine</span><span class="p">.</span><span class="nf">rule</span> <span class="s2">"friends of friends"</span> <span class="k">do</span>
+  <span class="n">forall</span> <span class="p">{</span>
+    <span class="n">has</span> <span class="ss">:A</span><span class="p">,</span> <span class="ss">:friend</span><span class="p">,</span> <span class="ss">:B</span>
+    <span class="n">has</span> <span class="ss">:B</span><span class="p">,</span> <span class="ss">:friend</span><span class="p">,</span> <span class="ss">:C</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="n">second_degree</span><span class="p">.</span><span class="nf">tokens</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">token</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">"%s and %s are friends through %s"</span> <span class="o">%</span> <span class="p">[</span> <span class="n">token</span><span class="p">[</span><span class="ss">:A</span><span class="p">],</span> <span class="n">token</span><span class="p">[</span><span class="ss">:C</span><span class="p">],</span> <span class="n">token</span><span class="p">[</span><span class="ss">:B</span><span class="p">]</span> <span class="p">]</span>
+<span class="k">end</span>
+</code></pre>
+<p>(The object returned by <code>engine#rule</code> is called the production node. You don't need to carry it around — you can always access it as <code>engine.productions["friends of friends"]</code>. In fact, you shouldn't even need to use it that often, as there are more powerful ways to work with result sets.)</p>
+
+            </div>
+            <nav class="main-content-nav clearfix" role="navigation">
+              <ul>
+                <li><a href="03-simple-iteration.html" class="previous">Previous</a></li>
+                <li><a href="05-taking-an-action.html" class="next">Next</a></li>
+              </ul>
+            </nav>
+          </section>
+
+          <aside class="aside-content" role="complementary">
+            <div class="aside-wrapper">
+
+              <div class="block table-of-contents">
+                <h3>Table of contents</h3>
+                <nav role="navigation">
+                  <ul>
+                    <li class='child '><a href="/">Preface</a></li><li class='parent'><span class='parent-label'>Basics</span><ul><li class='child '><a href="01-index.html">Starting up</a></li><li class='child '><a href="02-facts.html">Facts</a></li><li class='child '><a href="03-simple-iteration.html">Simple iteration</a></li><li class='child active'><a href="04-simple-rules.html">Simple rules</a></li><li class='child '><a href="05-taking-an-action.html">Taking an action</a></li><li class='child '><a href="06-two-phase-execution.html">Two-phase execution</a></li><li class='child '><a href="07-more-facts.html">More facts!</a></li><li class='child '><a href="08-chain-of-causality.html">Chain of causality</a></li><li class='child '><a href="09-queries.html">Queries</a></li><li class='child '><a href="10-rulesets.html">Rulesets</a></li></ul></li><li class='child '><a href="../02-matchers.html">Matchers</a></li><li class='child '><a href="../03-actions.html">Actions</a></li><li class='child '><a href="../04-overlays.html">Overlays</a></li><li class='parent'><span class='parent-label'>Advanced Topics</span><ul><li class='child '><a href="../05-advanced-topics/01-timelines.html">Timelines</a></li><li class='child '><a href="../05-advanced-topics/02-dsl-extensions.html">DSL extensions</a></li></ul></li>
+                  </ul>
+                </nav>
+              </div>
+              <!--
+              <div class="block translations">
+                <h3>Book translations</h3>
+                <p>This book is translated into
+                  <a href="#">Spanish</a>
+                  and <a href="#">English</a>.
+                  You can help with more translations <a href="https://github.com/ulfurinn/wongi-engine">on Github</a>.
+                </p>
+              </div>
+              -->
+            </div><!-- end aside-wrapper -->
+          </aside>
+
+        </div><!-- end content-wrapper -->
+
+      <footer class="page-footer">
+
+        <div class="footer-wrapper">
+          <!--
+          <div class="block downloads">&nbsp;
+            <h3>Downloads</h3>
+            <p>Download this book in
+                <a href="#">PDF</a>, <a href="#">mobi</a>, and <a href="#">epub</a>
+              form for free.
+            </p>
+          </div>
+          -->
+          <!-- <div class="block license">
+            <h3>License</h3>
+            <p>This book is licensed under the <a href="https://creativecommons.org/licenses/by-sa/4.0">Attribution-ShareAlike</a> license.</p>
+          </div>
+
+          <div class="block open-source">
+            <h3>This book is open source</h3>
+            <p>The source of this book is <a href="https://github.com/ulfurinn/wongi-engine">hosted on Github</a>. Go, ahead. Check it out.</p>
+          </div> -->
+
+          <small class="small-text">Copyright 2017</small>
+
+        </div><!-- end footer-wrapper -->
+
+      </footer>
+
+
+    </div><!-- end page-wrapper -->
+
+    <!-- include scripts just before the close of the body tag -->
+    <script src="../themes/glide/javascripts/anchor.min-9893b39a.js"></script>
+    <script src="../themes/glide/javascripts/glide-0e98d5e5.js"></script>
+  </body>
+</html>

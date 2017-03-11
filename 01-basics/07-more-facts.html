@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>More facts!</title>
+
+    <!-- Styles and fonts -->
+    <link href="../themes/glide/stylesheets/glide-df938af1.css" rel="stylesheet" />
+    <link href="../themes/glide/stylesheets/syntax-e33ab3a1.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Bree+Serif&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <script src="../themes/glide/javascripts/modernizr-16671e9f.js"></script>
+  </head>
+
+  <body class="x01-basics x01-basics_07-more-facts glide">
+    <div class="page-wrapper">
+
+      <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+
+      <header class="page-header" role="banner">
+<a href="/" class="invisilink">            <span class="book-title">Wongi::Engine</span>
+</a>        <span class="book-author visuallyhidden">by úlfurinn</span>
+      </header>
+
+        <div class="content-wrapper clearfix">
+
+          <section class="main-content" role="main">
+            <div class="main-content-source">
+              <h1 id="more-facts">More facts!</h1>
+
+<p>Note how our facts define relations that always go from subject to object, i.e., they describe a directed graph. In a perfect world, friendships would go both ways, i.e. the friendship relation would be symmetric. To model that, we would have to manually assert <code>[:a, :friend, :b]</code> and <code>[:b, :friend, :a]</code>, or we can make the engine do the work:</p>
+
+<pre class="highlight ruby"><code><span class="n">engine</span><span class="p">.</span><span class="nf">rule</span> <span class="s2">"symmetric predicate"</span> <span class="k">do</span>
+  <span class="n">forall</span> <span class="p">{</span>
+    <span class="n">has</span> <span class="ss">:P</span><span class="p">,</span> <span class="ss">:symmetric</span><span class="p">,</span> <span class="kp">true</span>
+    <span class="n">has</span> <span class="ss">:X</span><span class="p">,</span> <span class="ss">:P</span><span class="p">,</span> <span class="ss">:Y</span>
+  <span class="p">}</span>
+  <span class="n">make</span> <span class="p">{</span>
+    <span class="n">gen</span> <span class="ss">:Y</span><span class="p">,</span> <span class="ss">:P</span><span class="p">,</span> <span class="ss">:X</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="n">engine</span> <span class="o">&lt;&lt;</span> <span class="p">[</span><span class="ss">:friend</span><span class="p">,</span> <span class="ss">:symmetric</span><span class="p">,</span> <span class="kp">true</span><span class="p">]</span>
+</code></pre>
+<p>If you do this on the engine with the self-printer rule installed, you'll instantly see the new reciprocated friendships pop up.</p>
+
+<p><code>gen</code> is an action that creates new facts based on the provided template and the variables bound in the token, and it's one of the most important elements in a rule. Generated actions can trigger other rules, which is a very powerful mechanism.</p>
+
+            </div>
+            <nav class="main-content-nav clearfix" role="navigation">
+              <ul>
+                <li><a href="06-two-phase-execution.html" class="previous">Previous</a></li>
+                <li><a href="08-chain-of-causality.html" class="next">Next</a></li>
+              </ul>
+            </nav>
+          </section>
+
+          <aside class="aside-content" role="complementary">
+            <div class="aside-wrapper">
+
+              <div class="block table-of-contents">
+                <h3>Table of contents</h3>
+                <nav role="navigation">
+                  <ul>
+                    <li class='child '><a href="/">Preface</a></li><li class='parent'><span class='parent-label'>Basics</span><ul><li class='child '><a href="01-index.html">Starting up</a></li><li class='child '><a href="02-facts.html">Facts</a></li><li class='child '><a href="03-simple-iteration.html">Simple iteration</a></li><li class='child '><a href="04-simple-rules.html">Simple rules</a></li><li class='child '><a href="05-taking-an-action.html">Taking an action</a></li><li class='child '><a href="06-two-phase-execution.html">Two-phase execution</a></li><li class='child active'><a href="07-more-facts.html">More facts!</a></li><li class='child '><a href="08-chain-of-causality.html">Chain of causality</a></li><li class='child '><a href="09-queries.html">Queries</a></li><li class='child '><a href="10-rulesets.html">Rulesets</a></li></ul></li><li class='child '><a href="../02-matchers.html">Matchers</a></li><li class='child '><a href="../03-actions.html">Actions</a></li><li class='child '><a href="../04-overlays.html">Overlays</a></li><li class='parent'><span class='parent-label'>Advanced Topics</span><ul><li class='child '><a href="../05-advanced-topics/01-timelines.html">Timelines</a></li><li class='child '><a href="../05-advanced-topics/02-dsl-extensions.html">DSL extensions</a></li></ul></li>
+                  </ul>
+                </nav>
+              </div>
+              <!--
+              <div class="block translations">
+                <h3>Book translations</h3>
+                <p>This book is translated into
+                  <a href="#">Spanish</a>
+                  and <a href="#">English</a>.
+                  You can help with more translations <a href="https://github.com/ulfurinn/wongi-engine">on Github</a>.
+                </p>
+              </div>
+              -->
+            </div><!-- end aside-wrapper -->
+          </aside>
+
+        </div><!-- end content-wrapper -->
+
+      <footer class="page-footer">
+
+        <div class="footer-wrapper">
+          <!--
+          <div class="block downloads">&nbsp;
+            <h3>Downloads</h3>
+            <p>Download this book in
+                <a href="#">PDF</a>, <a href="#">mobi</a>, and <a href="#">epub</a>
+              form for free.
+            </p>
+          </div>
+          -->
+          <!-- <div class="block license">
+            <h3>License</h3>
+            <p>This book is licensed under the <a href="https://creativecommons.org/licenses/by-sa/4.0">Attribution-ShareAlike</a> license.</p>
+          </div>
+
+          <div class="block open-source">
+            <h3>This book is open source</h3>
+            <p>The source of this book is <a href="https://github.com/ulfurinn/wongi-engine">hosted on Github</a>. Go, ahead. Check it out.</p>
+          </div> -->
+
+          <small class="small-text">Copyright 2017</small>
+
+        </div><!-- end footer-wrapper -->
+
+      </footer>
+
+
+    </div><!-- end page-wrapper -->
+
+    <!-- include scripts just before the close of the body tag -->
+    <script src="../themes/glide/javascripts/anchor.min-9893b39a.js"></script>
+    <script src="../themes/glide/javascripts/glide-0e98d5e5.js"></script>
+  </body>
+</html>

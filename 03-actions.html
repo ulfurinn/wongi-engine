@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Actions</title>
+
+    <!-- Styles and fonts -->
+    <link href="themes/glide/stylesheets/glide-df938af1.css" rel="stylesheet" />
+    <link href="themes/glide/stylesheets/syntax-e33ab3a1.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Bree+Serif&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <script src="themes/glide/javascripts/modernizr-16671e9f.js"></script>
+  </head>
+
+  <body class="x03-actions glide">
+    <div class="page-wrapper">
+
+      <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+
+      <header class="page-header" role="banner">
+<a href="/" class="invisilink">            <span class="book-title">Wongi::Engine</span>
+</a>        <span class="book-author visuallyhidden">by úlfurinn</span>
+      </header>
+
+        <div class="content-wrapper clearfix">
+
+          <section class="main-content" role="main">
+            <div class="main-content-source">
+              <h1 id="actions">Actions</h1>
+
+<h2 id="gen">gen</h2>
+
+<pre class="highlight ruby"><code><span class="n">gen</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+</code></pre>
+<p>Asserts a fact according to the provided template and links it to the current token. If all linked tokens are invalidated and the same fact has not been asserted manually, it is retracted.</p>
+
+<h2 id="action">action</h2>
+
+<pre class="highlight ruby"><code><span class="n">action</span> <span class="p">{</span> <span class="o">|</span><span class="n">token</span><span class="o">|</span>
+  <span class="c1"># ...</span>
+<span class="p">}</span>
+
+<span class="n">action</span> <span class="ss">activate: </span><span class="o">-&gt;</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="p">{</span> <span class="p">},</span> <span class="ss">deactivate: </span><span class="o">-&gt;</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+<span class="n">action</span> <span class="no">ActionClass</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span>
+<span class="k">class</span> <span class="nc">ActionClass</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">deexecute</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+<p>A piece of code executed upon activating and/or deactivating the production node.</p>
+
+<p>The action class may define the following accessors that will be populated with relevant data:</p>
+
+<ul>
+  <li><code>rete</code>: the engine instance</li>
+  <li><code>rule</code>: the rule in which the action is included</li>
+  <li><code>name</code>: the <a href="05-advanced-topics/02-dsl-extensions.html">extension clause</a> through which the action was instantiated</li>
+  <li><code>production</code>: the production node</li>
+</ul>
+
+<p>A short way to define all 4 is to inherit from <code>Wongi::Engine::Action</code>, but this is not necessary.</p>
+
+<h2 id="collect">collect</h2>
+
+<pre class="highlight ruby"><code><span class="n">collect</span> <span class="n">collection_name</span><span class="p">,</span> <span class="n">variable</span>
+</code></pre><p><code>engine.collection(collection_name)</code> will return a <code>uniq</code>ed array of all encountered values of the variable.</p>
+
+<h2 id="error">error</h2>
+
+<pre class="highlight ruby"><code><span class="n">error</span> <span class="n">message</span>
+<span class="n">error</span> <span class="p">{</span> <span class="o">|</span><span class="n">bound_variables</span><span class="o">|</span>
+  <span class="c1"># ...</span>
+  <span class="n">error_message</span>
+<span class="p">}</span>
+</code></pre>
+<p><code>engine.errors</code> will return all generated errors. Useful, for example, to detect contradictory facts.</p>
+
+<h2 id="trace">trace</h2>
+
+<pre class="highlight ruby"><code><span class="n">trace</span> <span class="n">options</span>
+</code></pre>
+<p>Prints a message each time the production node is activated. The following options are recognized:</p>
+
+<ul>
+  <li><code>:values =&gt; false</code>: whether to print all bound variables</li>
+  <li><code>:io =&gt; $stdout</code>: where to write the message</li>
+  <li><code>:generation =&gt; false</code>: whether this rule's <code>gen</code> actions should print debug traces, too. Must precede the <code>gen</code> actions in this case.</li>
+  <li><code>:tracer</code>: a class that defines <code>#trace(x)</code>. The content of <code>x</code> will vary depending on the action.</li>
+</ul>
+
+            </div>
+            <nav class="main-content-nav clearfix" role="navigation">
+              <ul>
+                <li><a href="02-matchers.html" class="previous">Previous</a></li>
+                <li><a href="04-overlays.html" class="next">Next</a></li>
+              </ul>
+            </nav>
+          </section>
+
+          <aside class="aside-content" role="complementary">
+            <div class="aside-wrapper">
+
+              <div class="block table-of-contents">
+                <h3>Table of contents</h3>
+                <nav role="navigation">
+                  <ul>
+                    <li class='child '><a href="/">Preface</a></li><li class='parent'><span class='parent-label'>Basics</span><ul><li class='child '><a href="01-basics/01-index.html">Starting up</a></li><li class='child '><a href="01-basics/02-facts.html">Facts</a></li><li class='child '><a href="01-basics/03-simple-iteration.html">Simple iteration</a></li><li class='child '><a href="01-basics/04-simple-rules.html">Simple rules</a></li><li class='child '><a href="01-basics/05-taking-an-action.html">Taking an action</a></li><li class='child '><a href="01-basics/06-two-phase-execution.html">Two-phase execution</a></li><li class='child '><a href="01-basics/07-more-facts.html">More facts!</a></li><li class='child '><a href="01-basics/08-chain-of-causality.html">Chain of causality</a></li><li class='child '><a href="01-basics/09-queries.html">Queries</a></li><li class='child '><a href="01-basics/10-rulesets.html">Rulesets</a></li></ul></li><li class='child '><a href="02-matchers.html">Matchers</a></li><li class='child active'><a href="03-actions.html">Actions</a></li><li class='child '><a href="04-overlays.html">Overlays</a></li><li class='parent'><span class='parent-label'>Advanced Topics</span><ul><li class='child '><a href="05-advanced-topics/01-timelines.html">Timelines</a></li><li class='child '><a href="05-advanced-topics/02-dsl-extensions.html">DSL extensions</a></li></ul></li>
+                  </ul>
+                </nav>
+              </div>
+              <!--
+              <div class="block translations">
+                <h3>Book translations</h3>
+                <p>This book is translated into
+                  <a href="#">Spanish</a>
+                  and <a href="#">English</a>.
+                  You can help with more translations <a href="https://github.com/ulfurinn/wongi-engine">on Github</a>.
+                </p>
+              </div>
+              -->
+            </div><!-- end aside-wrapper -->
+          </aside>
+
+        </div><!-- end content-wrapper -->
+
+      <footer class="page-footer">
+
+        <div class="footer-wrapper">
+          <!--
+          <div class="block downloads">&nbsp;
+            <h3>Downloads</h3>
+            <p>Download this book in
+                <a href="#">PDF</a>, <a href="#">mobi</a>, and <a href="#">epub</a>
+              form for free.
+            </p>
+          </div>
+          -->
+          <!-- <div class="block license">
+            <h3>License</h3>
+            <p>This book is licensed under the <a href="https://creativecommons.org/licenses/by-sa/4.0">Attribution-ShareAlike</a> license.</p>
+          </div>
+
+          <div class="block open-source">
+            <h3>This book is open source</h3>
+            <p>The source of this book is <a href="https://github.com/ulfurinn/wongi-engine">hosted on Github</a>. Go, ahead. Check it out.</p>
+          </div> -->
+
+          <small class="small-text">Copyright 2017</small>
+
+        </div><!-- end footer-wrapper -->
+
+      </footer>
+
+
+    </div><!-- end page-wrapper -->
+
+    <!-- include scripts just before the close of the body tag -->
+    <script src="themes/glide/javascripts/anchor.min-9893b39a.js"></script>
+    <script src="themes/glide/javascripts/glide-0e98d5e5.js"></script>
+  </body>
+</html>

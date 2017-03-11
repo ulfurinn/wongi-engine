@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Matchers</title>
+
+    <!-- Styles and fonts -->
+    <link href="themes/glide/stylesheets/glide-df938af1.css" rel="stylesheet" />
+    <link href="themes/glide/stylesheets/syntax-e33ab3a1.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Bree+Serif&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <script src="themes/glide/javascripts/modernizr-16671e9f.js"></script>
+  </head>
+
+  <body class="x02-matchers glide">
+    <div class="page-wrapper">
+
+      <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+
+      <header class="page-header" role="banner">
+<a href="/" class="invisilink">            <span class="book-title">Wongi::Engine</span>
+</a>        <span class="book-author visuallyhidden">by úlfurinn</span>
+      </header>
+
+        <div class="content-wrapper clearfix">
+
+          <section class="main-content" role="main">
+            <div class="main-content-source">
+              <h1 id="matchers">Matchers</h1>
+
+<p>This section describes all the matchers currently recognized by the <code>forall</code> section.</p>
+
+<h2 id="has">has</h2>
+
+<pre class="highlight ruby"><code><span class="n">has</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+</code></pre>
+<p><code>has</code> passes when it finds a fact that matches the template. It can introduce new variables.</p>
+
+<h2 id="neg--missing">neg / missing</h2>
+
+<pre class="highlight ruby"><code><span class="n">neg</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+</code></pre>
+<p><code>neg</code> passes when it <em>cannot</em> find any facts that match the template. It <strong>may not</strong> introduce new variables (because it doesn't make say to say "let x equal something that doesn't exist").</p>
+
+<h2 id="maybe--optional">maybe / optional</h2>
+
+<pre class="highlight ruby"><code><span class="n">maybe</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+</code></pre>
+<p><code>maybe</code> passes whether or not it finds a fact that matches the template. It is only useful if it introduces a new variable.</p>
+
+<h2 id="none--ncc">none / ncc</h2>
+
+<pre class="highlight ruby"><code><span class="n">none</span> <span class="p">{</span>
+  <span class="n">has</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+  <span class="c1"># ...</span>
+<span class="p">}</span>
+</code></pre>
+<p><code>none</code> creates a subchain of matchers and passes if that entire subchain yields an empty result set.</p>
+
+<h2 id="any">any</h2>
+
+<pre class="highlight ruby"><code><span class="n">any</span> <span class="p">{</span>
+  <span class="n">option</span> <span class="p">{</span>
+    <span class="n">has</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+    <span class="c1"># ...</span>
+  <span class="p">}</span>
+  <span class="n">option</span> <span class="p">{</span>
+    <span class="n">has</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+    <span class="c1"># ...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<p><code>any</code> passes if any of the subchains in <code>option</code>s yield a non-empty result set.</p>
+
+<h2 id="assign">assign</h2>
+
+<pre class="highlight ruby"><code><span class="n">assign</span> <span class="ss">:X</span> <span class="k">do</span> <span class="o">|</span><span class="n">token</span><span class="o">|</span>
+   <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre>
+<p><code>assign</code> always passes. The argument must be a new variable that will be bound to the value returned by the block.</p>
+
+<h2 id="assuming">assuming</h2>
+
+<pre class="highlight ruby"><code><span class="n">engine</span> <span class="o">&lt;&lt;</span> <span class="n">rule</span><span class="p">(</span><span class="s2">"base"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+
+<span class="n">engine</span> <span class="o">&lt;&lt;</span> <span class="n">rule</span><span class="p">(</span><span class="s2">"specialization"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">forall</span> <span class="p">{</span>
+    <span class="n">assuming</span> <span class="s2">"base"</span>
+    <span class="c1"># ...</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre>
+<p>If several of your rules have a common prefix, <code>assuming</code> lets you extract it into a reusable base rule. The specialized rule will work as if the <code>forall</code> section of the base rule were included verbatim. This lets you keep your rules more compact and helps performance a bit, since some of the work can be reused.</p>
+
+<p>The base rule must be installed prior to installing the specialized ones.</p>
+
+<p>The rule compiler can collapse some simpler matchers like <code>has</code> into a single execution node if it detects that the declarations are identical, but for matchers taking code blocks, like <code>assert</code>, it is not possible, and <code>assuming</code> must be used.</p>
+
+<h2 id="filter-matchers">Filter matchers</h2>
+
+<p>Filters are a category of matchers that block rule execution based on some predicate; they operate entirely on the token assembed so far.</p>
+
+<h3 id="same--eq--equal">same / eq / equal</h3>
+
+<pre class="highlight ruby"><code><span class="n">same</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</code></pre>
+<p><code>same</code> passes if its arguments compare as equal using <code>#==</code>. It is obviously only useful if at least one of them is a variable.</p>
+
+<h3 id="diff--ne">diff / ne</h3>
+
+<pre class="highlight ruby"><code><span class="n">diff</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</code></pre>
+<p><code>diff</code> passes if its arguments do not compare as equal using <code>#==</code>.</p>
+
+<h3 id="less">less</h3>
+
+<pre class="highlight ruby"><code><span class="n">less</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</code></pre>
+<p><code>less</code> passes if <code>x &lt; y</code>.</p>
+
+<h3 id="greater">greater</h3>
+
+<pre class="highlight ruby"><code><span class="n">greater</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</code></pre>
+<p><code>greater</code> passes if <code>x &gt; y</code>.</p>
+
+<h3 id="assert">assert</h3>
+
+<pre class="highlight ruby"><code><span class="n">assert</span> <span class="p">{</span> <span class="o">|</span><span class="n">token</span><span class="o">|</span>
+  <span class="c1"># ...</span>
+<span class="p">}</span>
+
+<span class="n">assert</span> <span class="ss">:A</span><span class="p">,</span> <span class="ss">:B</span><span class="p">,</span> <span class="ss">:C</span><span class="p">,</span> <span class="p">.</span><span class="nf">.</span><span class="p">.</span> <span class="nf">do</span> <span class="o">|</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="p">.</span><span class="nf">.</span><span class="o">.|</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre>
+<p><code>assert</code> passes if the block returns a truthy value.</p>
+
+            </div>
+            <nav class="main-content-nav clearfix" role="navigation">
+              <ul>
+                <li><a href="01-basics/10-rulesets.html" class="previous">Previous</a></li>
+                <li><a href="03-actions.html" class="next">Next</a></li>
+              </ul>
+            </nav>
+          </section>
+
+          <aside class="aside-content" role="complementary">
+            <div class="aside-wrapper">
+
+              <div class="block table-of-contents">
+                <h3>Table of contents</h3>
+                <nav role="navigation">
+                  <ul>
+                    <li class='child '><a href="/">Preface</a></li><li class='parent'><span class='parent-label'>Basics</span><ul><li class='child '><a href="01-basics/01-index.html">Starting up</a></li><li class='child '><a href="01-basics/02-facts.html">Facts</a></li><li class='child '><a href="01-basics/03-simple-iteration.html">Simple iteration</a></li><li class='child '><a href="01-basics/04-simple-rules.html">Simple rules</a></li><li class='child '><a href="01-basics/05-taking-an-action.html">Taking an action</a></li><li class='child '><a href="01-basics/06-two-phase-execution.html">Two-phase execution</a></li><li class='child '><a href="01-basics/07-more-facts.html">More facts!</a></li><li class='child '><a href="01-basics/08-chain-of-causality.html">Chain of causality</a></li><li class='child '><a href="01-basics/09-queries.html">Queries</a></li><li class='child '><a href="01-basics/10-rulesets.html">Rulesets</a></li></ul></li><li class='child active'><a href="02-matchers.html">Matchers</a></li><li class='child '><a href="03-actions.html">Actions</a></li><li class='child '><a href="04-overlays.html">Overlays</a></li><li class='parent'><span class='parent-label'>Advanced Topics</span><ul><li class='child '><a href="05-advanced-topics/01-timelines.html">Timelines</a></li><li class='child '><a href="05-advanced-topics/02-dsl-extensions.html">DSL extensions</a></li></ul></li>
+                  </ul>
+                </nav>
+              </div>
+              <!--
+              <div class="block translations">
+                <h3>Book translations</h3>
+                <p>This book is translated into
+                  <a href="#">Spanish</a>
+                  and <a href="#">English</a>.
+                  You can help with more translations <a href="https://github.com/ulfurinn/wongi-engine">on Github</a>.
+                </p>
+              </div>
+              -->
+            </div><!-- end aside-wrapper -->
+          </aside>
+
+        </div><!-- end content-wrapper -->
+
+      <footer class="page-footer">
+
+        <div class="footer-wrapper">
+          <!--
+          <div class="block downloads">&nbsp;
+            <h3>Downloads</h3>
+            <p>Download this book in
+                <a href="#">PDF</a>, <a href="#">mobi</a>, and <a href="#">epub</a>
+              form for free.
+            </p>
+          </div>
+          -->
+          <!-- <div class="block license">
+            <h3>License</h3>
+            <p>This book is licensed under the <a href="https://creativecommons.org/licenses/by-sa/4.0">Attribution-ShareAlike</a> license.</p>
+          </div>
+
+          <div class="block open-source">
+            <h3>This book is open source</h3>
+            <p>The source of this book is <a href="https://github.com/ulfurinn/wongi-engine">hosted on Github</a>. Go, ahead. Check it out.</p>
+          </div> -->
+
+          <small class="small-text">Copyright 2017</small>
+
+        </div><!-- end footer-wrapper -->
+
+      </footer>
+
+
+    </div><!-- end page-wrapper -->
+
+    <!-- include scripts just before the close of the body tag -->
+    <script src="themes/glide/javascripts/anchor.min-9893b39a.js"></script>
+    <script src="themes/glide/javascripts/glide-0e98d5e5.js"></script>
+  </body>
+</html>

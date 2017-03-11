@@ -9,19 +9,19 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Wongi::Engine</title>
+    <title>Two-phase execution</title>
 
     <!-- Styles and fonts -->
-    <link href="themes/glide/stylesheets/glide-df938af1.css" rel="stylesheet" />
-    <link href="themes/glide/stylesheets/syntax-e33ab3a1.css" rel="stylesheet" />
+    <link href="../themes/glide/stylesheets/glide-df938af1.css" rel="stylesheet" />
+    <link href="../themes/glide/stylesheets/syntax-e33ab3a1.css" rel="stylesheet" />
     <link href='https://fonts.googleapis.com/css?family=Bree+Serif&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <script src="themes/glide/javascripts/modernizr-16671e9f.js"></script>
+    <script src="../themes/glide/javascripts/modernizr-16671e9f.js"></script>
   </head>
 
-  <body class="index glide">
+  <body class="x01-basics x01-basics_06-two-phase-execution glide">
     <div class="page-wrapper">
 
       <!--[if lt IE 7]>
@@ -29,7 +29,7 @@
       <![endif]-->
 
       <header class="page-header" role="banner">
-<a href="/" class="invisilink">            <h1 class="book-title">Wongi::Engine</h1>
+<a href="/" class="invisilink">            <span class="book-title">Wongi::Engine</span>
 </a>        <span class="book-author visuallyhidden">by úlfurinn</span>
       </header>
 
@@ -37,20 +37,19 @@
 
           <section class="main-content" role="main">
             <div class="main-content-source">
-              <h1 id="preface">Preface</h1>
+              <h1 id="two-phase-execution">Two-phase execution</h1>
 
-<p>This is a pure-Ruby forward-chaining inference engine based on the classic <a href="http://en.wikipedia.org/wiki/Rete_algorithm">Rete</a> algorithm.</p>
+<p>This is a good place to mention an important detail that has caused some confusion among users.</p>
 
-<h2 id="word-of-caution">Word of caution</h2>
+<p>People sometimes assume that the literal contents of <code>forall</code> and <code>make</code> are executed for each fact, and try to put arbitrary Ruby statements in there, but this is not what's happening. Rule declarations are interpreted <strong>once</strong> in the compilation phase which builds internal structures corresponding to the declaration, and those structures are then traversed when facts are added. Any statement that is not part of the rule DSL will not be recognized by the compiler and will not have the effect you intended. Any custom code must be wrapped in appropriate rule DSL clauses.</p>
 
-<p>This is complex and fragile machinery, and there may be subtle bugs that are only revealed with nontrivial usage.<br />
-Be conservative with upgrades, test your rules extensively, and please report any behaviour that is not consistent with your expectations.</p>
+<p>As a consequence of this, any Ruby variable used in a matcher declaration will effectively become constant in the rule execution phase, keeping the value that was visible during compilation. One common example is trying to use <code>Time.now</code> in a template, expecting it to evaluate at the moment of matching. The <a href="../02-matchers.html#assign"><code>assign</code></a> matcher should be used for this instead.</p>
 
             </div>
             <nav class="main-content-nav clearfix" role="navigation">
               <ul>
-                <li></li>
-                <li><a href="01-basics/01-index.html" class="next">Next</a></li>
+                <li><a href="05-taking-an-action.html" class="previous">Previous</a></li>
+                <li><a href="07-more-facts.html" class="next">Next</a></li>
               </ul>
             </nav>
           </section>
@@ -62,7 +61,7 @@ Be conservative with upgrades, test your rules extensively, and please report an
                 <h3>Table of contents</h3>
                 <nav role="navigation">
                   <ul>
-                    <li class='child active'><a href="/">Preface</a></li><li class='parent'><span class='parent-label'>Basics</span><ul><li class='child '><a href="01-basics/01-index.html">Starting up</a></li><li class='child '><a href="01-basics/02-facts.html">Facts</a></li><li class='child '><a href="01-basics/03-simple-iteration.html">Simple iteration</a></li><li class='child '><a href="01-basics/04-simple-rules.html">Simple rules</a></li><li class='child '><a href="01-basics/05-taking-an-action.html">Taking an action</a></li><li class='child '><a href="01-basics/06-two-phase-execution.html">Two-phase execution</a></li><li class='child '><a href="01-basics/07-more-facts.html">More facts!</a></li><li class='child '><a href="01-basics/08-chain-of-causality.html">Chain of causality</a></li><li class='child '><a href="01-basics/09-queries.html">Queries</a></li><li class='child '><a href="01-basics/10-rulesets.html">Rulesets</a></li></ul></li><li class='child '><a href="02-matchers.html">Matchers</a></li><li class='child '><a href="03-actions.html">Actions</a></li><li class='child '><a href="04-overlays.html">Overlays</a></li><li class='parent'><span class='parent-label'>Advanced Topics</span><ul><li class='child '><a href="05-advanced-topics/01-timelines.html">Timelines</a></li><li class='child '><a href="05-advanced-topics/02-dsl-extensions.html">DSL extensions</a></li></ul></li>
+                    <li class='child '><a href="/">Preface</a></li><li class='parent'><span class='parent-label'>Basics</span><ul><li class='child '><a href="01-index.html">Starting up</a></li><li class='child '><a href="02-facts.html">Facts</a></li><li class='child '><a href="03-simple-iteration.html">Simple iteration</a></li><li class='child '><a href="04-simple-rules.html">Simple rules</a></li><li class='child '><a href="05-taking-an-action.html">Taking an action</a></li><li class='child active'><a href="06-two-phase-execution.html">Two-phase execution</a></li><li class='child '><a href="07-more-facts.html">More facts!</a></li><li class='child '><a href="08-chain-of-causality.html">Chain of causality</a></li><li class='child '><a href="09-queries.html">Queries</a></li><li class='child '><a href="10-rulesets.html">Rulesets</a></li></ul></li><li class='child '><a href="../02-matchers.html">Matchers</a></li><li class='child '><a href="../03-actions.html">Actions</a></li><li class='child '><a href="../04-overlays.html">Overlays</a></li><li class='parent'><span class='parent-label'>Advanced Topics</span><ul><li class='child '><a href="../05-advanced-topics/01-timelines.html">Timelines</a></li><li class='child '><a href="../05-advanced-topics/02-dsl-extensions.html">DSL extensions</a></li></ul></li>
                   </ul>
                 </nav>
               </div>
@@ -113,7 +112,7 @@ Be conservative with upgrades, test your rules extensively, and please report an
     </div><!-- end page-wrapper -->
 
     <!-- include scripts just before the close of the body tag -->
-    <script src="themes/glide/javascripts/anchor.min-9893b39a.js"></script>
-    <script src="themes/glide/javascripts/glide-0e98d5e5.js"></script>
+    <script src="../themes/glide/javascripts/anchor.min-9893b39a.js"></script>
+    <script src="../themes/glide/javascripts/glide-0e98d5e5.js"></script>
   </body>
 </html>
