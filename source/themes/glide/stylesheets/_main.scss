@@ -1,0 +1,266 @@
+// Header
+.page-header {
+  // Prevent margin from pushing through container.
+  background-color: $light-gray;
+  text-align: center;
+  padding: 2em 0;
+
+  // Overrides for the index page
+  .book_index &,
+  .index & {
+    padding: 3em 0;
+  }
+}
+.book-title {
+  font-family: $titles;
+  font-weight: 100;
+  font-size: 2.50em; // 40px / 16px
+  display: block;
+  margin: 0;
+
+  // Overrides for the index page
+  .book_index &,
+  .index & {
+    font-size: 3em; // 60px / 16px
+    padding: 0;
+  }
+}
+.book_index .book-author,
+.index .book-author {
+  font-size: 1em; // 16px / 16px
+  font-family: $titles;
+
+  // Override visually hidden
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+
+// Layout
+.content-wrapper {
+  max-width: $inside-width;
+  margin: 0 auto;
+  padding: 3em 2em;
+  @media screen and (max-width: $tablet-mid) {
+    max-width: 46em;
+  }
+  @media screen and (max-width: $tablet-1) {
+    padding: 3em 1em;
+  }
+}
+.aside-content {
+  float: right;
+  width: 34%;
+  padding-right: 5em;
+
+  @media screen and (max-width: $tablet-2) {
+    padding-right: 3em;
+  }
+
+  .block {
+    font-size: 0.875em; // 16px * 0.875 = 14px <---- BASE FONT FOR ASIDE BLOCK CONTENT
+
+    &:first-child h3 {
+      margin-top: 0.4em;
+    }
+
+    h3 {
+      font-family: $titles;
+      font-size: 1.2em;
+    }
+  }
+
+  // Reset sidebar content to full width for small devices.
+  @media screen and (max-width: $tablet-1) {
+    float: none;
+    width: 100%;
+    padding: 3em 0 0 0;
+    margin-top: 3em;
+    border-top: 1px solid #F2F2F2;
+  }
+}
+
+.main-content {
+  width: 66%;
+  float: right;
+
+  h1:first-child {
+    margin-top: 0;
+  }
+
+  // Reset main content to full width for small devices.
+  @media screen and (max-width: $tablet-1) {
+    float: none;
+    width: 100%;
+    padding-right: 0;
+  }
+}
+
+// Sidebar
+
+.table-of-contents {
+  margin-bottom: 3.5em;
+
+  ul {
+      list-style-type: none;
+      padding-left: 1em;
+  }
+  li.child {
+      line-height: 1;
+      padding: 2px 0 8px 0;
+  }
+  // First level of nav.
+  nav > ul {
+      padding: 0;
+      -webkit-padding-start: 0;
+  }
+}
+
+// Main
+.main-content-source {
+  margin-bottom: 2em;
+
+  li {
+    padding: 4px 0;
+    line-height: 1.3;
+  }
+
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.main-content-nav {
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    display: inline;
+
+    &:first-child {
+      float: left;
+      overflow: hidden;
+    }
+
+    &:last-child {
+      float: right;
+      overflow: hidden;
+    }
+  }
+
+  a {
+    display: block;
+    padding: 0.5em 0;
+    width: 6em; // 96px / 18px
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    background-color: $red;
+    transition: background-color 0.15s ease-in;
+  }
+}
+
+.active {
+  font-weight: bold;
+}
+
+a.anchor-link:focus {
+  background-color: transparent;
+}
+
+.previous {
+  position: relative;
+  margin-left: 1em;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: -0.313em; // -5px / 16px
+    left: -1.375em; // -22px / 16px
+    width: 0;
+    height: 0;
+    border-color: transparent $red transparent transparent;
+    border-style: solid;
+    border-width: 1.625em 1em 1.625em 0.5em; // 26px 16px 26px 8px (all / 16px)
+    transition: border-color 0.15s ease-in;
+  }
+
+  &:hover, &:focus {
+    background: darken($red, 8%);
+  }
+
+  &:hover:after, &:focus:after {
+    border-color: transparent darken($red, 8%) transparent transparent;
+  }
+}
+
+.next {
+  position: relative;
+  margin-right: 1em;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: -0.313em; // -5px / 16px
+    right: -1.375em; // -22px / 16px
+    width: 0;
+    height: 0;
+    border-color: transparent transparent transparent $red;
+    border-style: solid;
+    border-width: 1.625em 0.5em 1.625em 1em; // 26px 8px 26px 16px (all / 16px)
+    transition: border-color 0.15s ease-in;
+  }
+
+  &:hover, &:focus {
+    background: darken($red, 8%);
+  }
+
+  &:hover:after, &:focus:after {
+    border-color: transparent transparent transparent darken($red, 8%);
+  }
+}
+
+// Footer
+.page-footer {
+  clear: both;
+  background-color: $light-gray;
+  padding: 2em 0;
+}
+.footer-wrapper {
+  max-width: $two-block;
+  margin: 0 auto;
+  padding: 0 1em;
+
+  .block {
+    width: 49%;
+    padding: 0 0.8em;
+    font-size: 0.875em; // 16px * 0.875 = 14px <---- BASE FONT FOR FOOTER BLOCK CONTENT
+    float: left;
+
+    h3 {
+      font-family: $titles;
+      font-size: 1.2em;
+    }
+
+    @media screen and (max-width: $tablet-1) {
+      width: 100%;
+      padding: 0;
+    }
+  }
+}
+
+.page-footer small {
+    clear: both;
+    display: block;
+    text-align: center;
+    padding: 1em 0;
+}

@@ -1,0 +1,194 @@
+/* ==========================================================================
+   Bitbooks base styles
+   ========================================================================== */
+
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: $red;
+    color: white;
+    text-shadow: none;
+}
+
+::selection {
+    background: $red;
+    color: white;
+    text-shadow: none;
+}
+
+html {
+  /* Too Small */
+
+  @media screen and (max-width: $phone-1) {
+    font-size: 0.875em; // 16px * 0.875em = 14px base font
+  }
+
+  @media screen and (min-width: $phone-1) {
+    font-size: 1em; // 16px * 1em = 16px base font
+  }
+
+  @media screen and (min-width: $tablet-1) {
+    font-size: 1em; // 16px * 1em = 16px base font
+  }
+
+  @media screen and (min-width: $tablet-2) {
+    font-size: 1.125em; // 16px * 1.125em = 18px base font
+  }
+/*
+  @media screen and (min-width: $desktop-1) {
+    font-size: 1.250em; // 16px * 1.250em = 20px base font
+  }
+
+  @media screen and (min-width: $desktop-2) {
+    font-size: 1.375em; // 16px * 1.375em = 22px base font
+  }
+*/
+}
+
+html, html a {
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+}
+
+// The base font is equivalent to the default 16px.
+body {
+  background: #fff;
+  font-family: $sans-serif;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $sans-serif;
+  font-weight: normal;
+  margin: 1em 0;
+}
+
+h1 {
+  font-size: 2.250em; // 16px * 2.250em = 36px
+}
+
+h2 {
+  font-size: 1.50em; // 16px * 1.50em = 24px
+  border-bottom: 1px solid #ccc;
+}
+
+h3 {
+  font-size: 1.313em; // 16px * 1.313em = 21px
+}
+
+h4 {
+  font-size: 1.313em; // 16px * 1.313em = 21px
+  font-style: italic;
+}
+
+h5 {
+  font-size: 1.125em; // 16px * 1.125em = 18px
+  text-transform: uppercase;
+}
+
+h6 {
+  font-size: 1.125em; // 16px * 1.125em = 18px
+  text-transform: uppercase;
+  color: #777;
+}
+
+a {
+    color: $red;
+    text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:visited {
+
+  }
+
+  &:active {
+
+  }
+  &:focus {
+    background-color: $red;
+    color: white;
+    text-decoration: none;
+  }
+}
+
+p {
+  color: #3b3b3b;
+}
+
+ul {
+  -webkit-padding-start: 2em;
+  color: #3b3b3b;
+}
+
+blockquote {
+  font-style: italic;
+  margin-left: 1.94em;
+}
+
+table {
+  margin: 1em 0;
+  width: 100%;
+}
+
+th,
+td {
+  border: solid 1px #ccc;
+  padding: 5px 11px;
+  vertical-align: top;
+}
+
+/**
+ * 'Simple' styling for code examples
+ */
+code,
+samp,
+kbd {
+  font-family: "Courier", monospace;
+  font-size: 0.9em;
+  padding: 0 6px;
+  text-align: left;
+}
+
+pre {
+  font-family: "Courier", monospace;
+  font-size: 0.9em;
+  line-height: 1.2em;
+  margin: 1.2em 0;
+  overflow: auto;
+  padding: 5px 0 5px 1.5em;
+  border: 1px solid #ddd;
+
+  // Override non-horizontally scrolling defaults in normalize.css.
+  white-space: pre;
+  word-wrap: normal;
+}
+
+/**
+* Override 'code' css rules if using 'pre > code' markup.
+*/
+pre > code {
+  padding: 0;
+}
+
+/**
+ * target IE7 and IE6
+ */
+*:first-child+html pre {
+  overflow: visible;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2em;
+}
+
+* html pre {
+  overflow: visible;
+  overflow-x: auto;
+  padding-bottom: 2em;
+}

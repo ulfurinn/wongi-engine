@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%= discover_page_title %></title>
+
+    <!-- Styles and fonts -->
+    <%= stylesheet_link_tag :hamilton %>
+    <%= stylesheet_link_tag :syntax %>
+
+    <link href='https://fonts.googleapis.com/css?family=Crimson+Text:400,400italic,700italic,700' rel='stylesheet' type='text/css'>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <%= javascript_include_tag  "themes/hamilton/javascripts/modernizr" %>
+  </head>
+
+  <body class="<%= page_classes %> hamilton">
+    <div class="page-wrapper">
+
+      <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+
+      <header class="page-header" role="banner">
+        <% link_to_if_exists '/index.html', :class => "invisilink" do %>
+          <% if ['index.html'].include? current_page.path %>
+            <h1 class="book-title"><%= data.book.title %></h1>
+          <% else %>
+            <span class="book-title"><%= data.book.title %></span>
+          <% end %>
+        <% end %>
+        <span class="book-author visuallyhidden">by <%= data.book.author %></span>
+      </header>
+
+      <div class="content-wrapper clearfix">
+        <div class="toc" id="toc">
+          <a href="#" class="toc-title" id="toc-title">
+            <h3><%= I18n.t('table_of_contents', default: 'Table of Contents') %></h3>
+          </a>
+          <nav role="navigation" id="toc-nav" style="display: none;">
+            <ul id="toc-list">
+              <%= tree_to_html(data.tree) %>
+            </ul>
+          </nav>
+        </div>
+        <section class="main-content" role="main">
+          <div class="main-content-source">
+            <%= yield %>
+          </div>
+          <nav class="main-content-nav clearfix" role="navigation">
+            <ul class="clearfix">
+              <li><%= previous_link(data.tree) %></li>
+                <li><%= next_link(data.tree) %></li>
+            </ul>
+          </nav>
+        </section>
+
+        </div><!-- end content-wrapper -->
+
+      <footer class="page-footer">
+
+        <div class="footer-wrapper clearfix" role="complementary">
+          <!--
+          <div class="block-pair clearfix">
+            <div class="block downloads">
+              <h3>Downloads</h3>
+              <p>Download this book in
+                  <a href="#">PDF</a>, <a href="#">mobi</a>, and <a href="#">epub</a>
+                form for free.
+              </p>
+            </div>
+
+            <div class="block translations">
+              <h3>Book translations</h3>
+              <p>This book is translated into
+                <a href="#">Spanish</a>
+                and <a href="#">English</a>.
+                You can help with more translations <a href="<%= data.book.github_url %>">on Github</a>.
+              </p>
+            </div>
+          </div>
+          -->
+          <div class="block-pair clearfix">
+            <div class="block license">
+              <h3><%= I18n.t('license', default: 'License') %></h3>
+              <p>This book is licensed under the <a href="<%= data.book.license_url %>"><%= data.book.license_name %></a> license.</p>
+            </div>
+            <div class="block open-source">
+              <h3>This book is open source</h3>
+              <p>The source of this book is <a href="<%= data.book.github_url %>">hosted on Github</a>. Go, ahead. Check it out.</p>
+            </div>
+          </div>
+
+          <div class="small-text">Copyright <%= Time.now.year %></div>
+
+        </div><!-- end footer-wrapper -->
+
+      </footer>
+
+
+    </div><!-- end page-wrapper -->
+
+    <!-- include scripts just before the close of the body tag -->
+    <%= javascript_include_tag "themes/hamilton/javascripts/anchor.min" %>
+    <%= javascript_include_tag "themes/hamilton/javascripts/hamilton" %>
+  </body>
+</html>
