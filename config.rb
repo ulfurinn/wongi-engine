@@ -61,4 +61,6 @@ end
 # activate :relative_assets
 # set :relative_links, true
 
-set :http_prefix, '/wongi-engine/'
+configure :production do
+  set :http_prefix, '/wongi-engine/'
+end
