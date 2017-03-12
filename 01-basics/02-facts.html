@@ -51,7 +51,7 @@ Any kind of complex structures and relationships between entities can be decompo
 
 <pre class="highlight ruby"><code><span class="n">engine</span><span class="p">.</span><span class="nf">retract</span> <span class="p">[</span><span class="s2">"Alice"</span><span class="p">,</span> <span class="ss">:age</span><span class="p">,</span> <span class="mi">35</span><span class="p">]</span>
 </code></pre>
-<p>There are no restrictions on what constitutes a subject vs a predicate. A term that is used as a predicate in one triple can be a predicate in another, allowing you to build meta-models of your data.</p>
+<p>There are no restrictions on what constitutes a subject vs a predicate. A term that is used as a predicate in one triple <a href="/wongi-engine/01-basics/07-more-facts.html">can be a subject in another</a>, allowing you to build meta-models of your data.</p>
 
 <p>Any Ruby object that implements <code>#==</code> in a sensible way can be used in any position in a triple, except symbols that start with an uppercase latin letter and <code>:_</code>, which have special meaning; more on those later. Uppercase symbols were chosen because you never see them in idiomatic Ruby code, so they're fair game for overloading.</p>
 
