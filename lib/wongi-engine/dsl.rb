@@ -2,6 +2,10 @@ module Wongi::Engine
   module DSL
     extend self
 
+    def sections
+      @sections ||= {}
+    end
+
     def ruleset name = nil, &definition
       rs = Ruleset.new
       if ! name.nil?
@@ -47,6 +51,7 @@ require 'wongi-engine/dsl/action/statement_generator'
 require 'wongi-engine/dsl/action/simple_collector'
 require 'wongi-engine/dsl/action/trace_action'
 require 'wongi-engine/dsl/action/error_generator'
+require 'wongi-engine/dsl/action/assign_action'
 
 module Wongi::Engine::DSL
   dsl {
@@ -128,5 +133,8 @@ module Wongi::Engine::DSL
 
     clause :action
     action Action::SimpleAction
+
+    clause :assign
+    action Action::AssignAction
   }
 end

@@ -10,7 +10,10 @@ module Wongi::Engine::DSL
     def build &definition
       instance_eval &definition
       @clauses.each do |c|
-        Generated.create_dsl_method c
+        Wongi::Engine::DSL.sections[c[:section]] ||= Class.new do
+          include Generated
+        end
+        Wongi::Engine::DSL.sections[c[:section]].create_dsl_method(c)
       end
     end
     

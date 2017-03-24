@@ -37,14 +37,17 @@ module Wongi::Engine
     end
 
     def subst variable, value
-      @cached_assignments = nil
       if @assignments.has_key? variable
         @assignments[ variable ] = value
       end
     end
 
+    def set(variable, value)
+      @assignments[variable] = value
+    end
+
     def assignments
-      @cached_assignments ||= all_assignments
+      all_assignments
     end
 
     def [] var

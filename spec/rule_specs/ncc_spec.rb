@@ -101,8 +101,8 @@ describe Wongi::Engine::NccNode do
       }
       make {
         #trace values: true, generation: true
-        gen self.name, :light_bathroom, :on
-        gen self.name, :want_action_for, :light_bathroom
+        gen rule.name, :light_bathroom, :on
+        gen rule.name, :want_action_for, :light_bathroom
       }
     end
 
@@ -159,8 +159,8 @@ describe Wongi::Engine::NccNode do
       }
       make {
         #trace values: true, generation: true
-        gen self.name, :light_bathroom, :on
-        gen self.name, :want_action_for, :light_bathroom
+        gen rule.name, :light_bathroom, :on
+        gen rule.name, :want_action_for, :light_bathroom
       }
     end
 

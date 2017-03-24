@@ -4,8 +4,6 @@ module Wongi::Engine
 
     attr_reader :name
 
-      include Generated
-
     class << self
 
       def section s, *aliases
@@ -13,7 +11,9 @@ module Wongi::Engine
           sections << s
           define_method s do |&d|
             @current_section = s
-            instance_eval &d
+            section = DSL.sections[s].new
+            section.rule = self
+            section.instance_eval &d
           end
           aliases.each { |a| alias_method a, s }
         end
@@ -71,8 +71,6 @@ module Wongi::Engine
     def install( rete )
       rete.install_rule( self )
     end
-
-    protected
 
     def accept stuff
       acceptors[@current_section] << stuff
