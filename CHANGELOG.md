@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0
+
+* Breaking change: the content of `forall` and `make` is no longer evaluated in the rule context. Instead, the rule is accessible as `rule`.
+* Added `assign` to the `make` section
+
 ## 0.2.9
 
 * fixed a bug preventing variables being bound to `false` and `nil`
