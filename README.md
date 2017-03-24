@@ -1,16 +1,17 @@
 # Wongi::Engine
 
-[![Build Status](https://travis-ci.org/ulfurinn/wongi-engine.svg?branch=master)](https://travis-ci.org/ulfurinn/wongi-engine) (MRI 2.1 to 2.4, JRuby)
+[![Gem](https://img.shields.io/gem/v/wongi-engine.svg)](https://rubygems.org/gems/wongi-engine/)  
+[![Build Status](https://travis-ci.org/ulfurinn/wongi-engine.svg?branch=master)](https://travis-ci.org/ulfurinn/wongi-engine)
 
-[Feature annoucements](https://github.com/ulfurinn/wongi-engine/issues?q=is%3Aopen+is%3Aissue+label%3Aannoucement)
-
-[Open discussions](https://github.com/ulfurinn/wongi-engine/issues?q=is%3Aopen+is%3Aissue+label%3Adiscussion)
-
-[Tutorial](http://ulfurinn.github.io/wongi-engine/)
+## [Documentation](http://ulfurinn.github.io/wongi-engine/)
 
 This library contains a rule engine written in Ruby. It's based on the [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm) and uses a DSL to express rules in a readable way.
 
 **Word of caution**: this is complex and fragile machinery, and there may be subtle bugs that are only revealed with nontrivial usage. Be conservative with upgrades, test your rules extensively, and please report any behaviour that is not consistent with your expectations.
+
+[Feature annoucements](https://github.com/ulfurinn/wongi-engine/issues?q=is%3Aopen+is%3Aissue+label%3Aannoucement)
+
+[Open discussions](https://github.com/ulfurinn/wongi-engine/issues?q=is%3Aopen+is%3Aissue+label%3Adiscussion)
 
 ## Acknowledgements
 
