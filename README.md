@@ -3,6 +3,8 @@
 [![Gem](https://img.shields.io/gem/v/wongi-engine.svg)](https://rubygems.org/gems/wongi-engine/)  
 [![Build Status](https://travis-ci.org/ulfurinn/wongi-engine.svg?branch=master)](https://travis-ci.org/ulfurinn/wongi-engine)
 
+Ruby >= 2.1 and JRuby are supported. Rubinius should work but isn't actively supported.
+
 ## [Documentation](http://ulfurinn.github.io/wongi-engine/)
 
 This library contains a rule engine written in Ruby. It's based on the [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm) and uses a DSL to express rules in a readable way.
