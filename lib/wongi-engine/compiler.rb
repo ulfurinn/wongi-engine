@@ -54,6 +54,7 @@ module Wongi::Engine
       else
         JoinNode.new(node, tests, assignment).tap do |join|
           join.alpha = alpha
+          join.alpha_template = condition.alpha_template
           alpha.betas << join unless alpha_deaf
         end
       end

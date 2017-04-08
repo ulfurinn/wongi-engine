@@ -4,7 +4,7 @@ require 'wongi-engine/network/debug'
 module Wongi::Engine
   class Network
 
-    attr_reader :alpha_top, :beta_top
+    attr_reader :alpha, :beta_top
     attr_reader :queries, :results
     attr_reader :productions
     attr_reader :overlays
@@ -12,8 +12,7 @@ module Wongi::Engine
     include NetworkParts::Collectable
 
     protected
-    attr_accessor :alpha_hash
-    attr_writer :alpha_top, :beta_top
+    attr_writer :beta_top
     attr_writer :queries, :results
 
     public
@@ -46,8 +45,7 @@ module Wongi::Engine
 
     def initialize
       @timeline = []
-      self.alpha_top = AlphaMemory.new( Template.new( :_, :_, :_ ), self )
-      self.alpha_hash = { alpha_top.template.hash => alpha_top }
+      @alpha = Alpha::Cluster.new(self)
       self.beta_top = BetaMemory.new(nil)
       self.beta_top.rete = self
       self.beta_top.seed
@@ -123,13 +121,12 @@ module Wongi::Engine
         wme = wme.import_into self
       end
 
-      source = best_alpha(wme)
       if existing = find(wme.subject, wme.predicate, wme.object)
         existing.manual! if wme.manual?
         return
       end
 
-      alphas_for( wme ).each { |a| a.activate wme }
+      alpha.activate(wme)
 
       wme
     end
@@ -232,46 +229,20 @@ module Wongi::Engine
     end
 
     def compile_alpha condition
-      template = Template.new :_, :_, :_
+      template = condition.alpha_template
       time = condition.time
 
-      template.subject = condition.subject unless Template.variable?( condition.subject )
-      template.predicate = condition.predicate unless Template.variable?( condition.predicate )
-      template.object = condition.object unless Template.variable?( condition.object )
+      # if time == 0
+        
+      # else
+      #   if @timeline[time+1].nil?
+      #     # => ensure lineage from 0 to time
+      #     compile_alpha condition.class.new(condition.subject, condition.predicate, condition.object, time: time + 1)
+      #     @timeline.unshift Hash.new
+      #   end
 
-      hash = template.hash
-      # puts "COMPILED CONDITION #{condition} WITH KEY #{key}"
-      if time == 0
-        return self.alpha_hash[ hash ] if self.alpha_hash.has_key?( hash )
-      else
-        return @timeline[time+1][ hash ] if @timeline[time+1] && @timeline[time+1].has_key?( hash )
-      end
-
-      alpha = AlphaMemory.new( template, self )
-
-      if time == 0
-        self.alpha_hash[ hash ] = alpha
-        initial_fill alpha
-      else
-        if @timeline[time+1].nil?
-          # => ensure lineage from 0 to time
-          compile_alpha condition.class.new(condition.subject, condition.predicate, condition.object, time: time + 1)
-          @timeline.unshift Hash.new
-        end
-        @timeline[time+1][ hash ] = alpha
-      end
-      alpha
-    end
-
-    def cache s, p, o
-      compile_alpha Template.new(s, p, o)
-    end
-
-    # TODO: pick an alpha with fewer candidates to go through
-    def initial_fill alpha
-      alpha_top.wmes.each do |wme|
-        alpha.activate wme if wme =~ alpha.template
-      end
+      # end
+      alpha.prepare(template)
     end
 
     def remove_production pnode
@@ -308,30 +279,15 @@ module Wongi::Engine
       else
         raise Error, "Network#each expect a template or nothing at all"
       end
-      source = best_alpha(template)
-      matching = current_overlay.wmes(source).select { |wme| wme =~ template }
-      if block_given?
-        matching.each(&block)
-      else
-        matching.each
-      end
+      alpha.each(template, &block)
     end
 
-    def select s, p, o
-      template = Template.new(s, p, o)
-      source = best_alpha(template)
-      matching = current_overlay.wmes(source).select { |wme| wme =~ template }
-      if block_given?
-        matching.each { |st| yield st.subject, st.predicate, st.object }
-      end
-      matching
+    def select s, p, o, &block
+      alpha.select(Template.new(s, p, o), &block)
     end
 
-    def find s, p, o
-      template = Template.new(s, p, o)
-      source = best_alpha(template)
-      # puts "looking for #{template} among #{source.wmes.size} triples of #{source.template}"
-      current_overlay.wmes(source).find { |wme| wme =~ template }
+    def find s, p, o, &block
+      alpha.find(Template.new(s, p, o), &block)
     end
 
     protected
@@ -346,40 +302,6 @@ module Wongi::Engine
 
     def generate_rule_name
       "rule_#{productions.length}"
-    end
-
-    def alphas_for wme
-      s, p, o = wme.subject, wme.predicate, wme.object
-      [
-        lookup( s,  p,  o),
-        lookup( s,  p, :_),
-        lookup( s, :_,  o),
-        lookup(:_,  p,  o),
-        lookup( s, :_, :_),
-        lookup(:_,  p, :_),
-        lookup(:_, :_,  o),
-        lookup(:_, :_, :_),
-      ].compact!.tap(&:uniq!)
-    end
-
-    def lookup s, p, o
-      key = Template.hash_for(s, p, o)
-      # puts "Lookup for #{key}"
-      self.alpha_hash[ key ]
-    end
-
-    def alpha_activate alpha, wme
-      alpha.activate(wme)
-    end
-
-    def best_alpha template
-      alpha_hash.inject(nil) do |best, (_, alpha)|
-        if template =~ alpha.template && (best.nil? || alpha.size < best.size)
-          alpha
-        else
-          best
-        end
-      end
     end
 
     def build_production root, conditions, parameters, actions, alpha_deaf

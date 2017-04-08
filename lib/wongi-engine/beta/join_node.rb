@@ -41,6 +41,8 @@ module Wongi
       attr_reader :tests
       attr_reader :assignment_pattern
 
+      attr_accessor :alpha_template
+
       def initialize parent, tests, assignment
         super(parent)
         @tests = tests
@@ -101,9 +103,9 @@ module Wongi
       end
 
       def refresh_child child
-        alpha.wmes.each do |wme|
+        parent.tokens.each do |token|
+          alpha.wmes(template_with_substitutions(token)).each do |wme|
           assignments = collect_assignments( wme )
-          parent.tokens.each do |token|
             if matches?( token, wme )
               child.beta_activate Token.new( child, token, wme, assignments )
             end
@@ -112,6 +114,20 @@ module Wongi
       end
 
       protected
+
+      def template_with_substitutions(token)
+        members = %i(subject predicate object).map do |member|
+          value = alpha_template.send(member)
+          if Template.const?(value)
+            value
+          elsif Template.variable?(value) && subst = token[value]
+            subst
+          else
+            :_
+          end
+        end
+        Template.new(*members)
+      end
 
       def matches? token, wme
         @tests.each do |test|

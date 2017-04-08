@@ -2,9 +2,16 @@ module Wongi::Engine
 
   Template = Struct.new( :subject, :predicate, :object ) do
 
+    # TODO: :_ ?
     def self.variable? thing
       return false unless thing.is_a?(Symbol)
       thing[0] >= 'A' && thing[0] <= 'Z'
+    end
+
+    def self.const?(thing)
+      return true unless thing.is_a?(Symbol)
+      return false if thing == :_ 
+      not (thing[0] >= 'A' && thing[0] <= 'Z')
     end
 
     # TODO: reintroduce Network#import when bringing back RDF support

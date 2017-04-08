@@ -102,13 +102,26 @@ module Wongi::Engine
       nil # unrelated lineages
     end
 
+    def lineage
+      if parent
+        parent.lineage << self
+      else
+        [self]
+      end
+    end
+
     # TODO: this is inconsistent.
     # A WME retracted in-flight will be visible in active enumerators
     # but a token will not.
     # But this is how it works.
 
-    def wmes(alpha)
+    def _wmes(alpha)
       DuplicatingEnumerator.new(raw_wmes(alpha))
+    end
+
+    # TODO: proper layering
+    def all_wmes(alpha)
+      lineage.flat_map { |overlay| overlay.raw_wmes(alpha).dup }
     end
 
     def tokens(beta)

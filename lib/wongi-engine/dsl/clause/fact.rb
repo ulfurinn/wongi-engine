@@ -22,6 +22,20 @@ module Wongi::Engine
         "<+#{subject.inspect} #{predicate.inspect} #{object.inspect}>"
       end
 
+      def alpha_template
+        @alpha_template ||= begin
+          members = %i(subject predicate object).map do |member|
+            value = send(member)
+            if Template.variable?(value)
+              :_
+            else
+              value
+            end
+          end
+          Template.new(*members)
+        end
+      end
+
       private
 
       def parse_variables(context)
