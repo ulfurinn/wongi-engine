@@ -9,6 +9,7 @@ module Wongi
       def beta_activate token
         t = Token.new self, token, nil, {}
         owner = owner_for( t )
+        return unless t.overlay
         t.overlay.add_token(t, self)
         if owner
           owner.ncc_results << t

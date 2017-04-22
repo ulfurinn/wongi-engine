@@ -65,6 +65,7 @@ module Wongi
       def beta_activate t
         return if tokens.find { |token| token.parent == t }
         token = Token.new( self, t, nil, { } )
+        return unless token.overlay
         token.overlay.add_token(token, self)
         match = false
         alpha.wmes.each do |wme|
