@@ -26,7 +26,7 @@ module Wongi
         assignment = token[ self.variable ]
         field = wme.send( self.field )
         #field.nil? ||
-        assignment && field == assignment
+        !token.has_var?(self.variable) || field == assignment
       end
 
       def equivalent? other
