@@ -77,12 +77,18 @@ module Wongi::Engine
 
     def or_node(variants)
       beta_memory
+      subvariables = []
       branches = variants.map do |variant|
         subcompiler = Compiler.new(rete, node, variant.conditions, parameters, false)
         declared_variables.each { |v| subcompiler.declare(v) }
         subcompiler.compile
-        subcompiler.declared_variables.each { |v| declare(v) }
+        subvariables << subcompiler.declared_variables
         subcompiler.node
+      end
+      subvariables.each do |variables|
+        variables.each do |v|
+          declare(v)
+        end
       end
       self.node = OrNode.new(branches).tap &:refresh
     end

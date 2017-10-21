@@ -72,6 +72,10 @@ module Wongi::Engine
       str
     end
 
+    def inspect
+      to_s
+    end
+
     def destroy
       deleted!
     end

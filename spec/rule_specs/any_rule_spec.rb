@@ -74,4 +74,36 @@ describe "ANY rule" do
 
   end
 
+  context "with two options and same assignments" do
+    let :production do
+      engine << rule do
+        forall {
+          any {
+            option {
+              has :A, :path1, :PathVar
+            }
+            option {
+              has :A, :path2, :PathVar
+            }
+          }
+        }
+        make {
+          collect :PathVar, :paths
+        }
+      end
+    end
+
+    specify 'should fire on the first path', debug: true do
+      engine << [:x, :path1, true]
+      expect(production.tokens).to have(1).item
+      expect(engine.collection(:paths)).to include(true)
+    end
+
+    specify 'should fire on the second path', debug: true do
+      engine << [:x, :path2, true]
+      expect(production.tokens).to have(1).item
+      expect(engine.collection(:paths)).to include(true)
+    end
+  end
+
 end
