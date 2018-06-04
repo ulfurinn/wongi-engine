@@ -1,6 +1,6 @@
 module Wongi
   module Engine
-    
+
     class ProductionNode < BetaMemory
 
       attr_accessor :tracer

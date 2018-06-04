@@ -32,7 +32,7 @@ module Wongi::Engine
         elsif @deaction.respond_to? :call
           @deaction.call token
         elsif @deaction.respond_to? :deexecute
-          @deaction.execute token
+          @deaction.deexecute token
         end
       end
 
@@ -43,7 +43,7 @@ module Wongi::Engine
         elsif @reaction.respond_to? :call
           @reaction.call token, newtoken
         elsif @reaction.respond_to? :reexecute
-          @reaction.execute token, newtoken
+          @reaction.reexecute token, newtoken
         end
       end
 
