@@ -255,4 +255,20 @@ describe Wongi::Engine::NccNode do
     expect(engine.find "StudentA", :passes_for, "CourseC").to be_nil
   end
 
+  specify 'regression #71' do
+    prod = engine << rule {
+      forall {
+        none {
+          has "TestSet", :contains, :B
+          has "MatchSet", :contains, :B
+        }
+      }
+    }
+    engine << ["TestSet", :contains, "not matching"]
+    engine << ["MatchSet", :contains, "match 1"]
+    engine << ["MatchSet", :contains, "match 2"]
+
+    expect(prod).to have(1).tokens
+  end
+
 end

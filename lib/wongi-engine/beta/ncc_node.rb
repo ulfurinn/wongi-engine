@@ -58,7 +58,7 @@ module Wongi
       def refresh_child child
         tokens.each do |token|
           if token.ncc_results.empty?
-            child.beta_activate Token.new( child, t, nil, { } )
+            child.beta_activate Token.new( child, token, nil, { } )
           end
         end
       end
