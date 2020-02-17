@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Greater Than Or Equal test' do
+describe 'Less Than Or Equal test' do
   before :each do
     @engine = Wongi::Engine.create
   end
@@ -21,13 +21,13 @@ describe 'Greater Than Or Equal test' do
     test_rule do
       forall do
         has :Number, :assign_check, :_
-        gte :Number, 6
+        lte :Number, 6
       end
     end
 
-    engine << [6, :assign_check, nil]
-    engine << [7, :assign_check, nil]
     engine << [5, :assign_check, nil]
+    engine << [6, :assign_check, nil]
+    engine << [7, :assign_check, nil] #should not pass
     expect(@production.size).to eq(2)
   end
 end
