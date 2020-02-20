@@ -81,8 +81,14 @@ module Wongi::Engine::DSL
     clause :less
     accept Wongi::Engine::LessThanTest
 
+    clause :lte
+    accept Wongi::Engine::LessThanOrEqualTest
+
     clause :greater
     accept Wongi::Engine::GreaterThanTest
+
+    clause :gte
+    accept Wongi::Engine::GreaterThanOrEqualTest
 
     clause :assert, :dynamic
     accept Wongi::Engine::AssertingTest
