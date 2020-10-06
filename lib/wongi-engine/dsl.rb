@@ -90,6 +90,9 @@ module Wongi::Engine::DSL
     clause :gte
     accept Wongi::Engine::GreaterThanOrEqualTest
 
+    clause :empty
+    accept Wongi::Engine::EmptyTest
+
     clause :assert, :dynamic
     accept Wongi::Engine::AssertingTest
 
