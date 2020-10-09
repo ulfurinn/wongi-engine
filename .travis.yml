@@ -1,10 +1,13 @@
 language: ruby
 rvm:
-- 2.1.10
-- 2.2.6
-- 2.3.3
-- 2.4.0
-- jruby-9.0
+- 2.1
+- 2.2
+- 2.3
+- 2.4
+- 2.5
+- 2.6
+- 2.7
+- jruby
 sudo: false
 notifications:
   hipchat:
