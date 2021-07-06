@@ -106,4 +106,101 @@ describe "ANY rule" do
     end
   end
 
+  describe "broken ANY interaction" do
+    let :passed do
+      rule('passed') do
+        forall {
+          any {
+            option {
+              has :Event, :exam_name, 'Final Exam'
+            }
+            option {
+              has :Event, :exam_name, 'Retake Exam'
+            }
+          }
+          has :Event, :grade, "pass"
+        }
+        make {
+          collect :Event, :passed
+        }
+      end
+    end
+
+    let :fail_final do
+      rule('fail final') do
+        forall {
+          has :Event, :exam_name, 'Final Exam'
+          has :Event, :grade, "fail"
+        }
+        make {
+          collect :Event, :failed_final
+        }
+      end
+    end
+
+    let :fail_retake do
+      rule('fail retake') do
+        forall {
+          has :Event, :exam_name, 'Retake Exam'
+          has :Event, :grade, "fail"
+        }
+        make {
+          collect :Event, :failed_retake
+        }
+      end
+    end
+
+    before do
+      # add the facts
+      engine << [:fail_final_event, :exam_name, 'Final Exam']
+      engine << [:fail_final_event, :grade, 'fail']
+
+      engine << [:fail_retake_event, :exam_name, 'Retake Exam']
+      engine << [:fail_retake_event, :grade, 'fail']
+    end
+
+    shared_examples 'shared expectations' do
+      it 'has nothing passed' do
+        expect(engine.collection(:passed)).to match_array([])
+      end
+
+      it 'has correct failed final' do
+        expect(engine.collection(:failed_final)).to match_array([:fail_final_event])
+      end
+
+      it 'has correct failed retake' do
+        expect(engine.collection(:failed_retake)).to match_array([:fail_retake_event])
+      end
+    end
+
+    context "with option production absent (OK)" do
+      before do
+        #engine << passed
+        engine << fail_final
+        engine << fail_retake
+      end
+
+      it_behaves_like 'shared expectations'
+    end
+
+    context "with option production last (OK)" do
+      before do
+        engine << fail_final
+        engine << fail_retake
+        engine << passed
+      end
+
+      it_behaves_like 'shared expectations'
+    end
+
+    context "with option production first (BAD)" do
+      before do
+        engine << passed
+        engine << fail_final
+        engine << fail_retake
+      end
+
+      it_behaves_like 'shared expectations'
+    end
+  end
 end
