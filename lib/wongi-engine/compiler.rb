@@ -49,7 +49,7 @@ module Wongi::Engine
     def join_node(condition, tests, assignment)
       alpha = rete.compile_alpha(condition)
       beta_memory
-      self.node = if existing = node.children.find { |n| n.is_a?(JoinNode) && n.equivalent?(alpha, tests, assignment) }
+      self.node = if existing = node.children.find { |n| n.is_a?(JoinNode) && n.equivalent?(alpha, tests, assignment) && !n.children.map(&:class).include?(Wongi::Engine::OrNode) }
         existing
       else
         JoinNode.new(node, tests, assignment).tap do |join|

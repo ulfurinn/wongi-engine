@@ -106,4 +106,73 @@ describe "ANY rule" do
     end
   end
 
+  describe "ordering rules" do
+    let :any_stale_pastry_rule do
+      rule do
+        forall {
+          # has :A, :name, :Name # uncomment this line will make test pass
+          any {
+            option {
+              has :A, :name, 'Donut'
+            }
+            option {
+              has :A, :name, 'Cookie'
+            }
+          }
+          has :A, :condition, 'stale' # moving this line above 'any' will make test pass
+        }
+        make {
+          collect :A, :stale_pastries
+        }
+      end
+    end
+
+    let :fresh_donut_rule do
+      rule do
+        forall {
+          has :A, :name, 'Donut'
+          has :A, :condition, 'fresh'
+        }
+        make {
+          collect :A, :fresh_donuts
+        }
+      end
+    end
+
+    let :fresh_cookie_rule do
+      rule do
+        forall {
+          # swapping the following lines will make test pass
+          has :A, :name, 'Cookie'
+          has :A, :condition, 'fresh'
+        }
+        make {
+          collect :A, :fresh_cookies
+        }
+      end
+    end
+
+    before do
+      engine << any_stale_pastry_rule # commenting this rule, or moving it to end of rules will make test pass
+
+      engine << fresh_donut_rule
+      engine << fresh_cookie_rule # commenting this rule will make test pass
+
+      engine << [:donut, :name, 'Donut']
+      engine << [:donut, :condition, 'fresh']
+    end
+
+    it 'has no fresh cookies' do
+      # this expectation fails; the collection contains [:donut]!
+      expect(engine.collection(:fresh_cookies)).to match_array([])
+    end
+
+    it 'has one fresh donut' do
+      expect(engine.collection(:fresh_donuts)).to match_array([:donut])
+    end
+
+    it 'has no stale pastries' do
+      expect(engine.collection(:stale_pastries)).to match_array([])
+    end
+  end
 end
