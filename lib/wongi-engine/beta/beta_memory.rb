@@ -46,4 +46,15 @@ module Wongi::Engine
     end
 
   end
+
+  # SingletonBetaMemory is a memory node that only holds one token at a time.
+  # It should only be used after aggregate nodes.
+  class SingletonBetaMemory < BetaMemory
+    def beta_activate(token)
+      if (t = tokens.first)
+        beta_deactivate(t)
+      end
+      super
+    end
+  end
 end

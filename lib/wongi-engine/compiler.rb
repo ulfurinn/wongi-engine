@@ -32,12 +32,23 @@ module Wongi::Engine
     def beta_memory
       return if node.is_a?(BetaMemory)
       self.node = if (existing = node.children.find { |n| n.is_a?(BetaMemory) })
-        existing
-      else
-        BetaMemory.new(node).tap do |memory|
-          memory.refresh
-        end
-      end
+                    existing
+                  else
+                    BetaMemory.new(node).tap do |memory|
+                      memory.refresh
+                    end
+                  end
+    end
+
+    def singleton_beta_memory
+      return if node.is_a?(SingletonBetaMemory)
+      self.node = if (existing = node.children.find { |n| n.is_a?(SingletonBetaMemory) })
+                    existing
+                  else
+                    SingletonBetaMemory.new(node).tap do |memory|
+                      memory.refresh
+                    end
+                  end
     end
 
     def assignment_node(variable, body)
@@ -50,13 +61,13 @@ module Wongi::Engine
       alpha = rete.compile_alpha(condition)
       beta_memory
       self.node = if (existing = node.children.find { |n| n.is_a?(JoinNode) && n.equivalent?(alpha, tests, assignment) && !n.children.map(&:class).include?(Wongi::Engine::OrNode) })
-        existing
-      else
-        JoinNode.new(node, tests, assignment).tap do |join|
-          join.alpha = alpha
-          alpha.betas << join unless alpha_deaf
-        end
-      end
+                    existing
+                  else
+                    JoinNode.new(node, tests, assignment).tap do |join|
+                      join.alpha = alpha
+                      alpha.betas << join unless alpha_deaf
+                    end
+                  end
     end
 
     def neg_node(condition, tests, unsafe)
@@ -73,6 +84,15 @@ module Wongi::Engine
       self.node = OptionalNode.new(node, alpha, tests, assignment).tap do |node|
         alpha.betas << node unless alpha_deaf
       end
+    end
+
+    def aggregate_node(condition, tests, assignment, member, function)
+      alpha = rete.compile_alpha(condition)
+      beta_memory
+      self.node = AggregateNode.new(node, alpha, tests, assignment, member, function).tap do |node|
+        alpha.betas << node unless alpha_deaf
+      end
+      singleton_beta_memory
     end
 
     def or_node(variants)

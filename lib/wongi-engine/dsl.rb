@@ -38,6 +38,7 @@ require 'wongi-engine/dsl/generated'
 require 'wongi-engine/dsl/builder'
 require 'wongi-engine/dsl/clause/generic'
 require 'wongi-engine/dsl/clause/fact'
+require 'wongi-engine/dsl/clause/aggregate'
 require 'wongi-engine/dsl/clause/assign'
 require 'wongi-engine/dsl/clause/gen'
 require 'wongi-engine/dsl/action/base'
@@ -89,6 +90,19 @@ module Wongi::Engine::DSL
 
     clause :gte
     accept Wongi::Engine::GreaterThanOrEqualTest
+
+    clause :aggregate
+    accept Clause::Aggregate
+
+    clause :least, :min
+    body { |s, p, o, opts|
+      aggregate s, p, o, on: opts[:on], function: :min
+    }
+
+    clause :greatest, :max
+    body { |s, p, o, opts|
+      aggregate s, p, o, on: opts[:on], function: :max
+    }
 
     clause :assert, :dynamic
     accept Wongi::Engine::AssertingTest
