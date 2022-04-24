@@ -16,9 +16,13 @@ module Wongi::Engine
     attr_predicate :optional
     attr_predicate :deleted
 
-    def initialize node, token, wme, assignments
+    def initialize(node, token, wme, assignments)
       @node, @parent, @wme, @assignments = node, token, wme, assignments
-      @overlay = wme ? wme.overlay.highest(token.overlay) : (token ? token.overlay : node.rete.default_overlay)
+      @overlay = if wme
+                   wme.overlay.highest(token.overlay)
+                 else
+                   token ? token.overlay : node.rete.default_overlay
+                 end
       @children = []
       @deleted = false
       @neg_join_results = []
@@ -36,9 +40,9 @@ module Wongi::Engine
       end
     end
 
-    def subst variable, value
+    def subst(variable, value)
       if @assignments.has_key? variable
-        @assignments[ variable ] = value
+        @assignments[variable] = value
       end
     end
 
@@ -50,18 +54,18 @@ module Wongi::Engine
       all_assignments
     end
 
-    def [] var
-      if a = assignments[ var ]
-        a.respond_to?(:call) ? a.call( self ) : a
+    def [](var)
+      if a = assignments[var]
+        a.respond_to?(:call) ? a.call(self) : a
       end
     end
 
-    def has_var? x
+    def has_var?(x)
       assignments.has_key? x
     end
 
     # TODO ignore assignments?
-    def duplicate? other
+    def duplicate?(other)
       self.parent.equal?(other.parent) && @wme.equal?(other.wme) && self.assignments == other.assignments
     end
 
@@ -89,7 +93,7 @@ module Wongi::Engine
     end
 
     # for neg feedback loop protection
-    def generated? wme
+    def generated?(wme)
       return true if generated_wmes.any? { |w| w == wme }
       return children.any? { |t| t.generated? wme }
     end
@@ -97,7 +101,7 @@ module Wongi::Engine
     protected
 
     def all_assignments
-      raise "Assignments is not a hash" unless @assignments.kind_of?( Hash )
+      raise "Assignments is not a hash" unless @assignments.kind_of?(Hash)
       if @parent
         @parent.assignments.merge @assignments
       else
@@ -108,7 +112,7 @@ module Wongi::Engine
   end
 
   class FakeToken < Token
-    def initialize token, wme, assignments
+    def initialize(token, wme, assignments)
       @parent, @wme, @assignments = token, wme, assignments
       @children = []
       @neg_join_results = []

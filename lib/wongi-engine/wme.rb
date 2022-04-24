@@ -1,6 +1,6 @@
 module Wongi::Engine
 
-  WME = Struct.new( :subject, :predicate, :object ) do
+  WME = Struct.new(:subject, :predicate, :object) do
 
     include CoreExt
 
@@ -12,7 +12,7 @@ module Wongi::Engine
     attr_predicate :deleted
     attr_predicate :manual
 
-    def initialize s, p, o, r = nil
+    def initialize(s, p, o, r = nil)
 
       manual!
 
@@ -24,32 +24,32 @@ module Wongi::Engine
 
       @rete = r
 
-    # TODO: reintroduce Network#import when bringing back RDF support
-      super( s, p, o )
+      # TODO: reintroduce Network#import when bringing back RDF support
+      super(s, p, o)
 
     end
 
-    def import_into r
-      self.class.new( subject, predicate, object, r ).tap do |wme|
+    def import_into(r)
+      self.class.new(subject, predicate, object, r).tap do |wme|
         wme.overlay = overlay
         wme.manual = self.manual?
       end
     end
 
     def dup
-      self.class.new( subject, predicate, object, rete ).tap do |wme|
+      self.class.new(subject, predicate, object, rete).tap do |wme|
         wme.overlay = overlay
         wme.manual = self.manual?
       end
     end
 
-    def == other
+    def ==(other)
       subject == other.subject && predicate == other.predicate && object == other.object
     end
 
-    def =~ template
+    def =~(template)
       raise Wongi::Engine::Error, "Cannot match a WME against a #{template.class}" unless Template === template
-      result = match_member( self.subject, template.subject ) & match_member( self.predicate, template.predicate ) & match_member( self.object, template.object )
+      result = match_member(self.subject, template.subject) & match_member(self.predicate, template.predicate) & match_member(self.object, template.object)
       if result.match?
         result
       end
@@ -73,7 +73,7 @@ module Wongi::Engine
 
     protected
 
-    def match_member mine, theirs
+    def match_member(mine, theirs)
       result = WMEMatchData.new
       if theirs == :_ || mine == theirs
         result.match!

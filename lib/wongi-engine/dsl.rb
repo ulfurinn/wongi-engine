@@ -6,28 +6,28 @@ module Wongi::Engine
       @sections ||= {}
     end
 
-    def ruleset name = nil, &definition
+    def ruleset(name = nil, &definition)
       rs = Ruleset.new
-      if ! name.nil?
+      if name
         rs.name name
       end
       rs.instance_eval &definition if block_given?
       rs
     end
 
-    def rule name = nil, &definition
+    def rule(name = nil, &definition)
       r = Rule.new name
       r.instance_eval &definition
       r
     end
 
-    def query name, &definition
+    def query(name, &definition)
       q = Query.new name
       q.instance_eval &definition
       q
     end
 
-    def dsl &definition
+    def dsl(&definition)
       Builder.new.build &definition
     end
   end
@@ -93,7 +93,7 @@ module Wongi::Engine::DSL
     clause :assert, :dynamic
     accept Wongi::Engine::AssertingTest
 
-    clause :assign, :introduce
+    clause :assign, :introduce, :let
     accept Clause::Assign
 
     clause :asserted, :added

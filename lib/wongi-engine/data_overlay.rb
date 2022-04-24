@@ -54,7 +54,7 @@ module Wongi::Engine
       end
     end
 
-    def assert wme
+    def assert(wme)
       @next_cascade ||= []
       @next_cascade << [:assert, wme]
       if @current_cascade.nil?
@@ -64,7 +64,7 @@ module Wongi::Engine
       end
     end
 
-    def retract wme, options = { }
+    def retract(wme, options = {})
       if wme.is_a? Array
         wme = WME.new(*wme)
       end

@@ -13,14 +13,14 @@ module Wongi
 
       attr_reader :alpha, :tests
 
-      def initialize parent, tests, alpha, unsafe
+      def initialize(parent, tests, alpha, unsafe)
         super(parent)
         @tests, @alpha, @unsafe = tests, alpha, unsafe
       end
 
-      def alpha_activate wme
+      def alpha_activate(wme)
         tokens.each do |token|
-          if matches?( token, wme ) && ( @unsafe || ! token.generated?( wme ) )# feedback loop protection
+          if matches?(token, wme) && (@unsafe || !token.generated?(wme)) # feedback loop protection
             # order matters for proper invalidation
             make_join_result(token, wme)
             #token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things
@@ -36,36 +36,36 @@ module Wongi
         end
       end
 
-      def alpha_deactivate wme
+      def alpha_deactivate(wme)
         wme.neg_join_results.dup.each do |njr|
           tokens.each do |token|
             next unless token == njr.token
             njr.unlink
             if token.neg_join_results.empty?
               children.each do |child|
-                child.beta_activate Token.new( child, token, nil, {} )
+                child.beta_activate Token.new(child, token, nil, {})
               end
             end
           end
         end
       end
 
-      def beta_activate token
+      def beta_activate(token)
         return if tokens.find { |et| et.duplicate? token }
         token.overlay.add_token(token, self)
         alpha.wmes.each do |wme|
-          if matches?( token, wme )
+          if matches?(token, wme)
             make_join_result(token, wme)
           end
         end
         if token.neg_join_results.empty?
           children.each do |child|
-            child.beta_activate Token.new( child, token, nil, {} )
+            child.beta_activate Token.new(child, token, nil, {})
           end
         end
       end
 
-      def beta_deactivate token
+      def beta_deactivate(token)
         return nil unless tokens.find token
         token.overlay.remove_token(token, self)
         token.deleted!
@@ -84,10 +84,10 @@ module Wongi
         token
       end
 
-      def refresh_child child
+      def refresh_child(child)
         tokens.each do |token|
           if token.neg_join_results.empty?
-            child.beta_activate Token.new( child, token, nil, {} )
+            child.beta_activate Token.new(child, token, nil, {})
           end
         end
         alpha.wmes.each do |wme|
@@ -97,15 +97,15 @@ module Wongi
 
       protected
 
-      def matches? token, wme
+      def matches?(token, wme)
         puts "matching #{wme} against #{token}" if debug?
         @tests.each do |test|
-          return false unless test.matches?( token, wme )
+          return false unless test.matches?(token, wme)
         end
         true
       end
 
-      def make_join_result token, wme
+      def make_join_result(token, wme)
         njr = NegJoinResult.new token, wme
         token.neg_join_results << njr
         wme.neg_join_results << njr

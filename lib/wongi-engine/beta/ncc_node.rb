@@ -5,11 +5,7 @@ module Wongi
 
       attr_accessor :partner
 
-      def initialize parent
-        super
-      end
-
-      def beta_activate token
+      def beta_activate(token)
         return if tokens.find { |t| t.parent == token }
         t = Token.new self, token, nil, {}
         t.overlay.add_token(t, self)
@@ -20,12 +16,12 @@ module Wongi
         end
         if t.ncc_results.empty?
           children.each do |child|
-            child.beta_activate Token.new( child, t, nil, { } )
+            child.beta_activate Token.new(child, t, nil, {})
           end
         end
       end
 
-      def beta_deactivate token
+      def beta_deactivate(token)
         t = tokens.find { |tok| tok.parent == token }
         return unless t
         t.overlay.remove_token(t, self)
@@ -41,13 +37,13 @@ module Wongi
         end
       end
 
-      def ncc_activate token
+      def ncc_activate(token)
         children.each do |child|
-          child.beta_activate Token.new( child, token, nil, { } )
+          child.beta_activate Token.new(child, token, nil, {})
         end
       end
 
-      def ncc_deactivate token
+      def ncc_deactivate(token)
         children.each do |beta|
           beta.tokens.select { |t| t.parent == token }.each do |t|
             beta.beta_deactivate t
@@ -55,10 +51,10 @@ module Wongi
         end
       end
 
-      def refresh_child child
+      def refresh_child(child)
         tokens.each do |token|
           if token.ncc_results.empty?
-            child.beta_activate Token.new( child, token, nil, { } )
+            child.beta_activate Token.new(child, token, nil, {})
           end
         end
       end

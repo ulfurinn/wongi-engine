@@ -5,25 +5,24 @@ module Wongi
       attr_reader :parents
       attr_reader :rete
 
-      def initialize parents
+      def initialize(parents)
         super nil
         @parents = parents
         parents.each do |parent|
           parent.children << self
         end
-        retes = parents.map( &:rete ).uniq
+        retes = parents.map(&:rete).uniq
         raise "Cannot combine variants from several Retes" if retes.size > 1
         @rete = retes.first
       end
 
       def ident
-        ids = parents.map( &:id ).join ", "
+        ids = parents.map(&:id).join ", "
         "<R> #{self.class} #{id}, parents #{ids}"
       end
 
-
       def depth
-        parents.map( &:depth ).max + 1
+        parents.map(&:depth).max + 1
       end
 
       def refresh

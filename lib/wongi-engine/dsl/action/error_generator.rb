@@ -14,10 +14,10 @@ module Wongi::Engine
       def errors
         production.tokens.map do |token|
           message = if @messenger
-            @messenger.call token.assignments
-          else
-            @message
-          end
+                      @messenger.call token.assignments
+                    else
+                      @message
+                    end
           ReteError.new token, message, literate?
         end
       end

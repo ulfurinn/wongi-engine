@@ -2,32 +2,32 @@ module Wongi::Engine
   module DSL
     class AnyRule
 
-    attr_reader :variants
+      attr_reader :variants
 
-    def initialize &block
-      @variants = []
-      if block
-        instance_eval &block
+      def initialize(&block)
+        @variants = []
+        if block
+          instance_eval &block
+        end
       end
-    end
 
-    def option &block
-      var = VariantRule.new
-      var.forall &block
-      variants << var
-    end
+      def option(&block)
+        var = VariantRule.new
+        var.forall &block
+        variants << var
+      end
 
-    def compile context
-      context.tap { |c| c.or_node(variants) }
-    end
+      def compile(context)
+        context.tap { |c| c.or_node(variants) }
+      end
 
-  end
+    end
 
     class VariantRule < Rule
-    def initialize name = nil
-      super
-      @current_section = :forall
+      def initialize(name = nil)
+        super
+        @current_section = :forall
+      end
     end
-  end
   end
 end

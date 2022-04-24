@@ -6,13 +6,13 @@ module Wongi::Engine
         Class.new self
       end
 
-      def initialize variable, name = nil
+      def initialize(variable, name = nil)
         @variable = variable
         @name = name if name
         #(class << self; self; end).instance_eval do
-            #        define_method method do
-            #          collect variable
-            #        end
+        #        define_method method do
+        #          collect variable
+        #        end
         #    alias_method method, :default_collect
         #  end
       end
@@ -21,15 +21,15 @@ module Wongi::Engine
         collect @variable
       end
 
-      def name= n
+      def name=(n)
         @name = n unless @name
       end
 
-      def rete= rete
+      def rete=(rete)
         rete.add_collector self, name
       end
 
-      def collect var
+      def collect(var)
         production.tokens.map { |token| token[var] }
       end
 
@@ -37,13 +37,10 @@ module Wongi::Engine
 
     class GenericCollectClause
 
-      def initialize name, variable
+      def initialize(name, variable) end
 
-      end
-
-      def import_into rete
+      def import_into(rete)
         collector = SimpleCollector.new @variable
-
       end
 
     end

@@ -26,11 +26,12 @@ module Wongi::Engine
     include CoreExt
 
     attr_writer :rete
+    # @return [Wongi::Engine::BetaNode]
     attr_reader :parent
     attr_accessor :children
     attr_predicate :debug
 
-    def initialize parent = nil
+    def initialize(parent = nil)
       @parent = parent
       @children = []
       if parent
@@ -44,16 +45,16 @@ module Wongi::Engine
 
     def depth
       @depth ||= if parent.nil?
-        0
-      else
-        parent.depth + 1
-      end
+                   0
+                 else
+                   parent.depth + 1
+                 end
     end
 
     def rete
       @rete ||= if parent
-        parent.rete
-      end
+                  parent.rete
+                end
     end
 
     abstract :alpha_activate
@@ -63,7 +64,7 @@ module Wongi::Engine
     abstract :beta_deactivate
     abstract :beta_reactivate
 
-    def assignment_node variable, body
+    def assignment_node(variable, body)
       node = AssignmentNode.new self, variable, body
       node.refresh
       node
@@ -73,13 +74,13 @@ module Wongi::Engine
       parent.refresh_child self
     end
 
-    def refresh_child node
+    def refresh_child(node)
       raise "#{self.class} must implement refresh_child"
     end
 
     private
 
-    def dp message
+    def dp(message)
       if debug?
         puts "#{indent}#{message}"
       end

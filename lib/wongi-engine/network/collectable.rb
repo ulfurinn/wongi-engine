@@ -3,10 +3,10 @@ module Wongi::Engine
 
     module Collectable
 
-      def collectors name = nil
-        @collectors ||= { }
+      def collectors(name = nil)
+        @collectors ||= {}
         if name
-          @collectors[name] ||= [ ]
+          @collectors[name] ||= []
         else
           @collectors
         end
@@ -16,24 +16,24 @@ module Wongi::Engine
         collectors :error
       end
 
-      def add_collector collector, name
-        collectors( name ) << collector
+      def add_collector(collector, name)
+        collectors(name) << collector
       end
 
       def add_error_collector
         add_collector collector, :error
       end
 
-      def collection name
-        collectors( name ).map( &:default_collect ).flatten.uniq
+      def collection(name)
+        collectors(name).map(&:default_collect).flatten.uniq
       end
 
       def errors
-        error_collectors.map( &:errors ).flatten
+        error_collectors.map(&:errors).flatten
       end
 
-      def collected_tokens name
-        collectors( name ).map { |collector| collector.production.tokens }.flatten
+      def collected_tokens(name)
+        collectors(name).map { |collector| collector.production.tokens }.flatten
       end
 
     end

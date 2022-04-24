@@ -2,7 +2,7 @@ module Wongi::Engine::DSL
   module Generated
 
     module ClassMethods
-      def create_dsl_method extension
+      def create_dsl_method(extension)
 
         clause = extension[:clause]
         action = extension[:action]
@@ -17,7 +17,7 @@ module Wongi::Engine::DSL
 
           elsif acceptor
 
-            rule.accept acceptor.new( *args, &block )
+            rule.accept acceptor.new(*args, &block)
 
           elsif action
 

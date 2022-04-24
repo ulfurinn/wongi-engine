@@ -6,19 +6,19 @@ module Wongi
       attr_accessor :tracer
       attr_accessor :compilation_context
 
-      def initialize parent, actions
+      def initialize(parent, actions)
         super(parent)
         @actions = actions.each { |action| action.production = self }
       end
 
-      def beta_activate token
+      def beta_activate(token)
         return unless super
         @actions.each do |action|
           action.execute token if action.respond_to? :execute
         end
       end
 
-      def beta_deactivate token
+      def beta_deactivate(token)
         return unless super
         @actions.each do |action|
           action.deexecute token if action.respond_to? :deexecute

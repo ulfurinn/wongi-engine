@@ -2,11 +2,11 @@ module Wongi::Engine
 
   class Graph
 
-    def initialize rete
+    def initialize(rete)
       @rete = rete
     end
 
-    def dot io, opts = { }
+    def dot(io, opts = {})
 
       @seen_betas = []
 
@@ -36,7 +36,7 @@ module Wongi::Engine
       h.to_s.gsub /-/, '_'
     end
 
-    def dump_alphas opts
+    def dump_alphas(_opts)
       @io.puts "subgraph cluster_alphas {"
       @rete.alphas.select { |alpha| not alpha.betas.empty? }.each do |alpha|
         @io.puts "node#{print_hash alpha.object_id} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"
@@ -44,11 +44,11 @@ module Wongi::Engine
       @io.puts "};"
     end
 
-    def dump_betas opts
+    def dump_betas(opts)
       dump_beta @rete.beta_top, opts
     end
 
-    def dump_beta beta, opts
+    def dump_beta(beta, opts)
       return if @seen_betas.include? beta
       @seen_betas << beta
       @io.puts "node#{print_hash beta.object_id} [label=\"#{beta.class.name.split('::').last}\"];"

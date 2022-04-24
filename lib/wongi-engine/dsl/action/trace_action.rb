@@ -4,7 +4,8 @@ module Wongi::Engine
 
       class DefaultTracer
         attr_accessor :action
-        def trace args
+
+        def trace(args)
           case args[:action]
           when TraceAction
             if args[:token]
@@ -21,7 +22,7 @@ module Wongi::Engine
       attr_reader :io
       attr_predicate :generation, :values
 
-      def initialize opts = { }
+      def initialize(opts = {})
         [:generation, :values, :tracer, :tracer_class, :io].each do |option|
           if opts.has_key? option
             instance_variable_set "@#{option}", opts[option]
@@ -32,11 +33,11 @@ module Wongi::Engine
         @tracer.action = self
       end
 
-      def trace args
+      def trace(args)
         @tracer.trace args
       end
 
-      def execute token
+      def execute(token)
         production.tracer = self
         if values?
           trace action: self, token: token

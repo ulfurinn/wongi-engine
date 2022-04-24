@@ -4,7 +4,7 @@ module Wongi::Engine
       include CoreExt
       attr_predicate :debug
 
-      def initialize(s, p, o, options = { })
+      def initialize(s, p, o, options = {})
         time = options[:time] || 0
         @unsafe = options[:unsafe] || false
         debug! if options[:debug]
@@ -47,7 +47,8 @@ module Wongi::Engine
 
     class Neg < Has
       attr_reader :unsafe
-      def compile context
+
+      def compile(context)
         tests, assignment = parse_variables(context)
         raise DefinitionError.new("Negative matches may not introduce new variables: #{assignment.variables}") unless assignment.root?
         context.tap { |c| c.neg_node(self, tests, unsafe) }
@@ -59,10 +60,11 @@ module Wongi::Engine
     end
 
     class Opt < Has
-      def compile context
+      def compile(context)
         tests, assignment = parse_variables(context)
         context.tap { |c| c.opt_node(self, tests, assignment) }
       end
+
       def inspect
         "<?#{subject.inspect} #{predicate.inspect} #{object.inspect}>"
       end

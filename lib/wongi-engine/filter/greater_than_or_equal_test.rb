@@ -13,13 +13,13 @@ module Wongi::Engine
             token[@x]
           else
             @x
-      end
+          end
 
       y = if Template.variable? @y
             token[@y]
           else
             @y
-      end
+          end
 
       return false if x == :_ || y == :_
       x >= y

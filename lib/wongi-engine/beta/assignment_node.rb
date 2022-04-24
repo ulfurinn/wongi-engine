@@ -2,18 +2,18 @@ module Wongi::Engine
 
   class AssignmentNode < BetaNode
 
-    def initialize parent, variable, body
-      super parent
+    def initialize(parent, variable, body)
+      super(parent)
       @variable, @body = variable, body
     end
 
-    def beta_activate token, wme = nil, assignments = { }
+    def beta_activate(token, wme = nil, _assignments = {})
       children.each do |child|
-        child.beta_activate Token.new( child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body } )
+        child.beta_activate Token.new(child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body })
       end
     end
 
-    def beta_deactivate token
+    def beta_deactivate(token)
       children.each do |child|
         child.tokens.each do |t|
           if t.parent == token
@@ -24,12 +24,12 @@ module Wongi::Engine
       end
     end
 
-    def refresh_child child
+    def refresh_child(child)
       tmp = children
-      self.children = [ child ]
+      self.children = [child]
       parent.tokens.each do |token|
         children.each do |child|
-          child.beta_activate Token.new( child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body } )
+          child.beta_activate Token.new(child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body })
         end
       end
       self.children = tmp

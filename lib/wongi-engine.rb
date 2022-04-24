@@ -1,6 +1,6 @@
 module Wongi
   module Engine
-    
+
     def self.create
       Network.new
     end

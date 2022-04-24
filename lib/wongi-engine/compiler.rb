@@ -31,7 +31,7 @@ module Wongi::Engine
 
     def beta_memory
       return if node.is_a?(BetaMemory)
-      self.node = if existing = node.children.find { |n| n.is_a?(BetaMemory) }
+      self.node = if (existing = node.children.find { |n| n.is_a?(BetaMemory) })
         existing
       else
         BetaMemory.new(node).tap do |memory|
@@ -49,7 +49,7 @@ module Wongi::Engine
     def join_node(condition, tests, assignment)
       alpha = rete.compile_alpha(condition)
       beta_memory
-      self.node = if existing = node.children.find { |n| n.is_a?(JoinNode) && n.equivalent?(alpha, tests, assignment) && !n.children.map(&:class).include?(Wongi::Engine::OrNode) }
+      self.node = if (existing = node.children.find { |n| n.is_a?(JoinNode) && n.equivalent?(alpha, tests, assignment) && !n.children.map(&:class).include?(Wongi::Engine::OrNode) })
         existing
       else
         JoinNode.new(node, tests, assignment).tap do |join|
@@ -98,7 +98,7 @@ module Wongi::Engine
       subcompiler = Compiler.new(rete, node, subrule.conditions, parameters, alpha_deaf)
       declared_variables.each { |v| subcompiler.declare(v) }
       bottom = subcompiler.compile
-      if existing = node.children.find { |n| n.kind_of?( NccNode ) and n.partner.parent == bottom }
+      if (existing = node.children.find { |n| n.kind_of?(NccNode) and n.partner.parent == bottom })
         self.node = existing
         return
       end

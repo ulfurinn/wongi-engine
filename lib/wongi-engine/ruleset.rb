@@ -4,14 +4,14 @@ module Wongi
 
       class << self
 
-        def [] name
-          raise Error, "undefined ruleset #{name}" unless rulesets.has_key?( name )
-          rulesets[ name ]
+        def [](name)
+          raise Error, "undefined ruleset #{name}" unless rulesets.has_key?(name)
+          rulesets[name]
         end
 
-        def register name, ruleset
-          raise Error, "ruleset #{name} already exists" if rulesets.has_key?( name )
-          rulesets[ name ] = ruleset
+        def register(name, ruleset)
+          raise Error, "ruleset #{name} already exists" if rulesets.has_key?(name)
+          rulesets[name] = ruleset
         end
 
         def rulesets
@@ -24,26 +24,26 @@ module Wongi
 
       end
 
-      def initialize name = nil
+      def initialize(name = nil)
         @rules = []
-        self.name( name ) if name
+        self.name(name) if name
       end
 
       def inspect
         "<Ruleset #{name}>"
       end
 
-      def install rete
+      def install(rete)
         # puts "Installing ruleset #{name}"
         @rules.each { |rule| rete << rule }
       rescue StandardError => e
-        e1 = Error.new "error installing ruleset '#{name||'<unnamed>'}': #{e}"
+        e1 = Error.new "error installing ruleset '#{name || '<unnamed>'}': #{e}"
         e1.set_backtrace e.backtrace
         raise e1
       end
 
-      def name name = nil
-        if name && ! @name
+      def name(name = nil)
+        if name && !@name
           self.class.register name, self
           @name = name
         end
@@ -55,14 +55,14 @@ module Wongi
       #      @uri
       #    end
 
-      def rule name, &definition
+      def rule(name, &definition)
         r = DSL::Rule.new name
         r.instance_eval &definition
         @rules << r
         r
       end
 
-      def query name, &definition
+      def query(name, &definition)
         r = DSL::Query.new name
         r.instance_eval &definition
         @rules << r

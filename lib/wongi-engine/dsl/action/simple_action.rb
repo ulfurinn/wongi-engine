@@ -1,22 +1,22 @@
 module Wongi::Engine
   module DSL::Action
     class SimpleAction < Base
-      def initialize action = nil, *args, &block
+      def initialize(action = nil, *args, &block)
         @args = args
         case action
         when Class
           @action = @deaction = @reaction = action.new *args, &block
         when Hash
-          @action   = instance_or_proc action[:activate]
+          @action = instance_or_proc action[:activate]
           @deaction = instance_or_proc action[:deactivate]
           @reaction = instance_or_proc action[:reactivate]
         end
         @action ||= block
       end
 
-      def execute token
+      def execute(token)
         return unless @action
-        if @action.is_a?( Proc ) || @action.respond_to?( :to_proc )
+        if @action.is_a?(Proc) || @action.respond_to?(:to_proc)
           rete.instance_exec token, &@action
         elsif @action.respond_to? :call
           @action.call token
@@ -25,9 +25,9 @@ module Wongi::Engine
         end
       end
 
-      def deexecute token
+      def deexecute(token)
         return unless @deaction
-        if @deaction.is_a?( Proc ) || @deaction.respond_to?( :to_proc )
+        if @deaction.is_a?(Proc) || @deaction.respond_to?(:to_proc)
           rete.instance_exec token, &@deaction
         elsif @deaction.respond_to? :call
           @deaction.call token
@@ -36,9 +36,9 @@ module Wongi::Engine
         end
       end
 
-      def reexecute token, newtoken
+      def reexecute(token, newtoken)
         return unless @reaction
-        if @reaction.is_a?( Proc ) || @reaction.respond_to?( :to_proc )
+        if @reaction.is_a?(Proc) || @reaction.respond_to?(:to_proc)
           rete.instance_exec token, newtoken, &@reaction
         elsif @reaction.respond_to? :call
           @reaction.call token, newtoken
@@ -47,7 +47,7 @@ module Wongi::Engine
         end
       end
 
-      def instance_or_proc thing
+      def instance_or_proc(thing)
         case thing
         when Class
           thing.new

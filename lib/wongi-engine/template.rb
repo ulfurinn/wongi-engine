@@ -2,7 +2,7 @@ module Wongi::Engine
 
   Template = Struct.new( :subject, :predicate, :object ) do
 
-    def self.variable? thing
+    def self.variable?(thing)
       return false unless thing.is_a?(Symbol)
       thing[0] >= 'A' && thing[0] <= 'Z'
     end
@@ -25,20 +25,20 @@ module Wongi::Engine
       @hash ||= [subject.hash, predicate.hash, object.hash].hash
     end
 
-    def self.hash_for *args
-      args.map( &:hash ).hash
+    def self.hash_for(*args)
+      args.map(&:hash).hash
     end
 
-    def == other
+    def ==(other)
       other.is_a?(Template) && subject == other.subject && predicate == other.predicate && object == other.object
     end
 
-    def =~ template
+    def =~(template)
       case template
       when Template
-        ( template.subject == :_ || template.subject == subject ) &&
-        ( template.predicate == :_ || template.predicate == predicate ) &&
-        ( template.object == :_ || template.object == object )
+        (template.subject == :_ || template.subject == subject) &&
+          (template.predicate == :_ || template.predicate == predicate) &&
+          (template.object == :_ || template.object == object)
       else
         raise Error, "templates can only match other templates"
       end

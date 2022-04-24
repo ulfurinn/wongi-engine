@@ -4,7 +4,7 @@ module Wongi::Engine
 
     attr_reader :betas, :template, :rete
 
-    def initialize template, rete = nil
+    def initialize(template, rete = nil)
       @template = template
       @rete = rete
       @betas = []
@@ -12,7 +12,7 @@ module Wongi::Engine
       @frozen = false
     end
 
-    def activate wme
+    def activate(wme)
       wme.overlay.add_wme(wme, self)
       # TODO: it used to activate before adding to the list. mandated by the original thesis. investigate. it appears to create duplicate tokens - needs a remedy in collecting nodes
       betas.each do |beta|
@@ -20,15 +20,15 @@ module Wongi::Engine
       end
     end
 
-    def deactivate wme
+    def deactivate(wme)
       wme.overlay.remove_wme(wme, self)
       betas.each do |beta|
         beta.alpha_deactivate wme
       end
     end
 
-    def snapshot! alpha
-      alpha.wmes.map( &:dup ).each do |wme|
+    def snapshot!(alpha)
+      alpha.wmes.map(&:dup).each do |wme|
         activate wme
       end
     end

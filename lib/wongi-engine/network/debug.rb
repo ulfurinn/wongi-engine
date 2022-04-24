@@ -18,7 +18,7 @@ module Wongi::Engine
         end
       end
 
-      def full_dump io = $stdout
+      def full_dump(io = $stdout)
 
         alpha_hash.each_value do |alpha|
           io.puts "ALPHA #{alpha.template}"
@@ -32,7 +32,7 @@ module Wongi::Engine
 
       private
 
-      def token_lineage token
+      def token_lineage(token)
         result = []
         while token.parent
           result << token.parent
@@ -41,14 +41,14 @@ module Wongi::Engine
         result
       end
 
-      def dump_wme wme, io
+      def dump_wme(wme, io)
         io.puts "\tWME: #{wme.object_id} #{wme}"
         wme.tokens.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
         io.puts "\tGENERATING:" unless wme.generating_tokens.empty?
         wme.generating_tokens.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
       end
 
-      def dump_beta beta, io
+      def dump_beta(beta, io)
         case beta
         when BetaMemory
           dump_beta_memory beta, io
@@ -62,7 +62,7 @@ module Wongi::Engine
         beta.children.each { |child| dump_beta child, io } unless beta.children.empty?
       end
 
-      def dump_beta_memory beta, io
+      def dump_beta_memory(beta, io)
         io.puts "BETA MEMORY #{beta.object_id}"
         beta.tokens.each { |token|
           io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(" - ")}]"
@@ -70,7 +70,7 @@ module Wongi::Engine
         }
       end
 
-      def dump_ncc beta, io
+      def dump_ncc(beta, io)
         io.puts "NCC #{beta.object_id}"
         beta.tokens.each { |token|
           io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(" - ")}]"

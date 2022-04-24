@@ -4,16 +4,16 @@ module Wongi::Engine
 
     attr_reader :assignments
 
-    def initialize assignments = { }, match = false
+    def initialize(assignments = {}, match = false)
       @assignments = assignments
       @match = match
     end
 
-    def [] key
+    def [](key)
       assignments[key]
     end
 
-    def []= key, value
+    def []=(key, value)
       assignments[key] = value
     end
 
@@ -25,8 +25,8 @@ module Wongi::Engine
       @match = true
     end
 
-    def & other
-      WMEMatchData.new( assignments.merge( other.assignments ), match? && other.match? )
+    def &(other)
+      WMEMatchData.new(assignments.merge(other.assignments), match? && other.match?)
     end
 
   end
