@@ -86,10 +86,11 @@ module Wongi::Engine
       end
     end
 
-    def aggregate_node(condition, tests, assignment, member, function)
+    def aggregate_node(condition, tests, assignment, map, function, assign)
+      declare(assign)
       alpha = rete.compile_alpha(condition)
       beta_memory
-      self.node = AggregateNode.new(node, alpha, tests, assignment, member, function).tap do |node|
+      self.node = AggregateNode.new(node, alpha, tests, assignment, map, function, assign).tap do |node|
         alpha.betas << node unless alpha_deaf
       end
       singleton_beta_memory

@@ -96,12 +96,17 @@ module Wongi::Engine::DSL
 
     clause :least, :min
     body { |s, p, o, opts|
-      aggregate s, p, o, on: opts[:on], function: :min
+      aggregate s, p, o, on: opts[:on], function: :min, assign: opts[:assign]
     }
 
     clause :greatest, :max
     body { |s, p, o, opts|
-      aggregate s, p, o, on: opts[:on], function: :max
+      aggregate s, p, o, on: opts[:on], function: :max, assign: opts[:assign]
+    }
+
+    clause :count
+    body { |s, p, o, opts|
+      aggregate s, p, o, map: -> { _1 ; 1 }, function: -> { _1.inject(&:+) }, assign: opts[:assign]
     }
 
     clause :assert, :dynamic

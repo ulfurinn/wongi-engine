@@ -3,16 +3,18 @@ module Wongi::Engine
     attr_reader :alpha
     attr_reader :tests
     attr_reader :assignment_pattern
-    attr_reader :member
+    attr_reader :map
     attr_reader :function
+    attr_reader :assign
 
-    def initialize(parent, alpha, tests, assignment, member, function)
+    def initialize(parent, alpha, tests, assignment, map, function, assign)
       super(parent)
       @alpha = alpha
       @tests = tests
       @assignment_pattern = assignment
-      @member = member
+      @map = map
       @function = function
+      @assign = assign
     end
 
     def equivalent?(alpha, tests, assignment_pattern)
@@ -26,22 +28,22 @@ module Wongi::Engine
       true
     end
 
-    def alpha_activate(_)
+    def alpha_activate(wme)
       # we need to re-run all WMEs through the aggregator, so the new incoming one doesn't matter
       parent.tokens.each do |token|
-        evaluate(token)
+        evaluate(wme, token)
       end
     end
 
-    def alpha_deactivate(_)
+    def alpha_deactivate(wme)
       # we need to re-run all WMEs through the aggregator, so the new incoming one doesn't matter
       parent.tokens.each do |token|
-        evaluate(token)
+        evaluate(wme, token)
       end
     end
 
     def beta_activate(token)
-      evaluate(token)
+      evaluate(nil, token)
     end
 
     def beta_deactivate(token)
@@ -56,22 +58,27 @@ module Wongi::Engine
 
     def refresh_child(child)
       parent.tokens.each do |token|
-        evaluate(token, child)
+        evaluate(nil, token, child)
       end
     end
 
-    def evaluate(token, child = nil)
+    def evaluate(wme, token, child = nil)
+      # clean up previous decisions
+      beta_deactivate(token)
+
       candidates = alpha.wmes.select { |wme| matches?(token, wme) }
 
       if candidates.empty?
-        # deactivate anything remaining from previous runs
-        beta_deactivate(token)
         return
       end
 
-      pivot = candidates.map(&member).send(function)
-      wme = candidates.find { |wme| wme.send(member) == pivot }
-      assignments = collect_assignments(wme)
+      mapped = candidates.map(&map)
+      value = if function.is_a?(Symbol) && mapped.respond_to?(function)
+                mapped.send(function)
+              else
+                function.call(mapped)
+              end
+      assignments = { assign => value }
       if child
         child.beta_activate(Token.new(child, token, wme, assignments))
       else
@@ -88,21 +95,6 @@ module Wongi::Engine
         return false unless test.matches?(token, wme)
       end
       true
-    end
-
-    def collect_assignments(wme)
-      assignments = {}
-      return assignments if assignment_pattern.nil?
-      if assignment_pattern.subject != :_
-        assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject)
-      end
-      if assignment_pattern.predicate != :_
-        assignments[assignment_pattern.predicate] = TokenAssignment.new(wme, :predicate)
-      end
-      if assignment_pattern.object != :_
-        assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object)
-      end
-      assignments
     end
   end
 end

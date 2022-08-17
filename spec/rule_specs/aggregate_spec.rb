@@ -12,7 +12,7 @@ describe 'aggregate' do
     it 'should return a single token' do
       engine << rule(rule_name) do
         forall {
-          aggregate :_, :weight, :X, on: :object, function: :min
+          aggregate :_, :weight, :_, on: :object, function: :min, assign: :X
         }
       end
 
@@ -47,15 +47,25 @@ describe 'aggregate' do
     it 'works' do
       engine << rule(rule_name) do
         forall {
-          least :_, :weight, :X, on: :object
+          least :_, :weight, :_, on: :object, assign: :X
+          has :Fruit, :weight, :X
         }
       end
 
-      engine << [:pea, :weight, 2]
       engine << [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 5
+      expect(production.tokens.first[:Fruit]).to be == :apple
 
+      engine << [:pea, :weight, 2]
       expect(production.size).to be == 1
       expect(production.tokens.first[:X]).to be == 2
+      expect(production.tokens.first[:Fruit]).to be == :pea
+
+      engine.retract [:pea, :weight, 2]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 5
+      expect(production.tokens.first[:Fruit]).to be == :apple
     end
   end
 
@@ -63,15 +73,25 @@ describe 'aggregate' do
     it 'works' do
       engine << rule(rule_name) do
         forall {
-          min :_, :weight, :X, on: :object
+          min :_, :weight, :_, on: :object, assign: :X
+          has :Fruit, :weight, :X
         }
       end
 
-      engine << [:pea, :weight, 2]
       engine << [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 5
+      expect(production.tokens.first[:Fruit]).to be == :apple
 
+      engine << [:pea, :weight, 2]
       expect(production.size).to be == 1
       expect(production.tokens.first[:X]).to be == 2
+      expect(production.tokens.first[:Fruit]).to be == :pea
+
+      engine.retract [:pea, :weight, 2]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 5
+      expect(production.tokens.first[:Fruit]).to be == :apple
     end
   end
 
@@ -79,15 +99,25 @@ describe 'aggregate' do
     it 'works' do
       engine << rule(rule_name) do
         forall {
-          greatest :_, :weight, :X, on: :object
+          greatest :_, :weight, :_, on: :object, assign: :X
+          has :Fruit, :weight, :X
         }
       end
 
       engine << [:pea, :weight, 2]
-      engine << [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 2
+      expect(production.tokens.first[:Fruit]).to be == :pea
 
+      engine << [:apple, :weight, 5]
       expect(production.size).to be == 1
       expect(production.tokens.first[:X]).to be == 5
+      expect(production.tokens.first[:Fruit]).to be == :apple
+
+      engine.retract [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 2
+      expect(production.tokens.first[:Fruit]).to be == :pea
     end
   end
 
@@ -95,15 +125,51 @@ describe 'aggregate' do
     it 'works' do
       engine << rule(rule_name) do
         forall {
-          max :_, :weight, :X, on: :object
+          max :_, :weight, :_, on: :object, assign: :X
+          has :Fruit, :weight, :X
         }
       end
 
       engine << [:pea, :weight, 2]
-      engine << [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 2
+      expect(production.tokens.first[:Fruit]).to be == :pea
 
+      engine << [:apple, :weight, 5]
       expect(production.size).to be == 1
       expect(production.tokens.first[:X]).to be == 5
+      expect(production.tokens.first[:Fruit]).to be == :apple
+
+      engine.retract [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:X]).to be == 2
+      expect(production.tokens.first[:Fruit]).to be == :pea
+    end
+  end
+
+  context 'count' do
+    it 'works' do
+      engine << rule(rule_name) do
+        forall {
+          count :_, :weight, :_, assign: :Count
+        }
+      end
+
+      engine << [:pea, :weight, 1]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:Count]).to be == 1
+
+      engine << [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:Count]).to be == 2
+
+      engine << [:watermelon, :weight, 15]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:Count]).to be == 3
+
+      engine.retract [:apple, :weight, 5]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:Count]).to be == 2
     end
   end
 
