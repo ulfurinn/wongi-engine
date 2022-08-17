@@ -171,6 +171,28 @@ describe 'aggregate' do
       expect(production.size).to be == 1
       expect(production.tokens.first[:Count]).to be == 2
     end
+
+    it 'works with a post-filter' do
+      engine << rule(rule_name) do
+        forall {
+          count :_, :weight, :_, assign: :Count
+          gte :Count, 3 # pass if at least 3 matching facts exist
+        }
+      end
+
+      engine << [:pea, :weight, 1]
+      expect(production.size).to be == 0
+
+      engine << [:apple, :weight, 5]
+      expect(production.size).to be == 0
+
+      engine << [:watermelon, :weight, 15]
+      expect(production.size).to be == 1
+      expect(production.tokens.first[:Count]).to be == 3
+
+      engine.retract [:apple, :weight, 5]
+      expect(production.size).to be == 0
+    end
   end
 
 end
