@@ -93,7 +93,7 @@ module Wongi::Engine
       self.node = AggregateNode.new(node, alpha, tests, assignment, map, function, assign).tap do |node|
         alpha.betas << node unless alpha_deaf
       end
-      singleton_beta_memory
+      beta_memory
     end
 
     def or_node(variants)
