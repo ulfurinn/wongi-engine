@@ -398,7 +398,7 @@ module Wongi::Engine
 
       if [BetaMemory, NegNode, NccNode, NccPartner].any? { | klass| node.kind_of? klass }
         while node.tokens.first
-          node.tokens.first.delete
+          node.tokens.first.destroy
         end
       end
 
