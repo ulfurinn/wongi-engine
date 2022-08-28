@@ -42,6 +42,7 @@ describe Wongi::Engine::Network do
 
   end
 
+  # currently fails
   it 'new rules can be added to engine after a rule has been been removed' do
 
     subject << [1,2,3]
