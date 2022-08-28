@@ -52,11 +52,9 @@ describe Wongi::Engine::Network do
     expect( prod1 ).to have(1).tokens
 
     subject.remove_production(prod1)
-
     expect( prod1 ).to have(0).tokens
 
     prod2 = subject << rule { forall { has :X, 5, :Z } }
-
     expect( prod2 ).to have(1).tokens
 
   end
