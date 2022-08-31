@@ -1,9 +1,9 @@
 # Wongi::Engine
 
-[![Gem](https://img.shields.io/gem/v/wongi-engine.svg)](https://rubygems.org/gems/wongi-engine/)  
+[![Gem](https://img.shields.io/gem/v/wongi-engine.svg)](https://rubygems.org/gems/wongi-engine/)
 [![Build Status](https://travis-ci.com/ulfurinn/wongi-engine.svg?branch=master)](https://app.travis-ci.com/github/ulfurinn/wongi-engine)
 
-Ruby >= 2.4 and JRuby are supported. Rubinius should work but isn't actively supported.
+Ruby >= 2.7 and JRuby are supported. Rubinius should work but isn't actively supported.
 
 ## [Documentation](http://ulfurinn.github.io/wongi-engine/)
 
