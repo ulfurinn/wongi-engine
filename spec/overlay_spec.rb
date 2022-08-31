@@ -51,7 +51,7 @@ describe Wongi::Engine::DataOverlay do
     engine.with_overlay { |overlay|
       overlay << [1,2,3]
       expect(production).to have(1).token
-      expect(engine.find(:_, :_, :_)).not_to be_nil
+      expect(engine.find(:person, 'stuff', 6)).not_to be_nil
     }
 
     expect(production).to have(0).tokens
