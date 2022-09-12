@@ -3,15 +3,12 @@ require 'spec_helper'
 include Wongi::Engine::DSL
 
 dsl {
-
   section :make
   clause :test_collector
   action Wongi::Engine::DSL::Action::SimpleCollector.collector
-
 }
 
 describe 'the engine' do
-
   before :each do
     @rete = Wongi::Engine::Network.new
   end
@@ -21,9 +18,7 @@ describe 'the engine' do
   end
 
   context 'with a simple generative positive rule' do
-
     it 'should generate wmes with an existing rule' do
-
       rete << rule('symmetric') {
         forall {
           has :P, "symmetric", true
@@ -44,7 +39,6 @@ describe 'the engine' do
     end
 
     it 'should generate wmes with an added rule' do
-
       rete << Wongi::Engine::WME.new("friend", "symmetric", true)
       rete << Wongi::Engine::WME.new("Alice", "friend", "Bob")
 
@@ -65,7 +59,6 @@ describe 'the engine' do
     end
 
     it 'should not get confused by recursive activations' do
-
       rete << rule('reflexive') {
         forall {
           has :Predicate, "reflexive", true
@@ -83,30 +76,24 @@ describe 'the engine' do
       expect(rete.wmes.to_a.length).to eq(4)
       expect(rete.select(:x, :p, :x).length).to eq(1)
       expect(rete.select(:y, :p, :y).length).to eq(1)
-
     end
-
   end
 
   it 'should check equality' do
-
     node = rete << rule('equality') {
       forall {
         fact :A, "same", :B
         same :A, :B
       }
       make {
-
       }
     }
 
     rete << [ 42, "same", 42 ]
     expect(node.size).to eq(1)
-
   end
 
   it 'should compare things' do
-
     rete << rule('less') {
       forall {
         has :A, :age, :N1
@@ -137,11 +124,9 @@ describe 'the engine' do
 
     items = rete.select "Bob", :older, "Alice"
     expect(items.size).to eq(1)
-
   end
 
   it 'should use collectors' do
-
     rete << rule('collector') {
       forall {
         has :X, :_, 42
@@ -157,7 +142,6 @@ describe 'the engine' do
     collection = rete.collection(:test_collector)
     expect(collection.size).to eq(1)
     expect(collection.first).to eq("answer")
-
   end
 
   it "should properly show error messages" do
@@ -178,7 +162,6 @@ describe 'the engine' do
   end
 
   it 'should use generic collectors' do
-
     rete << rule('generic-collector') {
       forall {
         has :X, :_, 42
@@ -194,13 +177,10 @@ describe 'the engine' do
     collection = rete.collection(:things_that_are_42)
     expect(collection.size).to eq(1)
     expect(collection.first).to eq("answer")
-
   end
 
   it 'should accept several rules' do
-
     expect {
-
       rete << rule('generic-collector') {
         forall {
           has :X, :_, 42
@@ -218,13 +198,10 @@ describe 'the engine' do
           test_collector :X
         }
       }
-
     }.not_to raise_error
-
   end
 
   it 'should process negative nodes' do
-
     production = (rete << rule('negative') {
       forall {
         neg :_, :_, 42
@@ -236,11 +213,9 @@ describe 'the engine' do
     rete << [ "answer", "is", 42 ]
 
     expect(production.size).to eq(0)
-
   end
 
   context 'queries' do
-
     before :each do
       rete << query("test-query") {
         search_on :X
@@ -265,17 +240,13 @@ describe 'the engine' do
       expect(rete.results["test-query"].tokens.to_a.last[:Y]).to eq('6x9')
       expect(rete.results["test-query"].size).to eq(1)
     end
-
   end
 
   it 'should correctly execute a query several times' do
-
   end
   
   context 'with timelines' do
-
     it 'should not match with no past point' do
-
       production = rete.rule {
         forall {
           has 1, 2, 3, time: -1
@@ -287,11 +258,9 @@ describe 'the engine' do
       rete << [1, 2, 3]
 
       expect(production.size).to eq(0)
-
     end
 
     it 'should match a simple past point' do
-
       production = rete.rule {
         forall {
           has 1, 2, 3, time: -1
@@ -302,11 +271,9 @@ describe 'the engine' do
       rete.snapshot!
 
       expect(production.size).to eq(1)
-
     end
 
     context 'using the :asserted clause' do
-
       it 'should match asserted items' do
         count = 0
         production = rete.rule do
@@ -336,11 +303,9 @@ describe 'the engine' do
         expect(production.size).to eq(0)
         #puts count
       end
-
     end
 
     context 'using the :kept clause' do
-
       it 'should match kept items' do
         count = 0
         production = rete.rule do
@@ -370,9 +335,6 @@ describe 'the engine' do
         expect(production.size).to eq(0)
         #puts count
       end
-
     end
-
   end
-
 end

@@ -10,7 +10,6 @@ module Wongi::Engine::DSL
         acceptor = extension[:accept]
 
         define_method clause.first do |*args, &block|
-
           if body
 
             instance_exec *args, &body
@@ -28,7 +27,6 @@ module Wongi::Engine::DSL
             rule.accept c
 
           end
-
         end
 
         clause[1..-1].each do |al|

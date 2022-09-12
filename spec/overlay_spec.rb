@@ -57,5 +57,4 @@ describe Wongi::Engine::DataOverlay do
     expect(production).to have(0).tokens
     expect(engine.find(:_, :_, :_)).to be_nil
   end
-
 end

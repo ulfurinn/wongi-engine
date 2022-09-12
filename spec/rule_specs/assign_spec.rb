@@ -1,11 +1,9 @@
 require 'spec_helper'
 
 describe "ASSIGN rule" do
-
   let(:engine) { Wongi::Engine.create }
 
   it "should assign simple expressions" do
-
     production = engine << rule {
       forall {
         assign :X do
@@ -15,7 +13,6 @@ describe "ASSIGN rule" do
     }
     expect(production.size).to eq(1)
     expect(production.tokens.first[:X]).to eq(42)
-
   end
 
   it 'should be available in the make section' do
@@ -35,7 +32,6 @@ describe "ASSIGN rule" do
   end
 
   it "should be able to access previous assignments" do
-
     production = engine << rule {
       forall {
         has 1, 2, :X
@@ -47,11 +43,9 @@ describe "ASSIGN rule" do
 
     engine << [1, 2, 5]
     expect(production.tokens.first[:Y]).to eq(10)
-
   end
 
   it 'should be deactivatable' do
-
     prod = engine << rule {
       forall {
         has 1, 2, :X
@@ -65,7 +59,6 @@ describe "ASSIGN rule" do
     engine.retract [1, 2, 5]
 
     expect(prod).to have(0).tokens
-
   end
 
   it 'should be evaluated once' do
@@ -100,5 +93,4 @@ describe "ASSIGN rule" do
     end
     engine << [:a, :b, :c]
   end
-
 end

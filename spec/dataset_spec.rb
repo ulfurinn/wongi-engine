@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::Network do  
-
   it 'should expose compiled productions' do
-
     ds = Wongi::Engine::Network.new
 
     ds << rule('test-rule') {
@@ -21,7 +19,5 @@ describe Wongi::Engine::Network do
 
     expect(production.size).to eq(1)
     expect(production.size).to be == 1
-
   end
-
 end

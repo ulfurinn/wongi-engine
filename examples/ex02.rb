@@ -4,7 +4,6 @@ include Wongi::Engine::DSL
 ds = Network.new
 
 ds << ruleset {
-
   name "Example"
 
   rule "symmetric" do
@@ -16,7 +15,6 @@ ds << ruleset {
       gen :B, :P, :A
     }
   end
-
 }
 
 puts "Installed ruleset"

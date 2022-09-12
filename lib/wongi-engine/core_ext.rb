@@ -16,7 +16,6 @@ module Wongi::Engine
         end
 
         names_hash.each do |name, def_value|
-
           varname = "@#{name}".to_sym
           predname = "#{name}?".to_sym
           setname = "#{name}=".to_sym
@@ -42,7 +41,6 @@ module Wongi::Engine
           define_method noexclname do
             instance_variable_set(varname, false)
           end
-
         end
       end
 

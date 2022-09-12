@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "LESS test" do
-
   before :each do
     @engine = Wongi::Engine.create
   end
@@ -19,7 +18,6 @@ describe "LESS test" do
   end
 
   it "should interact with optional node correctly" do
-
     # before the fix, filters would try to piggy-back on optional templates
 
     test_rule {
@@ -37,5 +35,4 @@ describe "LESS test" do
 
     expect(@production.size).to eq(0)
   end
-
 end

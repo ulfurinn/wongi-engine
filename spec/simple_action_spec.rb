@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Wongi::Engine::DSL::Action::SimpleAction do
-
   before :each do
     @rete = Wongi::Engine::Network.new
   end
@@ -11,7 +10,6 @@ describe Wongi::Engine::DSL::Action::SimpleAction do
   end
 
   it 'should work with blocks' do
-
     count = 0
 
     rete.rule do
@@ -34,7 +32,5 @@ describe Wongi::Engine::DSL::Action::SimpleAction do
     rete << [1, 2, 4]
 
     expect(count).to eq(2)
-
   end
-
 end

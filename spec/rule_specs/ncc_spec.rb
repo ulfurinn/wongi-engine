@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Wongi::Engine::NccNode do
-
   before :each do
     @engine = Wongi::Engine.create
   end
@@ -36,7 +35,6 @@ describe Wongi::Engine::NccNode do
   end
 
   it 'should pass with a mismatching subchain' do
-
     engine << ncc_rule
     production = engine.productions['ncc']
 
@@ -51,11 +49,9 @@ describe Wongi::Engine::NccNode do
     engine << [3, 4, 5]
 
     expect(production).to have(0).token
-
   end
 
   it 'should remain consistent after retraction' do
-
     engine << ncc_rule
     production = engine.productions['ncc']
 
@@ -70,11 +66,9 @@ describe Wongi::Engine::NccNode do
 
     engine.retract ["base", "is", 1]
     expect(production).to have(0).tokens
-
   end
 
   it 'can handle an alpha node template introduced after the negative-conjunctive-condition' do
-
     engine << ncc_rule_post_has
 
     production = engine.productions['ncc post has']
@@ -90,11 +84,9 @@ describe Wongi::Engine::NccNode do
 
     engine.retract ["base", "is", 1]
     expect(production).to have(0).tokens
-
   end
 
   it 'should clean up correctly' do
-
     engine.rule :rule1 do
       forall {
         has :light_kitchen, :value, :on
@@ -148,11 +140,9 @@ describe Wongi::Engine::NccNode do
     engine << [:god, :light_bathroom, :let_there_be_light]
     expect(engine.select(:light_bathroom, :value, :_)).to be == [ Wongi::Engine::WME.new(:light_bathroom, :value, :let_there_be_light) ]
     expect(engine.select(:light_bathroom, :last_user, :_)).to be == [ Wongi::Engine::WME.new(:light_bathroom, :last_user, :god) ]
-
   end
 
   it 'should clean up correctly with a different activation order' do
-
     engine.rule :rule1 do
       forall {
         has :light_kitchen, :value, :on
@@ -206,7 +196,6 @@ describe Wongi::Engine::NccNode do
     engine << [:god, :light_bathroom, :let_there_be_light]
     expect(engine.select(:light_bathroom, :value, :_)).to be == [ Wongi::Engine::WME.new(:light_bathroom, :value, :let_there_be_light) ]
     expect(engine.select(:light_bathroom, :last_user, :_)).to be == [ Wongi::Engine::WME.new(:light_bathroom, :last_user, :god) ]
-
   end
 
   it 'should ncc-deactivate without destroying tokens' do
@@ -270,5 +259,4 @@ describe Wongi::Engine::NccNode do
 
     expect(prod).to have(1).tokens
   end
-
 end

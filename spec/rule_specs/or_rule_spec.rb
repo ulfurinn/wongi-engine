@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "ANY rule" do
-
   include Wongi::Engine::DSL
 
   before :each do
@@ -13,7 +12,6 @@ describe "ANY rule" do
   end
 
   context 'with two options' do
-
     let :production do
       engine << rule do
         forall {
@@ -44,7 +42,5 @@ describe "ANY rule" do
       engine << [:x, :path2, true]
       expect(production.tokens).to have(2).items
     end
-
   end
-
 end

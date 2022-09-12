@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Wongi::Engine::WME do
-
   # def capitalizing_rete
   #   rete = double 'rete'
   #   expect( rete ).to receive(:import).with("b").and_return("B")
@@ -15,7 +14,6 @@ describe Wongi::Engine::WME do
   }
 
   context 'a new WME' do
-
     it 'should initialize and expose members' do
       expect(subject.subject).to be == "a"
       expect(subject.predicate).to be == "b"
@@ -42,7 +40,6 @@ describe Wongi::Engine::WME do
   it {
     should_not be_generated
   }
-
   end
 
   # it 'should be able to import into rete' do
@@ -58,14 +55,12 @@ describe Wongi::Engine::WME do
   # end
 
   it 'should compare instances' do
-
     wme1 = Wongi::Engine::WME.new "a", "b", "c"
     wme2 = Wongi::Engine::WME.new "a", "b", "c"
     wme3 = Wongi::Engine::WME.new "a", "b", "d"
 
     expect(wme1).to be == wme2
     expect(wme1).not_to be == wme3
-
   end
 
   it 'should not match against non-templates' do
@@ -79,5 +74,4 @@ describe Wongi::Engine::WME do
     expect(subject).to be =~ t1
     expect(subject).not_to be =~ t2
   end
-
 end

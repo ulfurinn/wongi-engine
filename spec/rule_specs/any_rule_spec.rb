@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "ANY rule" do
-
   include Wongi::Engine::DSL
 
   before :each do
@@ -13,9 +12,7 @@ describe "ANY rule" do
   end
 
   context "with just one option" do
-
     it "should act like a positive matcher" do
-
       engine << rule('one-option') {
         forall {
           any {
@@ -33,15 +30,11 @@ describe "ANY rule" do
       engine << [3, 4, 5]
 
       expect(production.size).to eq(1)
-
     end
-
   end
 
   context "with several options" do
-
     specify "all matching branches must pass" do
-
       engine << rule('two-options') {
         forall {
           has 1, 2, :X
@@ -69,9 +62,7 @@ describe "ANY rule" do
       expect(production.size).to eq(2)
       expect(engine.collection(:threes)).to include(3)
       expect(engine.collection(:threes)).to include("three")
-
     end
-
   end
 
   context "with two options and same assignments" do

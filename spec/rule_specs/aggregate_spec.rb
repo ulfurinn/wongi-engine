@@ -194,5 +194,4 @@ describe 'aggregate' do
       expect(production.size).to be == 0
     end
   end
-
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Wongi::Engine::DSL::Action::StatementGenerator do
-
   let(:engine) { Wongi::Engine.create }
 
   let(:transitive_rule) {
@@ -20,7 +19,6 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
   let(:production) { engine << transitive_rule }
 
   shared_examples 'generation' do
-
     it 'should generate facts' do
       engine << %w(Alice relative Bob)
       engine << %w(Bob relative Dwight)
@@ -39,7 +37,6 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
     end
 
     context 'transitive diamond' do
-
       before :each do
         engine << %w(Alice relative Bob)
         engine << %w(Bob relative Dwight)
@@ -66,23 +63,18 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
         expect(production).to have(0).tokens
         expect(engine.find *%w(Alice relative Dwight)).to be_nil
       end
-
     end
-
   end
 
   context "pre-asserted", :pre do
-
     before :each do
       engine << [ "relative", :transitive, true ]
     end
 
     it_behaves_like 'generation'
-
   end
 
   context "post-asserted", :post do
-
     before :each do
       production
       engine << [ "relative", :transitive, true ]
@@ -110,7 +102,5 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       expect(production).to have(0).tokens
       expect(engine.find *%w(Alice relative Dwight)).to be_nil
     end
-
   end
-
 end

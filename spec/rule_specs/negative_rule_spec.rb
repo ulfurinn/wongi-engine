@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "negative rule" do
-
   before :each do
     @engine = Wongi::Engine.create
   end
@@ -11,9 +10,7 @@ describe "negative rule" do
   end
 
   it "should not introduce variables" do
-
     proc = lambda {
-
       engine << rule('one-option') {
         forall {
           neg :Foo, :bar, :_
@@ -24,15 +21,12 @@ describe "negative rule" do
           }
         }
       }
-
     }
 
     expect(&proc).to raise_error(Wongi::Engine::DefinitionError)
-
   end
 
   specify "variable example 1" do
-
     prod = engine << rule {
       forall {
         has :x, :y, :Z
@@ -45,11 +39,9 @@ describe "negative rule" do
 
     engine << [:a, :b, 1]
     expect(prod).to have(0).tokens
-
   end
 
   specify "variable example 1" do
-
     prod = engine << rule {
       forall {
         has :x, :y, :Z
@@ -63,7 +55,6 @@ describe "negative rule" do
 
     engine.retract [:a, :b, 1]
     expect(prod).to have(1).tokens
-
   end
 
   # it "should not create infinite feedback loops by default" do
@@ -82,7 +73,6 @@ describe "negative rule" do
   # end
 
   it "should create infinite feedback loops with unsafe option" do
-
     counter = 0
     exception = Class.new(StandardError)
 
@@ -99,7 +89,5 @@ describe "negative rule" do
     }
 
     expect(&proc).to raise_error(exception)
-
   end
-
 end

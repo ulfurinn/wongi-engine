@@ -2,7 +2,6 @@ require 'spec_helper'
 
 
 describe 'action classes' do
-
 	include Wongi::Engine::DSL
 
   let :engine do
@@ -26,7 +25,6 @@ describe 'action classes' do
   end
 
   it 'should have appropriate callbacks executed' do
-
   	executed = 0
   	deexecuted = 0
 
@@ -55,7 +53,5 @@ describe 'action classes' do
   	engine.retract [1, :x, 2]
   	expect(executed).to be == 1
   	expect(deexecuted).to be == 1
-
   end
-
 end

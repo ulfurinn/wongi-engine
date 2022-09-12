@@ -1,6 +1,5 @@
 module Wongi::Engine
   Compiler = Struct.new(:rete, :node, :conditions, :parameters, :alpha_deaf) do
-
     def compile
       conditions.inject(self) do |context, condition|
         condition.compile context

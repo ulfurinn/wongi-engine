@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   WME = Struct.new(:subject, :predicate, :object) do
-
     include CoreExt
 
     attr_reader :rete
@@ -82,7 +81,6 @@ module Wongi::Engine
       end
       result
     end
-
   end
 
 end

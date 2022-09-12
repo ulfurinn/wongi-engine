@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "ASSERT test" do
-
   before :each do
     @engine = Wongi::Engine.create
   end
@@ -19,7 +18,6 @@ describe "ASSERT test" do
   end
 
   it "should pass with a constant 'true'" do
-
     test_rule {
       forall {
         assert { |token|
@@ -33,7 +31,6 @@ describe "ASSERT test" do
   end
 
   it "should fail with a constant 'false'" do
-
     test_rule {
       forall {
         assert { |token|
@@ -43,11 +40,9 @@ describe "ASSERT test" do
     }
 
     expect(production).to have(0).tokens
-
   end
 
   it "should use the token with no arguments" do
-
     test_rule {
       forall {
         has :X, "is", :Y
@@ -61,11 +56,9 @@ describe "ASSERT test" do
 
     expect(production).to have(1).token
     expect(production.tokens.first[:X]).to eq("resistance")
-
   end
 
   it "should be retractable" do
-
     test_rule {
       forall {
         has :X, "is", :Y
@@ -78,11 +71,9 @@ describe "ASSERT test" do
     engine << ["resistance", "is", "futile"]
     engine.retract ["resistance", "is", "futile"]
     expect(production).to have(0).tokens
-
   end
 
   it "should use individual variables with arguments" do
-
     test_rule {
       forall {
         has :X, "is", :Y
@@ -96,7 +87,5 @@ describe "ASSERT test" do
 
     expect(production).to have(1).token
     expect(production.tokens.first[:X]).to eq("resistance")
-
   end
-
 end
