@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe "LESS test" do
+  include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
   attr_reader :production

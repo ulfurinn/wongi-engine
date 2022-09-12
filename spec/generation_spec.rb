@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::DSL::Action::StatementGenerator do
+  include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
   let(:transitive_rule) {

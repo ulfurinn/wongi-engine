@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe "negative rule" do
+  include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
   it "should not introduce variables" do

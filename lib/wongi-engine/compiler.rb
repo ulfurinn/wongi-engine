@@ -114,7 +114,7 @@ module Wongi::Engine
       subcompiler = Compiler.new(rete, node, subrule.conditions, parameters, alpha_deaf)
       declared_variables.each { |v| subcompiler.declare(v) }
       bottom = subcompiler.compile
-      if (existing = node.children.find { |n| n.is_a?(NccNode) and n.partner.parent == bottom })
+      if (existing = node.children.find { |n| n.is_a?(NccNode) && n.partner.parent == bottom })
         self.node = existing
         return
       end

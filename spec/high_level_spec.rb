@@ -1,14 +1,17 @@
 require 'spec_helper'
 
-include Wongi::Engine::DSL
+class << self
+  extend Wongi::Engine::DSL
 
-dsl {
-  section :make
-  clause :test_collector
-  action Wongi::Engine::DSL::Action::SimpleCollector.collector
-}
+  dsl {
+    section :make
+    clause :test_collector
+    action Wongi::Engine::DSL::Action::SimpleCollector.collector
+  }
+end
 
 describe 'the engine' do
+  include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
   context 'with a simple generative positive rule' do

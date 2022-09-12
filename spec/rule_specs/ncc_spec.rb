@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::NccNode do
+  include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
   def ncc_rule

@@ -3,11 +3,8 @@
 require 'spec_helper'
 
 describe 'Greater Than Or Equal test' do
-  before do
-    @engine = Wongi::Engine.create
-  end
-
-  attr_reader :engine
+  include Wongi::Engine::DSL
+  let(:engine) { Wongi::Engine.create }
 
   attr_reader :production
 

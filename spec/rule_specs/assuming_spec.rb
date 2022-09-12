@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::AssumingClause do
+  include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
   it 'should include base rules' do

@@ -34,7 +34,7 @@ module Wongi::Engine
 
     def dump_alphas(_opts)
       @io.puts "subgraph cluster_alphas {"
-      @rete.alphas.select { |alpha| !alpha.betas.empty? }.each do |alpha|
+      @rete.alphas.reject { |alpha| alpha.betas.empty? }.each do |alpha|
         @io.puts "node#{print_hash alpha.object_id} [shape=box label=\"#{alpha.template.to_s.gsub(/"/, '"')}\"];"
       end
       @io.puts "};"
@@ -53,7 +53,7 @@ module Wongi::Engine
         @io.puts "node#{print_hash beta.partner.object_id} -> node#{print_hash beta.object_id};"
         @io.puts "{ rank=same; node#{print_hash beta.partner.object_id} node#{print_hash beta.object_id} }"
       end
-      if beta.respond_to? :alpha and opts[:alpha] != false
+      if beta.respond_to? :alpha && opts[:alpha] != false
         alpha = beta.alpha
         @io.puts "node#{print_hash alpha.object_id} -> node#{print_hash beta.object_id};" if alpha
       end

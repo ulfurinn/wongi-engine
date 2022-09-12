@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe "ASSIGN rule" do
+  include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
   it "should assign simple expressions" do
