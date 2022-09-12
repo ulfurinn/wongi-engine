@@ -10,10 +10,10 @@ module Wongi
       end
 
       def beta_activate(token)
-        if test.passes? token
-          children.each do |child|
-            child.beta_activate Token.new(child, token, nil, {})
-          end
+        return unless test.passes?(token)
+
+        children.each do |child|
+          child.beta_activate Token.new(child, token, nil, {})
         end
       end
 

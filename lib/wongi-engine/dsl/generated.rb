@@ -10,7 +10,7 @@ module Wongi::Engine::DSL
         define_method clause.first do |*args, &block|
           if body
 
-            instance_exec *args, &body
+            instance_exec(*args, &body)
 
           elsif acceptor
 
@@ -18,7 +18,7 @@ module Wongi::Engine::DSL
 
           elsif action
 
-            c = Clause::Generic.new *args, &block
+            c = Clause::Generic.new(*args, &block)
             c.name = clause.first
             c.action = action
             c.rule = rule
@@ -27,7 +27,7 @@ module Wongi::Engine::DSL
           end
         end
 
-        clause[1..-1].each do |al|
+        clause[1..].each do |al|
           alias_method al, clause.first
         end
       end

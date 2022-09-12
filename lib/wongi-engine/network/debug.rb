@@ -5,13 +5,13 @@ module Wongi::Engine
         @timeline.each_with_index do |slice, index|
           puts "time #{index - @timeline.length}"
           slice.each do |_key, alpha|
-            puts "\t#{alpha.template} -> [#{alpha.wmes.map(&:to_s).join ", "}]"
+            puts "\t#{alpha.template} -> [#{alpha.wmes.map(&:to_s).join ', '}]"
           end
           puts ""
         end
         puts "time 0"
         alpha_hash.each do |_key, alpha|
-          puts "\t#{alpha.template} -> [#{alpha.wmes.map(&:to_s).join ", "}]"
+          puts "\t#{alpha.template} -> [#{alpha.wmes.map(&:to_s).join ', '}]"
         end
       end
 
@@ -53,23 +53,23 @@ module Wongi::Engine
           io.puts "BETA #{beta.object_id} #{beta.class} : TODO"
 
         end
-        io.puts "\tCHILDREN: #{beta.children.map(&:object_id).join ", "}"
+        io.puts "\tCHILDREN: #{beta.children.map(&:object_id).join ', '}"
         beta.children.each { |child| dump_beta child, io } unless beta.children.empty?
       end
 
       def dump_beta_memory(beta, io)
         io.puts "BETA MEMORY #{beta.object_id}"
         beta.tokens.each { |token|
-          io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(" - ")}]"
-          token.wmes.each { |wme| io.puts "\t\tWME " + wme.object_id.to_s }
+          io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(' - ')}]"
+          token.wmes.each { |wme| io.puts "\t\tWME #{wme.object_id}" }
         }
       end
 
       def dump_ncc(beta, io)
         io.puts "NCC #{beta.object_id}"
         beta.tokens.each { |token|
-          io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(" - ")}]"
-          token.wmes.each { |wme| io.puts "\t\tWME " + wme.object_id.to_s }
+          io.puts "\tTOKEN #{token.object_id} [#{token_lineage(token).map(&:object_id).map(&:to_s).join(' - ')}]"
+          token.wmes.each { |wme| io.puts "\t\tWME #{wme.object_id}" }
         }
       end
     end

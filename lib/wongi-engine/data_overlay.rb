@@ -38,7 +38,7 @@ module Wongi::Engine
       return if self == rete.default_overlay
 
       rete.remove_overlay(self)
-      @raw_tokens.values.each do |tokens|
+      @raw_tokens.each_value do |tokens|
         tokens.each(&:dispose!)
       end
       @raw_tokens.clear
