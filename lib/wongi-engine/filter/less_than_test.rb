@@ -9,7 +9,6 @@ module Wongi::Engine
     end
 
     def passes?(token)
-
       x = if Template.variable? @x
             token[@x]
           else
@@ -25,7 +24,6 @@ module Wongi::Engine
       return false if x == :_ || y == :_
 
       x < y
-
     end
 
     def ==(other)

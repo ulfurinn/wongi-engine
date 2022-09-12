@@ -56,7 +56,6 @@ module Wongi::Engine
 
       @collectors = {}
       @collectors[:error] = []
-
     end
 
     def dump
@@ -384,7 +383,6 @@ module Wongi::Engine
     end
 
     def delete_node_with_ancestors(node)
-
       delete_node_with_ancestors node.partner if node.kind_of?(NccNode)
 
       # the root node should not be deleted
@@ -400,7 +398,6 @@ module Wongi::Engine
         node.parent.children.delete node
         delete_node_with_ancestors(node.parent) if node.parent.children.empty?
       end
-
     end
   end
 

@@ -12,7 +12,6 @@ module Wongi::Engine
     attr_predicate :manual
 
     def initialize(s, p, o, r = nil)
-
       manual!
 
       @deleted = false
@@ -25,7 +24,6 @@ module Wongi::Engine
 
       # TODO: reintroduce Network#import when bringing back RDF support
       super(s, p, o)
-
     end
 
     def import_into(r)

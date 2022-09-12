@@ -9,7 +9,6 @@ module Wongi::Engine
     end
 
     def passes?(token)
-
       x = if Template.variable? @x
             token[@x]
           else

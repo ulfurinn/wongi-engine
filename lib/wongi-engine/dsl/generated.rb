@@ -3,7 +3,6 @@ module Wongi::Engine::DSL
 
     module ClassMethods
       def create_dsl_method(extension)
-
         clause = extension[:clause]
         action = extension[:action]
         body = extension[:body]
@@ -32,7 +31,6 @@ module Wongi::Engine::DSL
         clause[1..-1].each do |al|
           alias_method al, clause.first
         end
-
       end
     end
 

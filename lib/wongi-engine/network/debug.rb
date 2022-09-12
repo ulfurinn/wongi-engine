@@ -19,7 +19,6 @@ module Wongi::Engine
       end
 
       def full_dump(io = $stdout)
-
         alpha_hash.each_value do |alpha|
           io.puts "ALPHA #{alpha.template}"
           alpha.wmes.each do |wme|
@@ -27,7 +26,6 @@ module Wongi::Engine
           end
         end
         dump_beta beta_top, io
-
       end
 
       private

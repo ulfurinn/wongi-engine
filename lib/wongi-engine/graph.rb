@@ -6,7 +6,6 @@ module Wongi::Engine
     end
 
     def dot(io, opts = {})
-
       @seen_betas = []
 
       if String === io

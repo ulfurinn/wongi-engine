@@ -5,7 +5,6 @@ module Wongi::Engine
     module ClassMethods
 
       def attr_predicate(*names)
-
         names_hash = names.inject({}) do |hash, element|
           if Hash === element
             hash.merge element

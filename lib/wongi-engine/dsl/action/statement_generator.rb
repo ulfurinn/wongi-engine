@@ -27,7 +27,6 @@ module Wongi::Engine
           # in order for neg rule invalidation to work
           wme.overlay.assert wme
         end
-
       end
 
       def deexecute(token)
