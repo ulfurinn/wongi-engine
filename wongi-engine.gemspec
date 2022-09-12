@@ -19,13 +19,13 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://github.com/ulfurinn/wongi-engine'
   gem.licenses      = %w[MIT]
 
-  if GemHelper.git?
-    gem.files       = `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
-  elsif GemHelper.hg?
-    gem.files       = `hg st -cn`.split($OUTPUT_RECORD_SEPARATOR)
-  else
-    raise 'cannot enumerate files: not a git or hg repository'
-  end
+  gem.files = if GemHelper.git?
+                `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
+              elsif GemHelper.hg?
+                `hg st -cn`.split($OUTPUT_RECORD_SEPARATOR)
+              else
+                raise 'cannot enumerate files: not a git or hg repository'
+              end
   gem.executables   = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
   gem.name          = 'wongi-engine'
   gem.require_paths = ['lib']

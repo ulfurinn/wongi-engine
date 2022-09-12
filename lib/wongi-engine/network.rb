@@ -3,7 +3,7 @@ require 'wongi-engine/network/debug'
 
 module Wongi::Engine
   class Network
-    attr_reader :alpha_top, :beta_top, :queries, :results, :productions, :overlays
+    attr_reader :alpha_top, :beta_top, :queries, :results, :productions
 
     include NetworkParts::Collectable
 
@@ -22,7 +22,7 @@ module Wongi::Engine
       unless defined? Wongi::RDF::DocumentSupport
         begin
           require 'wongi-rdf'
-        rescue LoadError => e
+        rescue LoadError
           raise "'wongi-rdf' is required for RDF support"
         end
       end
@@ -139,8 +139,8 @@ module Wongi::Engine
         else
           raise Error, "cannot retract automatic facts"
         end
-      else
-        return if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
+      elsif options[:automatic] && real.manual?
+        return
       end
 
       alphas_for(real).each { |a| a.deactivate real }
@@ -150,8 +150,8 @@ module Wongi::Engine
       alpha_top.wmes
     end
 
-    alias_method :statements, :wmes
-    alias_method :facts, :wmes
+    alias statements wmes
+    alias facts wmes
 
     def in_snapshot?
       @in_snapshot
@@ -178,13 +178,13 @@ module Wongi::Engine
 
     def rule(name = nil, &block)
       r = DSL::Rule.new(name || generate_rule_name)
-      r.instance_eval &block
+      r.instance_eval(&block)
       self << r
     end
 
     def query(name, &block)
       q = DSL::Query.new name
-      q.instance_eval &block
+      q.instance_eval(&block)
       self << q
     end
 
@@ -235,8 +235,8 @@ module Wongi::Engine
       # puts "COMPILED CONDITION #{condition} WITH KEY #{key}"
       if time == 0
         return alpha_hash[hash] if alpha_hash.has_key?(hash)
-      else
-        return @timeline[time + 1][hash] if @timeline[time + 1] && @timeline[time + 1].has_key?(hash)
+      elsif @timeline[time + 1] && @timeline[time + 1].has_key?(hash)
+        return @timeline[time + 1][hash]
       end
 
       alpha = AlphaMemory.new(template, self)
@@ -248,7 +248,7 @@ module Wongi::Engine
         if @timeline[time + 1].nil?
           # => ensure lineage from 0 to time
           compile_alpha condition.class.new(condition.subject, condition.predicate, condition.object, time: time + 1)
-          @timeline.unshift Hash.new
+          @timeline.unshift({})
         end
         @timeline[time + 1][hash] = alpha
       end
@@ -388,11 +388,7 @@ module Wongi::Engine
       # the root node should not be deleted
       return unless node.parent
 
-      if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.is_a? klass }
-        while node.tokens.first
-          node.tokens.first.destroy
-        end
-      end
+      node.tokens.first.destroy while node.tokens.first if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.is_a? klass }
 
       if node.parent
         node.parent.children.delete node

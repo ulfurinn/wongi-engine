@@ -1,13 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::NccNode do
-  before do
-    @engine = Wongi::Engine.create
-  end
-
-  def engine
-    @engine
-  end
+  let(:engine) { Wongi::Engine.create }
 
   def ncc_rule
     rule('ncc') {
@@ -98,7 +92,7 @@ describe Wongi::Engine::NccNode do
       }
     end
 
-    prod = engine.rule "action" do
+    engine.rule "action" do
       forall {
         has :Requestor, :want_action_for, :Actor
         has :Requestor, :Actor, :Value
@@ -154,7 +148,7 @@ describe Wongi::Engine::NccNode do
       }
     end
 
-    prod = engine.rule "action" do
+    engine.rule "action" do
       forall {
         has :Requestor, :want_action_for, :Actor
         has :Requestor, :Actor, :Value
@@ -222,8 +216,8 @@ describe Wongi::Engine::NccNode do
       }
     }
 
-    %w(math science english bio).each { |req| engine << [req, :is_a, :requirement] }
-    %w(CourseA CourseB CourseC).each  { |course| engine << [course, :is_a, :course] }
+    %w[math science english bio].each { |req| engine << [req, :is_a, :requirement] }
+    %w[CourseA CourseB CourseC].each  { |course| engine << [course, :is_a, :course] }
     engine << ["StudentA", :is_a, :student]
 
     engine << ["CourseA", "math", 50]
@@ -239,9 +233,9 @@ describe Wongi::Engine::NccNode do
     engine << ["StudentA", "science", 60]
     engine << ["StudentA", "bio", 40]
 
-    expect(engine.find "StudentA", :passes_for, "CourseA").not_to be_nil
-    expect(engine.find "StudentA", :passes_for, "CourseB").to be_nil
-    expect(engine.find "StudentA", :passes_for, "CourseC").to be_nil
+    expect(engine.find("StudentA", :passes_for, "CourseA")).not_to be_nil
+    expect(engine.find("StudentA", :passes_for, "CourseB")).to be_nil
+    expect(engine.find("StudentA", :passes_for, "CourseC")).to be_nil
   end
 
   specify 'regression #71' do

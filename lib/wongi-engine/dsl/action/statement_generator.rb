@@ -2,6 +2,7 @@ module Wongi::Engine
   module DSL::Action
     class StatementGenerator < Base
       def initialize(template)
+        super()
         @template = template
       end
 
@@ -16,7 +17,7 @@ module Wongi::Engine
         production.tracer.trace(action: self, wme: wme) if production.tracer
         if (existing = rete.exists?(wme))
           generated = existing.generating_tokens.size
-          if generated > 0 && !token.generated_wmes.include?(existing)
+          if generated.positive? && !token.generated_wmes.include?(existing)
             token.generated_wmes << existing
             existing.generating_tokens << token
           end

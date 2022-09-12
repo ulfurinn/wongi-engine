@@ -1,18 +1,12 @@
 require 'spec_helper'
 
 describe Wongi::Engine::DSL::Action::SimpleAction do
-  before do
-    @rete = Wongi::Engine::Network.new
-  end
-
-  def rete
-    @rete
-  end
+  let(:engine) { Wongi::Engine.create }
 
   it 'should work with blocks' do
     count = 0
 
-    rete.rule do
+    engine.rule do
       forall {
         has 1, 2, :X
       }
@@ -25,11 +19,11 @@ describe Wongi::Engine::DSL::Action::SimpleAction do
 
     expect(count).to eq(0)
 
-    rete << [1, 2, 3]
+    engine << [1, 2, 3]
 
     expect(count).to eq(1)
 
-    rete << [1, 2, 4]
+    engine << [1, 2, 4]
 
     expect(count).to eq(2)
   end

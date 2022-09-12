@@ -6,7 +6,7 @@ module Wongi::Engine
       end
 
       def import_into(model)
-        super.tap { |copy| copy.search_on *parameters }
+        super.tap { |copy| copy.search_on(*parameters) }
       end
 
       def parameters

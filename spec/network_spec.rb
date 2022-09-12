@@ -65,7 +65,7 @@ describe Wongi::Engine::Network do
     activated_z = nil
     deactivated_z = nil
 
-    prod = subject << rule {
+    subject << rule {
       forall { has :X, 2, :Z }
       make {
         action activate: ->(token) { activated_z = token[:Z] },
@@ -117,7 +117,7 @@ describe Wongi::Engine::Network do
   end
 
   describe 'retraction with neg nodes lower in the chain' do
-    def expect_tokens n
+    def expect_tokens(n)
       expect(prod).to have(n).tokens
     end
 

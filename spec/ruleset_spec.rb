@@ -31,7 +31,7 @@ describe Wongi::Engine::Ruleset do
   end
 
   it 'should be able to clear registered rulesets' do
-    ruleset = Wongi::Engine::Ruleset.new 'testing-ruleset'
+    _ = Wongi::Engine::Ruleset.new 'testing-ruleset'
     Wongi::Engine::Ruleset.reset
     expect(Wongi::Engine::Ruleset.rulesets).to be_empty
   end

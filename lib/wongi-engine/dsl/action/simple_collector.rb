@@ -6,6 +6,7 @@ module Wongi::Engine
       end
 
       def initialize(variable, name = nil)
+        super()
         @variable = variable
         @name = name if name
         # (class << self; self; end).instance_eval do
@@ -21,7 +22,7 @@ module Wongi::Engine
       end
 
       def name=(n)
-        @name = n unless @name
+        @name ||= n
       end
 
       def rete=(rete)
@@ -30,14 +31,6 @@ module Wongi::Engine
 
       def collect(var)
         production.tokens.map { |token| token[var] }
-      end
-    end
-
-    class GenericCollectClause
-      def initialize(name, variable) end
-
-      def import_into(_rete)
-        collector = SimpleCollector.new @variable
       end
     end
   end

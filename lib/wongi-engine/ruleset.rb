@@ -3,13 +3,13 @@ module Wongi
     class Ruleset
       class << self
         def [](name)
-          raise Error, "undefined ruleset #{name}" unless rulesets.has_key?(name)
+          raise Error, "undefined ruleset #{name}" unless rulesets.key?(name)
 
           rulesets[name]
         end
 
         def register(name, ruleset)
-          raise Error, "ruleset #{name} already exists" if rulesets.has_key?(name)
+          raise Error, "ruleset #{name} already exists" if rulesets.key?(name)
 
           rulesets[name] = ruleset
         end
@@ -56,14 +56,14 @@ module Wongi
 
       def rule(name, &definition)
         r = DSL::Rule.new name
-        r.instance_eval &definition
+        r.instance_eval(&definition)
         @rules << r
         r
       end
 
       def query(name, &definition)
         r = DSL::Query.new name
-        r.instance_eval &definition
+        r.instance_eval(&definition)
         @rules << r
         r
       end

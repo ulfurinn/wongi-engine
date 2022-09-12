@@ -16,10 +16,10 @@ module Wongi
           t.ncc_results << ncc_token
           ncc_token.owner = t
         end
-        if t.ncc_results.empty?
-          children.each do |child|
-            child.beta_activate Token.new(child, t, nil, {})
-          end
+        return unless t.ncc_results.empty?
+
+        children.each do |child|
+          child.beta_activate Token.new(child, t, nil, {})
         end
       end
 
@@ -31,11 +31,11 @@ module Wongi
         t.deleted!
         partner.tokens.select { |ncc| ncc.owner == t }.each do |ncc_token|
           ncc_token.owner = nil
-          t.ncc_results.delete ncc_token
+          t.ncc_results.delete(ncc_token)
         end
         children.each do |beta|
-          beta.tokens.select { |token| token.parent == t }.each do |token|
-            beta.beta_deactivate token
+          beta.tokens.select { |child_token| child_token.parent == t }.each do |child_token|
+            beta.beta_deactivate(child_token)
           end
         end
       end

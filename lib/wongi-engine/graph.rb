@@ -28,14 +28,14 @@ module Wongi::Engine
 
     private
 
-    def print_hash h
-      h.to_s.gsub /-/, '_'
+    def print_hash(h)
+      h.to_s.gsub(/-/, '_')
     end
 
     def dump_alphas(_opts)
       @io.puts "subgraph cluster_alphas {"
-      @rete.alphas.select { |alpha| not alpha.betas.empty? }.each do |alpha|
-        @io.puts "node#{print_hash alpha.object_id} [shape=box label=\"#{alpha.template.to_s.gsub /"/, "\\\""}\"];"
+      @rete.alphas.select { |alpha| !alpha.betas.empty? }.each do |alpha|
+        @io.puts "node#{print_hash alpha.object_id} [shape=box label=\"#{alpha.template.to_s.gsub(/"/, '"')}\"];"
       end
       @io.puts "};"
     end

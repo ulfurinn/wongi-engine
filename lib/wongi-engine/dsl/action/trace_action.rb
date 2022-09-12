@@ -25,7 +25,7 @@ module Wongi::Engine
       def initialize(opts = {})
         super()
         %i[generation values tracer tracer_class io].each do |option|
-          instance_variable_set "@#{option}", opts[option] if opts.has_key? option
+          instance_variable_set "@#{option}", opts[option] if opts.key? option
         end
         @io ||= $stdout
         @tracer ||= (@tracer_class || DefaultTracer).new

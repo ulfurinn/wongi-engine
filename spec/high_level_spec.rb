@@ -234,9 +234,6 @@ describe 'the engine' do
     end
   end
 
-  it 'should correctly execute a query several times' do
-  end
-
   context 'with timelines' do
     it 'should not match with no past point' do
       production = engine.rule {

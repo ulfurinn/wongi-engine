@@ -113,11 +113,11 @@ describe "issue 4" do
       make {
         action { |token|
           number = token[:Number]
-          if number.even?
-            engine << [number, :is_even, true]
-          else
-            engine << [number, :probably_odd, true]
-          end
+          engine << if number.even?
+                      [number, :is_even, true]
+                    else
+                      [number, :probably_odd, true]
+                    end
         }
       }
     end
@@ -126,7 +126,7 @@ describe "issue 4" do
     evens = engine.select :_, :is_even, true
     odds = engine.select :_, :is_odd, true
 
-    # numbers.should be_empty
+    expect(numbers.length).to eq(5)
     expect(evens.length).to eq(5)
     expect(odds.length).to eq(5)
   end

@@ -36,7 +36,7 @@ module Wongi::Engine
     end
 
     def subst(variable, value)
-      @assignments[variable] = value if @assignments.has_key? variable
+      @assignments[variable] = value if @assignments.key? variable
     end
 
     def set(variable, value)
@@ -48,16 +48,16 @@ module Wongi::Engine
     end
 
     def [](var)
-      if a = assignments[var]
+      if (a = assignments[var])
         a.respond_to?(:call) ? a.call(self) : a
       end
     end
 
     def has_var?(x)
-      assignments.has_key? x
+      assignments.key? x
     end
 
-    # TODO ignore assignments?
+    # TODO: ignore assignments?
     def duplicate?(other)
       parent.equal?(other.parent) && @wme.equal?(other.wme) && assignments == other.assignments
     end
@@ -89,7 +89,7 @@ module Wongi::Engine
     def generated?(wme)
       return true if generated_wmes.any? { |w| w == wme }
 
-      return children.any? { |t| t.generated? wme }
+      children.any? { |t| t.generated? wme }
     end
 
     protected
