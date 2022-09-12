@@ -6,7 +6,7 @@ module Wongi::Engine
       @body = body
     end
 
-    def beta_activate(token, wme = nil, _assignments = {})
+    def beta_activate(token, _wme = nil, _assignments = {})
       children.each do |child|
         child.beta_activate Token.new(child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body })
       end

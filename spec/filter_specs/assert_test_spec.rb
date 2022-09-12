@@ -20,7 +20,7 @@ describe "ASSERT test" do
   it "should pass with a constant 'true'" do
     test_rule {
       forall {
-        assert { |token|
+        assert { |_token|
           true
         }
       }
@@ -33,7 +33,7 @@ describe "ASSERT test" do
   it "should fail with a constant 'false'" do
     test_rule {
       forall {
-        assert { |token|
+        assert { |_token|
           false
         }
       }
@@ -77,7 +77,7 @@ describe "ASSERT test" do
     test_rule {
       forall {
         has :X, "is", :Y
-        assert :X, :Y do |x, y|
+        assert :X, :Y do |_x, y|
           y == "futile"
         end
       }

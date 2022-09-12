@@ -1,7 +1,7 @@
 module Wongi
   module Engine
     TokenAssignment = Struct.new(:wme, :field) do
-      def call(token = nil)
+      def call(_token = nil)
         wme.send field
       end
 

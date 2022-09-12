@@ -1,6 +1,6 @@
 module Wongi::Engine
   class FilterTest
-    def passes?(token)
+    def passes?(_token)
       raise "#{self.class} must implement #passes?"
     end
 
@@ -8,7 +8,7 @@ module Wongi::Engine
       context.tap { |c| c.filter_node(self) }
     end
 
-    def ==(other)
+    def ==(_other)
       false
     end
   end

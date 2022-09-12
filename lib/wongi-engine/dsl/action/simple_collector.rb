@@ -36,7 +36,7 @@ module Wongi::Engine
     class GenericCollectClause
       def initialize(name, variable) end
 
-      def import_into(rete)
+      def import_into(_rete)
         collector = SimpleCollector.new @variable
       end
     end

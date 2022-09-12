@@ -69,7 +69,7 @@ module Wongi::Engine
       parent.refresh_child self
     end
 
-    def refresh_child(node)
+    def refresh_child(_node)
       raise "#{self.class} must implement refresh_child"
     end
 

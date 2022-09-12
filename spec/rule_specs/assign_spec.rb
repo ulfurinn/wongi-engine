@@ -83,7 +83,7 @@ describe "ASSIGN rule" do
     engine << rule do
       for_all {
         has :a, :b, :c
-        assign :X do |token|
+        assign :X do |_token|
           false
         end
       }

@@ -29,10 +29,10 @@ describe 'action classes' do
 
     klass = action_class
 
-    klass.execute_body = lambda do |token|
+    klass.execute_body = lambda do |_token|
       executed += 1
     end
-    klass.deexecute_body = lambda do |token|
+    klass.deexecute_body = lambda do |_token|
       deexecuted += 1
     end
 
