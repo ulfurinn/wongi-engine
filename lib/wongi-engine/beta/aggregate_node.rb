@@ -13,15 +13,16 @@ module Wongi::Engine
     end
 
     def equivalent?(alpha, tests, assignment_pattern)
-      return false unless self.alpha == alpha
-      return false unless self.assignment_pattern == assignment_pattern
-      return false unless (self.tests.empty? && tests.empty?) || self.tests.length == tests.length && self.tests.all? { |my_test|
+      return false if self.alpha != alpha
+      return false if self.assignment_pattern != assignment_pattern
+      return true if self.tests.empty? && tests.empty?
+      return false if self.tests.length != tests.length
+
+      self.tests.all? { |my_test|
         tests.any? { |new_test|
           my_test.equivalent? new_test
         }
       }
-
-      true
     end
 
     def alpha_activate(wme)
@@ -60,7 +61,7 @@ module Wongi::Engine
       # clean up previous decisions
       beta_deactivate(token)
 
-      candidates = alpha.wmes.select { |wme| matches?(token, wme) }
+      candidates = alpha.wmes.select { |asserted_wme| matches?(token, asserted_wme) }
 
       return if candidates.empty?
 

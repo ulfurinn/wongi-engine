@@ -1,19 +1,11 @@
 require 'spec_helper'
 
 describe "LESS test" do
-  before do
-    @engine = Wongi::Engine.create
-  end
+  let(:engine) { Wongi::Engine.create }
 
-  def engine
-    @engine
-  end
+  attr_reader :production
 
-  def production
-    @production
-  end
-
-  def test_rule &block
+  def test_rule(&block)
     @production = (engine << rule('test-rule', &block))
   end
 

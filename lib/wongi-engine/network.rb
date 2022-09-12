@@ -169,7 +169,7 @@ module Wongi::Engine
         slice.each { |key, alpha| wmes[key] = alpha.wmes }
         slice.each do |key, alpha|
           in_snapshot {
-            wmes[key].dup.each { |wme| wme.destroy }
+            wmes[key].dup.each(&:destroy)
           }
           alpha.snapshot! source[key]
         end

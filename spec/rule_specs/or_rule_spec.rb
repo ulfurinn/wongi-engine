@@ -3,13 +3,7 @@ require 'spec_helper'
 describe "ANY rule" do
   include Wongi::Engine::DSL
 
-  before do
-    @engine = Wongi::Engine.create
-  end
-
-  def engine
-    @engine
-  end
+  let(:engine) { Wongi::Engine.create }
 
   context 'with two options' do
     let :production do

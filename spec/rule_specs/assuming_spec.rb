@@ -21,12 +21,12 @@ describe Wongi::Engine::AssumingClause do
     engine << [:x, :y, 2]
     engine << [1, :u, :a]
     engine << [2, :u, :b]
-    result = extended.tokens.map { |token| [token[:Z], token[:W]] }.to_h
+    result = extended.tokens.to_h { |token| [token[:Z], token[:W]] }
     expect(result).to eq(1 => :a, 2 => :b)
   end
 
   it 'should check for base rule\'s existence' do
-    f = -> {
+    f = lambda {
       engine << rule {
         forall {
           assuming :base
@@ -38,7 +38,7 @@ describe Wongi::Engine::AssumingClause do
   end
 
   it 'should come first in a rule' do
-    f = -> {
+    f = lambda {
       engine << rule(:base) {
         forall {
           has :x, :y, :Z

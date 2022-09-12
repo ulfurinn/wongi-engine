@@ -5,16 +5,16 @@ module Wongi::Engine
 
       class << self
         def section(s, *aliases)
-          unless sections.include?(s)
-            sections << s
-            define_method s do |&d|
-              @current_section = s
-              section = DSL.sections[s].new
-              section.rule = self
-              section.instance_eval &d
-            end
-            aliases.each { |a| alias_method a, s }
+          return if sections.include?(s)
+
+          sections << s
+          define_method s do |&d|
+            @current_section = s
+            section = DSL.sections[s].new
+            section.rule = self
+            section.instance_eval(&d)
           end
+          aliases.each { |a| alias_method a, s }
         end
 
         def sections

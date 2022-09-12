@@ -18,12 +18,9 @@ module Wongi::Engine
       return unless block_given?
 
       new_child.tap do |overlay|
-        begin
-          result = yield overlay
-        ensure
-          overlay.dispose
-        end
-        result
+        yield overlay
+      ensure
+        overlay.dispose
       end
     end
 
@@ -47,7 +44,8 @@ module Wongi::Engine
     def <<(thing)
       case thing
       when Array
-        assert WME.new(*thing).tap { |wme| wme.overlay = self }
+        wme = WME.new(*thing).tap { |wme| wme.overlay = self }
+        assert(wme)
       when WME
         assert(thing)
       else
@@ -58,22 +56,22 @@ module Wongi::Engine
     def assert(wme)
       @next_cascade ||= []
       @next_cascade << [:assert, wme]
-      if @current_cascade.nil?
-        @current_cascade = @next_cascade
-        @next_cascade = nil
-        process_cascade
-      end
+      return if @current_cascade
+
+      @current_cascade = @next_cascade
+      @next_cascade = nil
+      process_cascade
     end
 
     def retract(wme, options = {})
       wme = WME.new(*wme) if wme.is_a? Array
       @next_cascade ||= []
       @next_cascade << [:retract, wme, options]
-      if @current_cascade.nil?
-        @current_cascade = @next_cascade
-        @next_cascade = nil
-        process_cascade
-      end
+      return if @current_cascade
+
+      @current_cascade = @next_cascade
+      @next_cascade = nil
+      process_cascade
     end
 
     def process_cascade

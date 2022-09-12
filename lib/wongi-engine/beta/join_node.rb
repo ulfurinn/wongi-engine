@@ -47,11 +47,11 @@ module Wongi
       def equivalent?(alpha, tests, assignment_pattern)
         return false unless self.alpha == alpha
         return false unless self.assignment_pattern == assignment_pattern
-        return false unless (self.tests.empty? && tests.empty?) || self.tests.length == tests.length && self.tests.all? { |my_test|
+        return false unless (self.tests.empty? && tests.empty?) || (self.tests.length == tests.length && self.tests.all? { |my_test|
           tests.any? { |new_test|
             my_test.equivalent? new_test
           }
-        }
+        })
 
         true
       end
@@ -117,9 +117,7 @@ module Wongi
         return assignments if assignment_pattern.nil?
 
         assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject) if assignment_pattern.subject != :_
-        if assignment_pattern.predicate != :_
-          assignments[assignment_pattern.predicate] = TokenAssignment.new(wme, :predicate)
-        end
+        assignments[assignment_pattern.predicate] = TokenAssignment.new(wme, :predicate) if assignment_pattern.predicate != :_
         assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object) if assignment_pattern.object != :_
         assignments
       end

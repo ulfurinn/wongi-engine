@@ -1,13 +1,7 @@
 require 'spec_helper'
 
 describe "negative rule" do
-  before do
-    @engine = Wongi::Engine.create
-  end
-
-  def engine
-    @engine
-  end
+  let(:engine) { Wongi::Engine.create }
 
   it "should not introduce variables" do
     proc = lambda {
@@ -82,7 +76,10 @@ describe "negative rule" do
           neg :a, :b, :_, unsafe: true
         }
         make {
-          action { counter += 1; raise exception.new if counter > 5 }
+          action {
+            counter += 1
+            raise exception if counter > 5
+          }
           gen :a, :b, :c
         }
       }

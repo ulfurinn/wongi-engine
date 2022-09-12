@@ -9,24 +9,24 @@ module Wongi::Engine
     def ruleset(name = nil, &definition)
       rs = Ruleset.new
       rs.name name if name
-      rs.instance_eval &definition if block_given?
+      rs.instance_eval(&definition) if block_given?
       rs
     end
 
     def rule(name = nil, &definition)
       r = Rule.new name
-      r.instance_eval &definition
+      r.instance_eval(&definition)
       r
     end
 
     def query(name, &definition)
       q = Query.new name
-      q.instance_eval &definition
+      q.instance_eval(&definition)
       q
     end
 
     def dsl(&definition)
-      Builder.new.build &definition
+      Builder.new.build(&definition)
     end
   end
 end
@@ -103,7 +103,7 @@ module Wongi::Engine::DSL
 
     clause :count
     body { |s, p, o, opts|
-      aggregate s, p, o, map: -> { _1; 1 }, function: -> { _1.inject(&:+) }, assign: opts[:assign]
+      aggregate s, p, o, map: ->(_) { 1 }, function: -> { _1.inject(&:+) }, assign: opts[:assign]
     }
 
     clause :assert, :dynamic
