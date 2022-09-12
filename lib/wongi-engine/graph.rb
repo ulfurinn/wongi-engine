@@ -59,9 +59,7 @@ module Wongi::Engine
       end
       if beta.respond_to? :alpha and opts[:alpha] != false
         alpha = beta.alpha
-        if alpha
-          @io.puts "node#{print_hash alpha.object_id} -> node#{print_hash beta.object_id};"
-        end
+        @io.puts "node#{print_hash alpha.object_id} -> node#{print_hash beta.object_id};" if alpha
       end
       beta.children.each do |child|
         @io.puts "node#{print_hash beta.object_id} -> node#{print_hash child.object_id};"

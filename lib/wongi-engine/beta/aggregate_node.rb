@@ -45,9 +45,7 @@ module Wongi::Engine
     def beta_deactivate(token)
       children.each do |child|
         child.tokens.each do |t|
-          if t.parent == token
-            child.beta_deactivate t
-          end
+          child.beta_deactivate t if t.parent == token
         end
       end
     end
@@ -64,9 +62,7 @@ module Wongi::Engine
 
       candidates = alpha.wmes.select { |wme| matches?(token, wme) }
 
-      if candidates.empty?
-        return
-      end
+      return if candidates.empty?
 
       mapped = candidates.map(&map)
       value = if function.is_a?(Symbol) && mapped.respond_to?(function)

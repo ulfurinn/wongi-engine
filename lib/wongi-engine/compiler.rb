@@ -12,9 +12,7 @@ module Wongi::Engine
     end
 
     def declare(v)
-      unless declared_variables.include?(v)
-        declared_variables << v
-      end
+      declared_variables << v unless declared_variables.include?(v)
     end
 
     def declared_variables

@@ -58,9 +58,7 @@ module Wongi
 
         token.overlay.add_token(token, self)
         alpha.wmes.each do |wme|
-          if matches?(token, wme)
-            make_join_result(token, wme)
-          end
+          make_join_result(token, wme) if matches?(token, wme)
         end
         if token.neg_join_results.empty?
           children.each do |child|
@@ -91,9 +89,7 @@ module Wongi
 
       def refresh_child(child)
         tokens.each do |token|
-          if token.neg_join_results.empty?
-            child.beta_activate Token.new(child, token, nil, {})
-          end
+          child.beta_activate Token.new(child, token, nil, {}) if token.neg_join_results.empty?
         end
         alpha.wmes.each do |wme|
           alpha_activate wme

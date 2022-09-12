@@ -34,9 +34,7 @@ module Wongi::Engine
     def initialize(parent = nil)
       @parent = parent
       @children = []
-      if parent
-        parent.children << self
-      end
+      parent.children << self if parent
     end
 
     def root?
@@ -52,9 +50,7 @@ module Wongi::Engine
     end
 
     def rete
-      @rete ||= if parent
-                  parent.rete
-                end
+      @rete ||= (parent.rete if parent)
     end
 
     abstract :alpha_activate
@@ -81,9 +77,7 @@ module Wongi::Engine
     private
 
     def dp(message)
-      if debug?
-        puts "#{indent}#{message}"
-      end
+      puts "#{indent}#{message}" if debug?
     end
 
     def indent

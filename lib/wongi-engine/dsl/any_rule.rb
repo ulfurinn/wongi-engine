@@ -6,9 +6,7 @@ module Wongi::Engine
 
       def initialize(&block)
         @variants = []
-        if block
-          instance_eval &block
-        end
+        instance_eval &block if block
       end
 
       def option(&block)

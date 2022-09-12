@@ -4,9 +4,7 @@ module Wongi::Engine
 
       def initialize(name = nil, &block)
         super
-        if block
-          forall &block
-        end
+        forall &block if block
       end
 
       def compile(context)

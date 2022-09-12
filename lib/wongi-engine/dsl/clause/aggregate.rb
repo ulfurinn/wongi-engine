@@ -9,9 +9,7 @@ module Wongi::Engine
         @map = options[:map]
         @function = options[:function]
         @assign = options[:assign]
-        if !@map
-          @map = -> { _1.send(member) }
-        end
+        @map = -> { _1.send(member) } if !@map
         super
       end
 

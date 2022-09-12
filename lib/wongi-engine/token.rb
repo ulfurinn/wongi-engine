@@ -37,9 +37,7 @@ module Wongi::Engine
     end
 
     def subst(variable, value)
-      if @assignments.has_key? variable
-        @assignments[variable] = value
-      end
+      @assignments[variable] = value if @assignments.has_key? variable
     end
 
     def set(variable, value)

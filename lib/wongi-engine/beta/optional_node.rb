@@ -93,15 +93,11 @@ module Wongi
 
         token.overlay.remove_token(token, self)
         token.deleted!
-        if token.parent
-          token.parent.children.delete token
-        end
+        token.parent.children.delete token if token.parent
         token.opt_join_results.each &:unlink
         children.each do |child|
           child.tokens.each do |t|
-            if t.parent == token
-              child.beta_deactivate t
-            end
+            child.beta_deactivate t if t.parent == token
           end
         end
         token
@@ -130,15 +126,11 @@ module Wongi
         assignments = {}
         return assignments if assignment_pattern.nil?
 
-        if assignment_pattern.subject != :_
-          assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject)
-        end
+        assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject) if assignment_pattern.subject != :_
         if assignment_pattern.predicate != :_
           assignments[assignment_pattern.predicate] = TokenAssignment.new(wme, :predicate)
         end
-        if assignment_pattern.object != :_
-          assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object)
-        end
+        assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object) if assignment_pattern.object != :_
         assignments
       end
     end

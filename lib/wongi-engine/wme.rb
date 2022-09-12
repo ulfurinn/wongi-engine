@@ -51,9 +51,7 @@ module Wongi::Engine
       raise Wongi::Engine::Error, "Cannot match a WME against a #{template.class}" unless Template === template
 
       result = match_member(self.subject, template.subject) & match_member(self.predicate, template.predicate) & match_member(self.object, template.object)
-      if result.match?
-        result
-      end
+      result if result.match?
     end
 
     def generated?

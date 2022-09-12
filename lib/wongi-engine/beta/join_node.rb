@@ -74,9 +74,7 @@ module Wongi
       def alpha_deactivate(wme)
         children.each do |child|
           child.tokens.each do |token|
-            if token.wme == wme
-              child.beta_deactivate token
-            end
+            child.beta_deactivate token if token.wme == wme
           end
         end
       end
@@ -95,9 +93,7 @@ module Wongi
       def beta_deactivate(token)
         children.each do |child|
           child.tokens.each do |t|
-            if t.parent == token
-              child.beta_deactivate t
-            end
+            child.beta_deactivate t if t.parent == token
           end
         end
       end
@@ -106,9 +102,7 @@ module Wongi
         alpha.wmes.each do |wme|
           assignments = collect_assignments(wme)
           parent.tokens.each do |token|
-            if matches?(token, wme)
-              child.beta_activate Token.new(child, token, wme, assignments)
-            end
+            child.beta_activate Token.new(child, token, wme, assignments) if matches?(token, wme)
           end
         end
       end
@@ -126,15 +120,11 @@ module Wongi
         assignments = {}
         return assignments if assignment_pattern.nil?
 
-        if assignment_pattern.subject != :_
-          assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject)
-        end
+        assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject) if assignment_pattern.subject != :_
         if assignment_pattern.predicate != :_
           assignments[assignment_pattern.predicate] = TokenAssignment.new(wme, :predicate)
         end
-        if assignment_pattern.object != :_
-          assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object)
-        end
+        assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object) if assignment_pattern.object != :_
         assignments
       end
 

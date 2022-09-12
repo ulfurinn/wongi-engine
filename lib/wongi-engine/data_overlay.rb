@@ -67,9 +67,7 @@ module Wongi::Engine
     end
 
     def retract(wme, options = {})
-      if wme.is_a? Array
-        wme = WME.new(*wme)
-      end
+      wme = WME.new(*wme) if wme.is_a? Array
       @next_cascade ||= []
       @next_cascade << [:retract, wme, options]
       if @current_cascade.nil?

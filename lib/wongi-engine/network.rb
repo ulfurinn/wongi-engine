@@ -117,9 +117,7 @@ module Wongi::Engine
 
     # @private
     def real_assert(wme)
-      unless wme.rete == self
-        wme = wme.import_into self
-      end
+      wme = wme.import_into self unless wme.rete == self
 
       # source = best_alpha(wme)
       if (existing = find(wme.subject, wme.predicate, wme.object))
@@ -144,9 +142,7 @@ module Wongi::Engine
           raise Error, "cannot retract automatic facts"
         end
       else
-        if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
-          return
-        end
+        return if options[:automatic] && real.manual? # auto-retracting a fact that has been added manually
       end
 
       alphas_for(real).each { |a| a.deactivate real }
@@ -220,9 +216,7 @@ module Wongi::Engine
     def install_rule(rule)
       derived = rule.import_into self
       production = build_production beta_top, derived.conditions, [], derived.actions, false
-      if rule.name
-        productions[rule.name] = production
-      end
+      productions[rule.name] = production if rule.name
       production
     end
 
@@ -322,9 +316,7 @@ module Wongi::Engine
       template = Template.new(s, p, o)
       source = best_alpha(template)
       matching = current_overlay.wmes(source).select { |wme| wme =~ template }
-      if block_given?
-        matching.each { |st| yield st.subject, st.predicate, st.object }
-      end
+      matching.each { |st| yield st.subject, st.predicate, st.object } if block_given?
       matching
     end
 
@@ -394,9 +386,7 @@ module Wongi::Engine
 
     def delete_node_with_ancestors(node)
 
-      if node.kind_of?(NccNode)
-        delete_node_with_ancestors node.partner
-      end
+      delete_node_with_ancestors node.partner if node.kind_of?(NccNode)
 
       # the root node should not be deleted
       return unless node.parent
@@ -409,9 +399,7 @@ module Wongi::Engine
 
       if node.parent
         node.parent.children.delete node
-        if node.parent.children.empty?
-          delete_node_with_ancestors(node.parent)
-        end
+        delete_node_with_ancestors(node.parent) if node.parent.children.empty?
       end
 
     end

@@ -23,9 +23,7 @@ module Wongi
         token.overlay.remove_token(token, self)
         if (owner = token.owner)
           owner.ncc_results.delete token
-          if owner.ncc_results.empty?
-            ncc.ncc_activate owner
-          end
+          ncc.ncc_activate owner if owner.ncc_results.empty?
         end
       end
 

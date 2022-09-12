@@ -8,9 +8,7 @@ module Wongi::Engine
 
     def ruleset(name = nil, &definition)
       rs = Ruleset.new
-      if name
-        rs.name name
-      end
+      rs.name name if name
       rs.instance_eval &definition if block_given?
       rs
     end

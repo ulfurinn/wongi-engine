@@ -51,7 +51,9 @@ module Wongi::Engine
 
       def compile(context)
         tests, assignment = parse_variables(context)
-        raise DefinitionError.new("Negative matches may not introduce new variables: #{assignment.variables}") unless assignment.root?
+        unless assignment.root?
+          raise DefinitionError.new("Negative matches may not introduce new variables: #{assignment.variables}")
+        end
 
         context.tap { |c| c.neg_node(self, tests, unsafe) }
       end
