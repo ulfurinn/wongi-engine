@@ -24,14 +24,9 @@ module Wongi::Engine
     end
 
     def refresh_child(child)
-      tmp = children
-      self.children = [child]
       parent.tokens.each do |token|
-        children.each do |child|
-          child.beta_activate Token.new(child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body })
-        end
+        child.beta_activate Token.new(child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body })
       end
-      self.children = tmp
     end
   end
 end
