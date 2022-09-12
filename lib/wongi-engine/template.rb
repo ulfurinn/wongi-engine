@@ -58,21 +58,21 @@ module Wongi::Engine
         token[subject]
       else
         subject
-      end
+          end
       p = if Template.variable?(predicate)
         raise DefinitionError, "unbound variable #{predicate} in token #{token}" unless token.has_var?(predicate)
 
         token[predicate]
       else
         predicate
-      end
+          end
       o = if Template.variable?(object)
         raise DefinitionError, "unbound variable #{object} in token #{token}" unless token.has_var?(object)
 
         token[object]
       else
         object
-      end
+          end
       [s, p, o]
     end
   end
