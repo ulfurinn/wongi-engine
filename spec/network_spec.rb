@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::Network do
+  include Wongi::Engine::DSL
 
   let( :engine ) { Wongi::Engine.create }
   subject { engine }
@@ -21,6 +22,41 @@ describe Wongi::Engine::Network do
     prod = subject << rule { forall { has :X, 2, :Z } }
     subject << [1,2,3]
     expect( prod ).to have(1).tokens
+
+  end
+
+  it 'rules can be removed from engine' do
+
+    subject << [1,2,3]
+    subject << [4,5,6]
+
+    prod1 = subject << rule { forall { has :X, 2, :Z } }
+    prod2 = subject << rule { forall { has :X, 5, :Z } }
+
+    expect( prod1 ).to have(1).tokens
+    expect( prod2 ).to have(1).tokens
+
+    subject.remove_production(prod1)
+
+    expect( prod1 ).to have(0).tokens
+    expect( prod2 ).to have(1).tokens
+
+  end
+
+  it 'new rules can be added to engine after a rule has been been removed' do
+
+    subject << [1,2,3]
+    subject << [4,5,6]
+
+    prod1 = subject << rule { forall { has :X, 2, :Z } }
+
+    expect( prod1 ).to have(1).tokens
+
+    subject.remove_production(prod1)
+    expect( prod1 ).to have(0).tokens
+
+    prod2 = subject << rule { forall { has :X, 5, :Z } }
+    expect( prod2 ).to have(1).tokens
 
   end
 
