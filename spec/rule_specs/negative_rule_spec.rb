@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "negative rule" do
-  before :each do
+  before do
     @engine = Wongi::Engine.create
   end
 

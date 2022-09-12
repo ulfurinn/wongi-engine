@@ -9,7 +9,7 @@ dsl {
 }
 
 describe 'the engine' do
-  before :each do
+  before do
     @rete = Wongi::Engine::Network.new
   end
 
@@ -216,7 +216,7 @@ describe 'the engine' do
   end
 
   context 'queries' do
-    before :each do
+    before do
       rete << query("test-query") {
         search_on :X
         forall {
@@ -234,7 +234,7 @@ describe 'the engine' do
 
     it 'should run several times' do
       rete << ["answer", "is", 42]
-      rete << ['question', 'is', '6x9']
+      rete << %w[question is 6x9]
       rete.execute "test-query", { X: "answer" }
       rete.execute "test-query", { X: "question" }
       expect(rete.results["test-query"].tokens.to_a.last[:Y]).to eq('6x9')

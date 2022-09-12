@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::NccNode do
-  before :each do
+  before do
     @engine = Wongi::Engine.create
   end
 

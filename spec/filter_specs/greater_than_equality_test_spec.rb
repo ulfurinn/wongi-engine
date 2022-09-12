@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe 'Greater Than Or Equal test' do
-  before :each do
+  before do
     @engine = Wongi::Engine.create
   end
 

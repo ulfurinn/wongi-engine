@@ -37,7 +37,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
     end
 
     context 'transitive diamond' do
-      before :each do
+      before do
         engine << %w(Alice relative Bob)
         engine << %w(Bob relative Dwight)
         engine << %w(Alice relative Claire)
@@ -67,7 +67,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
   end
 
   context "pre-asserted", :pre do
-    before :each do
+    before do
       engine << ["relative", :transitive, true]
     end
 
@@ -75,7 +75,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
   end
 
   context "post-asserted", :post do
-    before :each do
+    before do
       production
       engine << ["relative", :transitive, true]
     end

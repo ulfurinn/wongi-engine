@@ -8,7 +8,7 @@ module Wongi::Engine
         @map = options[:map]
         @function = options[:function]
         @assign = options[:assign]
-        @map = -> { _1.send(member) } unless @map
+        @map ||= -> { _1.send(member) }
         super
       end
 

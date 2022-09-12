@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::Ruleset do
-  before :each do
+  before do
     Wongi::Engine::Ruleset.reset
   end
 

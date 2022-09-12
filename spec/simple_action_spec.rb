@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Wongi::Engine::DSL::Action::SimpleAction do
-  before :each do
+  before do
     @rete = Wongi::Engine::Network.new
   end
 

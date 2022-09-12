@@ -3,13 +3,7 @@ require 'spec_helper'
 describe "ANY rule" do
   include Wongi::Engine::DSL
 
-  before :each do
-    @engine = Wongi::Engine.create
-  end
-
-  def engine
-    @engine
-  end
+  let(:engine) { Wongi::Engine.create }
 
   context "with just one option" do
     it "should act like a positive matcher" do
@@ -57,7 +51,7 @@ describe "ANY rule" do
       engine << [1, 2, 3]
       engine << [3, 4, 5]
       engine << [1, 2, "three"]
-      engine << ["three", "four", "five"]
+      engine << %w[three four five]
 
       expect(production.size).to eq(2)
       expect(engine.collection(:threes)).to include(3)

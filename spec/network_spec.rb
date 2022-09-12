@@ -121,7 +121,7 @@ describe Wongi::Engine::Network do
       expect(prod).to have(n).tokens
     end
 
-    before :each do
+    before do
       engine << rule('retract') {
         forall {
           has :x, :u, :Y

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "ANY rule" do
   include Wongi::Engine::DSL
 
-  before :each do
+  before do
     @engine = Wongi::Engine.create
   end
 

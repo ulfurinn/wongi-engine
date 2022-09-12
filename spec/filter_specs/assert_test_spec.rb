@@ -1,19 +1,11 @@
 require 'spec_helper'
 
 describe "ASSERT test" do
-  before :each do
-    @engine = Wongi::Engine.create
-  end
+  let(:engine) { Wongi::Engine.create }
 
-  def engine
-    @engine
-  end
+  attr_reader :production
 
-  def production
-    @production
-  end
-
-  def test_rule &block
+  def test_rule(&block)
     @production = (engine << rule('test-rule', &block))
   end
 
@@ -27,7 +19,6 @@ describe "ASSERT test" do
     }
 
     expect(production).to have(1).token
-    
   end
 
   it "should fail with a constant 'false'" do
@@ -52,7 +43,7 @@ describe "ASSERT test" do
       }
     }
 
-    engine << ["resistance", "is", "futile"]
+    engine << %w[resistance is futile]
 
     expect(production).to have(1).token
     expect(production.tokens.first[:X]).to eq("resistance")
@@ -68,8 +59,8 @@ describe "ASSERT test" do
       }
     }
 
-    engine << ["resistance", "is", "futile"]
-    engine.retract ["resistance", "is", "futile"]
+    engine << %w[resistance is futile]
+    engine.retract %w[resistance is futile]
     expect(production).to have(0).tokens
   end
 
@@ -83,7 +74,7 @@ describe "ASSERT test" do
       }
     }
 
-    engine << ["resistance", "is", "futile"]
+    engine << %w[resistance is futile]
 
     expect(production).to have(1).token
     expect(production.tokens.first[:X]).to eq("resistance")

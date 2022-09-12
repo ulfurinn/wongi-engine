@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "LESS test" do
-  before :each do
+  before do
     @engine = Wongi::Engine.create
   end
 
@@ -31,7 +31,7 @@ describe "LESS test" do
       }
     }
 
-    engine << ["A", "B", "C"]
+    engine << %w[A B C]
 
     expect(@production.size).to eq(0)
   end
