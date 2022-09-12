@@ -5,3 +5,76 @@ require:
 AllCops:
   TargetRubyVersion: 2.7
   NewCops: enable
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/FrozenStringLiteralComment:
+  Enabled: false # reconsider later
+
+Metrics:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false # temporary
+
+Lint/EmptyClass:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+
+RSpec:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
+
+Naming:
+  Enabled: false
+
+Style/MixinUsage:
+  Exclude:
+    - examples/*.rb
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/SelectByRegexp:
+  Enabled: false
+
+Lint/EmptyBlock:
+  Enabled: false
+
+Security/CompoundHash:
+  Enabled: false # we actually need it to work
+
+Lint/HashCompareByIdentity:
+  Enabled: false # investigate later
+
+Style/AccessModifierDeclarations:
+  Enabled: false # maybe for the use of module_function which I think is better off being explicit instead of grouped
+
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
