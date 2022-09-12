@@ -48,9 +48,10 @@ module Wongi::Engine
     end
 
     def [](var)
-      if (a = assignments[var])
-        a.respond_to?(:call) ? a.call(self) : a
-      end
+      a = assignments[var]
+      return unless a
+
+      a.respond_to?(:call) ? a.call(self) : a
     end
 
     def has_var?(x)

@@ -78,11 +78,11 @@ module Wongi
           end
           make_opt_result token, wme
         end
-        unless match
-          token.optional!
-          children.each do |child|
-            child.beta_activate Token.new(child, token, nil, {})
-          end
+        return if match
+
+        token.optional!
+        children.each do |child|
+          child.beta_activate Token.new(child, token, nil, {})
         end
       end
 
@@ -93,10 +93,10 @@ module Wongi
         token.overlay.remove_token(token, self)
         token.deleted!
         token.parent.children.delete token if token.parent
-        token.opt_join_results.each &:unlink
+        token.opt_join_results.each(&:unlink)
         children.each do |child|
-          child.tokens.each do |t|
-            child.beta_deactivate t if t.parent == token
+          child.tokens.each do |child_token|
+            child.beta_deactivate(child_token) if child_token.parent == token
           end
         end
         token
@@ -126,9 +126,7 @@ module Wongi
         return assignments if assignment_pattern.nil?
 
         assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject) if assignment_pattern.subject != :_
-        if assignment_pattern.predicate != :_
-          assignments[assignment_pattern.predicate] = TokenAssignment.new(wme, :predicate)
-        end
+        assignments[assignment_pattern.predicate] = TokenAssignment.new(wme, :predicate) if assignment_pattern.predicate != :_
         assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object) if assignment_pattern.object != :_
         assignments
       end
