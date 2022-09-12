@@ -7,7 +7,7 @@ module Wongi::Engine
     def dot(io, opts = {})
       @seen_betas = []
 
-      if String === io
+      if io.is_a?(String)
         File.open io, "w" do |actual_io|
           dot actual_io
         end

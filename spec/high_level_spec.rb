@@ -31,7 +31,7 @@ describe 'the engine' do
 
       rete << Wongi::Engine::WME.new("friend", "symmetric", true)
       rete << Wongi::Engine::WME.new("Alice", "friend", "Bob")
-      
+
       expect(rete.facts.to_a.length).to eq(3)
       expect(rete.facts.select(&:manual?).length).to eq(2)
       generated = rete.facts.find(&:generated?)
@@ -244,7 +244,7 @@ describe 'the engine' do
 
   it 'should correctly execute a query several times' do
   end
-  
+
   context 'with timelines' do
     it 'should not match with no past point' do
       production = rete.rule {

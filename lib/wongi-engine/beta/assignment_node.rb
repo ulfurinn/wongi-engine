@@ -17,7 +17,7 @@ module Wongi::Engine
         child.tokens.each do |t|
           if t.parent == token
             child.beta_deactivate t
-            #token.destroy
+            # token.destroy
           end
         end
       end

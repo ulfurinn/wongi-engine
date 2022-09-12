@@ -95,7 +95,7 @@ module Wongi::Engine
     protected
 
     def all_assignments
-      raise "Assignments is not a hash" unless @assignments.kind_of?(Hash)
+      raise "Assignments is not a hash" unless @assignments.is_a?(Hash)
 
       if @parent
         @parent.assignments.merge @assignments

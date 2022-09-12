@@ -18,10 +18,10 @@ describe "ANY rule" do
           any {
             option {
               has :A, :path1, :_
-            }    
+            }
             option {
               has :A, :path2, :_
-            }    
+            }
           }
         }
       end

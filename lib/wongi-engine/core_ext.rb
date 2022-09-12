@@ -3,7 +3,7 @@ module Wongi::Engine
     module ClassMethods
       def attr_predicate(*names)
         names_hash = names.inject({}) do |hash, element|
-          if Hash === element
+          if element.is_a?(Hash)
             hash.merge element
           else
             hash[element] = false

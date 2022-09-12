@@ -273,7 +273,7 @@ module Wongi::Engine
     def prepare_query(name, conditions, parameters, actions = [])
       query = queries[name] = BetaMemory.new(nil)
       query.rete = self
-      query.seed(Hash[parameters.map { |param| [param, nil] }])
+      query.seed(parameters.map { |param| [param, nil] }.to_h)
       results[name] = build_production query, conditions, parameters, actions, true
     end
 
@@ -383,12 +383,12 @@ module Wongi::Engine
     end
 
     def delete_node_with_ancestors(node)
-      delete_node_with_ancestors node.partner if node.kind_of?(NccNode)
+      delete_node_with_ancestors node.partner if node.is_a?(NccNode)
 
       # the root node should not be deleted
       return unless node.parent
 
-      if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.kind_of? klass }
+      if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.is_a? klass }
         while node.tokens.first
           node.tokens.first.destroy
         end

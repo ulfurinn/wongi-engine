@@ -45,7 +45,7 @@ module Wongi::Engine
     end
 
     def =~(template)
-      raise Wongi::Engine::Error, "Cannot match a WME against a #{template.class}" unless Template === template
+      raise Wongi::Engine::Error, "Cannot match a WME against a #{template.class}" unless template.is_a?(Template)
 
       result = match_member(subject, template.subject) & match_member(predicate, template.predicate) & match_member(object, template.object)
       result if result.match?

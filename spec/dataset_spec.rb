@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Wongi::Engine::Network do  
+describe Wongi::Engine::Network do
   it 'should expose compiled productions' do
     ds = Wongi::Engine::Network.new
 
