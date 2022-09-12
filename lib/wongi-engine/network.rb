@@ -396,7 +396,10 @@ module Wongi::Engine
         delete_node_with_ancestors node.partner
       end
 
-      if [BetaMemory, NegNode, NccNode, NccPartner].any? { | klass| node.kind_of? klass }
+      # the root node should not be deleted
+      return unless node.parent
+
+      if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.kind_of? klass }
         while node.tokens.first
           node.tokens.first.destroy
         end
