@@ -23,6 +23,7 @@ module Wongi::Engine
           end
 
       return false if x == :_ || y == :_
+
       x > y
     end
 

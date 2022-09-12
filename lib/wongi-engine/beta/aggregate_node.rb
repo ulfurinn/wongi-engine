@@ -25,6 +25,7 @@ module Wongi::Engine
           my_test.equivalent? new_test
         }
       }
+
       true
     end
 

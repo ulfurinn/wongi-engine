@@ -50,6 +50,7 @@ module Wongi::Engine
 
     def dump_beta(beta, opts)
       return if @seen_betas.include? beta
+
       @seen_betas << beta
       @io.puts "node#{print_hash beta.object_id} [label=\"#{beta.class.name.split('::').last}\"];"
       if beta.is_a? NccNode

@@ -140,6 +140,7 @@ module Wongi::Engine
     def real_retract(wme, options)
       real = find(wme.subject, wme.predicate, wme.object)
       return if real.nil?
+
       if real.generated? # still some generator tokens left
         if real.manual?
           real.manual = false
@@ -291,6 +292,7 @@ module Wongi::Engine
     def execute(name, valuations)
       beta = self.queries[name]
       raise Error, "Undefined query #{name}; known queries are #{queries.keys}" unless beta
+
       beta.subst valuations
     end
 

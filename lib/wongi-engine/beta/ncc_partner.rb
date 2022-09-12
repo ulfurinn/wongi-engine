@@ -20,6 +20,7 @@ module Wongi
       def beta_deactivate t
         token = tokens.find { |tok| tok.parent == t }
         return unless token
+
         token.overlay.remove_token(token, self)
         if (owner = token.owner)
           owner.ncc_results.delete token

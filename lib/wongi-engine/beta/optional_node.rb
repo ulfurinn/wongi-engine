@@ -48,6 +48,7 @@ module Wongi
         wme.opt_join_results.dup.each do |ojr|
           tokens.each do |token|
             next unless token == ojr.token
+
             ojr.unlink
             if token.opt_join_results.empty?
               children.each do |child|
@@ -64,6 +65,7 @@ module Wongi
 
       def beta_activate(t)
         return if tokens.find { |token| token.parent == t }
+
         token = Token.new(self, t, nil, {})
         token.overlay.add_token(token, self)
         match = false
@@ -88,6 +90,7 @@ module Wongi
       def beta_deactivate(t)
         token = tokens.find { |token| token.parent == t }
         return unless token
+
         token.overlay.remove_token(token, self)
         token.deleted!
         if token.parent
@@ -126,6 +129,7 @@ module Wongi
       def collect_assignments(wme)
         assignments = {}
         return assignments if assignment_pattern.nil?
+
         if assignment_pattern.subject != :_
           assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject)
         end

@@ -16,6 +16,7 @@ module Wongi::Engine
 
       def execute(token)
         return unless @action
+
         if @action.is_a?(Proc) || @action.respond_to?(:to_proc)
           rete.instance_exec token, &@action
         elsif @action.respond_to? :call
@@ -27,6 +28,7 @@ module Wongi::Engine
 
       def deexecute(token)
         return unless @deaction
+
         if @deaction.is_a?(Proc) || @deaction.respond_to?(:to_proc)
           rete.instance_exec token, &@deaction
         elsif @deaction.respond_to? :call
@@ -38,6 +40,7 @@ module Wongi::Engine
 
       def reexecute(token, newtoken)
         return unless @reaction
+
         if @reaction.is_a?(Proc) || @reaction.respond_to?(:to_proc)
           rete.instance_exec token, newtoken, &@reaction
         elsif @reaction.respond_to? :call

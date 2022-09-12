@@ -27,18 +27,21 @@ module Wongi::Engine::DSL
 
     def action(klass = nil, &block)
       raise DefinitionError, "Cannot create an action without a clause" if @current_clause.nil?
+
       @clauses << { section: @current_section, clause: @current_clause, action: klass || block }
       @current_clause = nil
     end
 
     def body(klass = nil, &block)
       raise DefinitionError, "Cannot create a body without a clause" if @current_clause.nil?
+
       @clauses << { section: @current_section, clause: @current_clause, body: klass || block }
       @current_clause = nil
     end
 
     def accept(klass)
       raise DefinitionError, "Cannot create an acceptor without a clause" if @current_clause.nil?
+
       @clauses << { section: @current_section, clause: @current_clause, accept: klass }
       @current_clause = nil
     end

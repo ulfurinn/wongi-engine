@@ -13,6 +13,7 @@ module Wongi
         end
         retes = parents.map(&:rete).uniq
         raise "Cannot combine variants from several Retes" if retes.size > 1
+
         @rete = retes.first
       end
 

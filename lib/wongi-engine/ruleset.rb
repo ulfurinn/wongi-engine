@@ -6,11 +6,13 @@ module Wongi
 
         def [](name)
           raise Error, "undefined ruleset #{name}" unless rulesets.has_key?(name)
+
           rulesets[name]
         end
 
         def register(name, ruleset)
           raise Error, "ruleset #{name} already exists" if rulesets.has_key?(name)
+
           rulesets[name] = ruleset
         end
 

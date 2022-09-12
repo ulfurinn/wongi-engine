@@ -40,6 +40,7 @@ module Wongi
         wme.neg_join_results.dup.each do |njr|
           tokens.each do |token|
             next unless token == njr.token
+
             njr.unlink
             if token.neg_join_results.empty?
               children.each do |child|
@@ -52,6 +53,7 @@ module Wongi
 
       def beta_activate(token)
         return if tokens.find { |et| et.duplicate? token }
+
         token.overlay.add_token(token, self)
         alpha.wmes.each do |wme|
           if matches?(token, wme)
@@ -67,6 +69,7 @@ module Wongi
 
       def beta_deactivate(token)
         return nil unless tokens.find token
+
         token.overlay.remove_token(token, self)
         token.deleted!
         if token.parent

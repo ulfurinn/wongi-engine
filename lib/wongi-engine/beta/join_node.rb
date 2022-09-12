@@ -57,6 +57,7 @@ module Wongi
             my_test.equivalent? new_test
           }
         }
+
         true
       end
 
@@ -125,6 +126,7 @@ module Wongi
       def collect_assignments(wme)
         assignments = {}
         return assignments if assignment_pattern.nil?
+
         if assignment_pattern.subject != :_
           assignments[assignment_pattern.subject] = TokenAssignment.new(wme, :subject)
         end

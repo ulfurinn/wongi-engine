@@ -31,6 +31,7 @@ module Wongi::Engine
 
     def beta_memory
       return if node.is_a?(BetaMemory)
+
       self.node = if (existing = node.children.find { |n| n.is_a?(BetaMemory) })
                     existing
                   else
@@ -42,6 +43,7 @@ module Wongi::Engine
 
     def singleton_beta_memory
       return if node.is_a?(SingletonBetaMemory)
+
       self.node = if (existing = node.children.find { |n| n.is_a?(SingletonBetaMemory) })
                     existing
                   else

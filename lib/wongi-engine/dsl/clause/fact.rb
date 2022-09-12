@@ -10,6 +10,7 @@ module Wongi::Engine
         debug! if options[:debug]
         raise "Cannot work with continuous time" unless time.integer?
         raise "Cannot look into the future" if time > 0
+
         super(s, p, o, time)
       end
 
@@ -51,6 +52,7 @@ module Wongi::Engine
       def compile(context)
         tests, assignment = parse_variables(context)
         raise DefinitionError.new("Negative matches may not introduce new variables: #{assignment.variables}") unless assignment.root?
+
         context.tap { |c| c.neg_node(self, tests, unsafe) }
       end
 

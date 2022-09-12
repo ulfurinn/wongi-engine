@@ -23,6 +23,7 @@ module Wongi::Engine
       raise UndefinedBaseRule.new(base_rule_name) unless base_production
       raise DefinitionError.new("'assuming' cannot be preceded by other matchers") unless context.node.root?
       raise StandardError.new("missing base context") unless base_production.compilation_context
+
       base_production.compilation_context.dup
     end
 

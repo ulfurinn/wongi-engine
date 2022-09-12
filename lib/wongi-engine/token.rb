@@ -95,6 +95,7 @@ module Wongi::Engine
     # for neg feedback loop protection
     def generated?(wme)
       return true if generated_wmes.any? { |w| w == wme }
+
       return children.any? { |t| t.generated? wme }
     end
 
@@ -102,6 +103,7 @@ module Wongi::Engine
 
     def all_assignments
       raise "Assignments is not a hash" unless @assignments.kind_of?(Hash)
+
       if @parent
         @parent.assignments.merge @assignments
       else

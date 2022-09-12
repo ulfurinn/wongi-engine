@@ -18,6 +18,7 @@ module Wongi::Engine
 
     def with_child
       return unless block_given?
+
       new_child.tap do |overlay|
         begin
           result = yield overlay
@@ -31,11 +32,13 @@ module Wongi::Engine
     def ancestor?(other)
       return false if parent.nil?
       return true if parent == other
+
       parent.ancestor?(other)
     end
 
     def dispose
       return if self == rete.default_overlay
+
       rete.remove_overlay(self)
       @raw_tokens.values.each do |tokens|
         tokens.each(&:dispose!)
@@ -99,6 +102,7 @@ module Wongi::Engine
       return self if other.nil?
       return self if ancestor?(other)
       return other if other.ancestor?(self)
+
       nil # unrelated lineages
     end
 

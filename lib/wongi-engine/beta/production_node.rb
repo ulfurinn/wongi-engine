@@ -13,6 +13,7 @@ module Wongi
 
       def beta_activate(token)
         return unless super
+
         @actions.each do |action|
           action.execute token if action.respond_to? :execute
         end
@@ -20,6 +21,7 @@ module Wongi
 
       def beta_deactivate(token)
         return unless super
+
         @actions.each do |action|
           action.deexecute token if action.respond_to? :deexecute
         end
