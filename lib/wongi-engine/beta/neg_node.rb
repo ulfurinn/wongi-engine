@@ -15,7 +15,9 @@ module Wongi
 
       def initialize(parent, tests, alpha, unsafe)
         super(parent)
-        @tests, @alpha, @unsafe = tests, alpha, unsafe
+        @tests = tests
+        @alpha = alpha
+        @unsafe = unsafe
       end
 
       def alpha_activate(wme)

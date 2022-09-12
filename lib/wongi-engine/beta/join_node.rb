@@ -21,7 +21,8 @@ module Wongi
       attr_reader :variable
 
       def initialize(field, variable)
-        @field, @variable = field, variable
+        @field = field
+        @variable = variable
       end
 
       def matches?(token, wme)

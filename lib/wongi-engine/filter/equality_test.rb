@@ -5,7 +5,8 @@ module Wongi::Engine
     attr_reader :x, :y
 
     def initialize(x, y)
-      @x, @y = x, y
+      @x = x
+      @y = y
     end
 
     def passes?(token)

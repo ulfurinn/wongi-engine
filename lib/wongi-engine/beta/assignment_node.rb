@@ -4,7 +4,8 @@ module Wongi::Engine
 
     def initialize(parent, variable, body)
       super(parent)
-      @variable, @body = variable, body
+      @variable = variable
+      @body = body
     end
 
     def beta_activate(token, wme = nil, _assignments = {})

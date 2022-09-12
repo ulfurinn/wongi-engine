@@ -12,7 +12,9 @@ module Wongi::Engine
     attr_reader :token, :message
 
     def initialize(token, message, literate)
-      @token, @message, @literate = token, message, literate
+      @token = token
+      @message = message
+      @literate = literate
     end
 
     def literate?

@@ -7,7 +7,10 @@ module Wongi::Engine
       attr_reader :assign
 
       def initialize(s, p, o, options = {})
-        member, @map, @function, @assign = options[:on], options[:map], options[:function], options[:assign]
+        member = options[:on]
+        @map = options[:map]
+        @function = options[:function]
+        @assign = options[:assign]
         if !@map
           @map = -> { _1.send(member) }
         end

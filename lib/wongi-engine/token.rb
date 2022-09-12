@@ -17,7 +17,10 @@ module Wongi::Engine
     attr_predicate :deleted
 
     def initialize(node, token, wme, assignments)
-      @node, @parent, @wme, @assignments = node, token, wme, assignments
+      @node = node
+      @parent = token
+      @wme = wme
+      @assignments = assignments
       @overlay = if wme
                    wme.overlay.highest(token.overlay)
                  else
@@ -115,7 +118,9 @@ module Wongi::Engine
 
   class FakeToken < Token
     def initialize(token, wme, assignments)
-      @parent, @wme, @assignments = token, wme, assignments
+      @parent = token
+      @wme = wme
+      @assignments = assignments
       @children = []
       @neg_join_results = []
       @opt_join_results = []

@@ -353,7 +353,9 @@ module Wongi::Engine
     end
 
     def alphas_for(wme)
-      s, p, o = wme.subject, wme.predicate, wme.object
+      s = wme.subject
+      p = wme.predicate
+      o = wme.object
       [
         lookup(s, p, o),
         lookup(s, p, :_),

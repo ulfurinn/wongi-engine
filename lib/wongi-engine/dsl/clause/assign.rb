@@ -3,7 +3,8 @@ module Wongi::Engine
     class Assign
 
       def initialize(variable, &body)
-        @variable, @body = variable, body
+        @variable = variable
+        @body = body
         raise DefinitionError, "#{variable} is not a variable" unless Template.variable?(variable)
       end
 

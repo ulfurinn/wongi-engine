@@ -3,7 +3,8 @@ module Wongi::Engine
     class ErrorGenerator < Base
 
       def initialize message = nil, &messenger
-        @message, @messenger = message, messenger
+        @message = message
+        @messenger = messenger
       end
 
       def rete=(*)
