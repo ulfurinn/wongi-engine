@@ -227,7 +227,7 @@ describe 'the engine' do
 
     it 'should run' do
       rete << ["answer", "is", 42]
-      rete.execute "test-query", {X: "answer"}
+      rete.execute "test-query", { X: "answer" }
       expect(rete.results["test-query"].size).to eq(1)
       expect(rete.results["test-query"].tokens.first[:Y]).to eq(42)
     end
@@ -235,8 +235,8 @@ describe 'the engine' do
     it 'should run several times' do
       rete << ["answer", "is", 42]
       rete << ['question', 'is', '6x9']
-      rete.execute "test-query", {X: "answer"}
-      rete.execute "test-query", {X: "question"}
+      rete.execute "test-query", { X: "answer" }
+      rete.execute "test-query", { X: "question" }
       expect(rete.results["test-query"].tokens.to_a.last[:Y]).to eq('6x9')
       expect(rete.results["test-query"].size).to eq(1)
     end

@@ -19,7 +19,7 @@ module Wongi
         end
 
         def reset
-          @rulesets = { }
+          @rulesets = {}
         end
       end
 
