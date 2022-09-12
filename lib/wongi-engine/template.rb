@@ -53,25 +53,25 @@ module Wongi::Engine
 
     def resolve!(token)
       s = if Template.variable?(subject)
-        raise DefinitionError, "unbound variable #{subject} in token #{token}" unless token.has_var?(subject)
+            raise DefinitionError, "unbound variable #{subject} in token #{token}" unless token.has_var?(subject)
 
         token[subject]
           else
-        subject
+            subject
           end
       p = if Template.variable?(predicate)
-        raise DefinitionError, "unbound variable #{predicate} in token #{token}" unless token.has_var?(predicate)
+            raise DefinitionError, "unbound variable #{predicate} in token #{token}" unless token.has_var?(predicate)
 
         token[predicate]
           else
-        predicate
+            predicate
           end
       o = if Template.variable?(object)
-        raise DefinitionError, "unbound variable #{object} in token #{token}" unless token.has_var?(object)
+            raise DefinitionError, "unbound variable #{object} in token #{token}" unless token.has_var?(object)
 
         token[object]
           else
-        object
+            object
           end
       [s, p, o]
     end

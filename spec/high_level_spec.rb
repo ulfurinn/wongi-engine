@@ -203,9 +203,9 @@ describe 'the engine' do
 
   it 'should process negative nodes' do
     production = (rete << rule('negative') {
-      forall {
-        neg :_, :_, 42
-      }
+        forall {
+          neg :_, :_, 42
+        }
       })
 
     expect(production.size).to eq(1)
