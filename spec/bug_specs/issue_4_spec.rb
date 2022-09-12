@@ -64,7 +64,7 @@ describe "issue 4" do
       make {
         action { |token|
           number = token[:Number]
-          if number % 2 == 0
+          if number.even?
             engine << [number, :is_even, true]
             engine.retract [number, :is_number, true]
             engine.retract [number + 1, :is_number, true]
@@ -98,7 +98,7 @@ describe "issue 4" do
       make {
         action { |token|
           number = token[:Number]
-          if number % 2 != 0
+          if number.odd?
             engine << [number, :is_odd, true]
             engine.retract [number, :is_number, true]
           end
@@ -113,7 +113,7 @@ describe "issue 4" do
       make {
         action { |token|
           number = token[:Number]
-          if number % 2 == 0
+          if number.even?
             engine << [number, :is_even, true]
           else
             engine << [number, :probably_odd, true]
