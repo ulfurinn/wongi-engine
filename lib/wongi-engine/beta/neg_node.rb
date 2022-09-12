@@ -1,6 +1,5 @@
 module Wongi
   module Engine
-
     NegJoinResult = Struct.new :token, :wme do
       def unlink
         wme.neg_join_results.delete self

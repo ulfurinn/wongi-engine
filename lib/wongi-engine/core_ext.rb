@@ -1,9 +1,6 @@
 module Wongi::Engine
-
   module CoreExt
-
     module ClassMethods
-
       def attr_predicate(*names)
         names_hash = names.inject({}) do |hash, element|
           if Hash === element
@@ -48,13 +45,10 @@ module Wongi::Engine
           raise NoMethodError.new "#{name} is not implemented for #{self.class.name}", name
         end
       end
-
     end
 
     def self.included(mod)
       mod.extend ClassMethods
     end
-
   end
-
 end

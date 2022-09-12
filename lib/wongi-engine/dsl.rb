@@ -29,7 +29,6 @@ module Wongi::Engine
       Builder.new.build &definition
     end
   end
-
 end
 
 require 'wongi-engine/dsl/generated'

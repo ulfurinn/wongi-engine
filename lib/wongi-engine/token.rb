@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class Token
     include CoreExt
 
@@ -118,5 +117,4 @@ module Wongi::Engine
       @generated_wmes = []
     end
   end
-
 end

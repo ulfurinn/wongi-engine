@@ -1,6 +1,5 @@
 module Wongi::Engine::DSL
   module Generated
-
     module ClassMethods
       def create_dsl_method(extension)
         clause = extension[:clause]
@@ -39,6 +38,5 @@ module Wongi::Engine::DSL
     def self.included(base)
       base.extend ClassMethods
     end
-
   end
 end

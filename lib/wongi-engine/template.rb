@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   Template = Struct.new(:subject, :predicate, :object) do
     def self.variable?(thing)
       return false unless thing.is_a?(Symbol)

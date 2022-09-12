@@ -40,6 +40,5 @@ module Wongi::Engine
         collector = SimpleCollector.new @variable
       end
     end
-
   end
 end

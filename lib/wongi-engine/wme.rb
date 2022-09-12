@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   WME = Struct.new(:subject, :predicate, :object) do
     include CoreExt
 
@@ -81,5 +80,4 @@ module Wongi::Engine
       result
     end
   end
-
 end

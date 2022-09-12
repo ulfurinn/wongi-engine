@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class FilterTest
     def passes?(token)
       raise "#{self.class} must implement #passes?"
@@ -13,5 +12,4 @@ module Wongi::Engine
       false
     end
   end
-
 end

@@ -17,6 +17,5 @@ module Wongi::Engine
         rete.install_query(self)
       end
     end
-
   end
 end

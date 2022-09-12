@@ -1,8 +1,6 @@
 module Wongi::Engine
   module NetworkParts
-
     module Collectable
-
       def collectors(name = nil)
         @collectors ||= {}
         if name
@@ -35,8 +33,6 @@ module Wongi::Engine
       def collected_tokens(name)
         collectors(name).map { |collector| collector.production.tokens }.flatten
       end
-
     end
-
   end
 end

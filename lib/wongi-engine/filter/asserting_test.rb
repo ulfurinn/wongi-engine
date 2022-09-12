@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class AssertingTest < FilterTest
     def initialize(*vars, &body)
       @vars = vars
@@ -14,5 +13,4 @@ module Wongi::Engine
       end
     end
   end
-
 end

@@ -1,6 +1,5 @@
 module Wongi
   module Engine
-
     OptionalJoinResult = Struct.new :token, :wme do
       def unlink
         wme.opt_join_results.delete self

@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class UndefinedBaseRule < StandardError
     def initialize(rule_name)
       @rule_name = rule_name
@@ -26,5 +25,4 @@ module Wongi::Engine
       base_production.compilation_context.dup
     end
   end
-
 end

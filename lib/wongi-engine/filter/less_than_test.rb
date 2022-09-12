@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class LessThanTest < FilterTest
     attr_reader :x, :y
 
@@ -30,5 +29,4 @@ module Wongi::Engine
       super && x == other.x && y == other.y
     end
   end
-
 end

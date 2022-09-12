@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class BetaMemory < BetaNode
     include TokenContainer
 

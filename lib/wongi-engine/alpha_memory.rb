@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class AlphaMemory
     attr_reader :betas, :template, :rete
 
@@ -54,5 +53,4 @@ module Wongi::Engine
       end
     end
   end
-
 end

@@ -1,9 +1,6 @@
 module Wongi::Engine
-
   module NetworkParts
-
     module Debug
-
       def full_wme_dump
         @timeline.each_with_index do |slice, index|
           puts "time #{ index - @timeline.length }"
@@ -75,9 +72,6 @@ module Wongi::Engine
           token.wmes.each { |wme| io.puts "\t\tWME " + wme.object_id.to_s }
         }
       end
-
     end
-
   end
-
 end

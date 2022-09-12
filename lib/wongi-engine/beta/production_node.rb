@@ -1,6 +1,5 @@
 module Wongi
   module Engine
-
     class ProductionNode < BetaMemory
       attr_accessor :tracer, :compilation_context
 
@@ -25,6 +24,5 @@ module Wongi
         end
       end
     end
-
   end
 end

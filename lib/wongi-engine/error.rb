@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class Error < StandardError
   end
 
@@ -19,5 +18,4 @@ module Wongi::Engine
       @literate
     end
   end
-
 end

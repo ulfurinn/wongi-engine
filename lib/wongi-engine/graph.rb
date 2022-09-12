@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class Graph
     def initialize(rete)
       @rete = rete
@@ -65,5 +64,4 @@ module Wongi::Engine
       end
     end
   end
-
 end

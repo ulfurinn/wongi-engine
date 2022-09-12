@@ -1,5 +1,4 @@
 module Wongi::Engine
-
   class BetaNode
     module TokenContainer
       def tokens
@@ -84,5 +83,4 @@ module Wongi::Engine
       '  ' * depth
     end
   end
-
 end
