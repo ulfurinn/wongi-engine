@@ -1,11 +1,6 @@
 module Wongi::Engine
   class AggregateNode < BetaNode
-    attr_reader :alpha
-    attr_reader :tests
-    attr_reader :assignment_pattern
-    attr_reader :map
-    attr_reader :function
-    attr_reader :assign
+    attr_reader :alpha, :tests, :assignment_pattern, :map, :function, :assign
 
     def initialize(parent, alpha, tests, assignment, map, function, assign)
       super(parent)

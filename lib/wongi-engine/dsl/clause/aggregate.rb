@@ -2,9 +2,7 @@ module Wongi::Engine
   module DSL::Clause
     class Aggregate < Has
 
-      attr_reader :map
-      attr_reader :function
-      attr_reader :assign
+      attr_reader :map, :function, :assign
 
       def initialize(s, p, o, options = {})
         member = options[:on]

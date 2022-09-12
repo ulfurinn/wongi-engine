@@ -4,15 +4,8 @@ module Wongi::Engine
 
     include CoreExt
 
-    attr_reader :children
-    attr_reader :wme
-    attr_reader :node
-    attr_reader :overlay
+    attr_reader :children, :wme, :node, :overlay, :neg_join_results, :opt_join_results, :ncc_results, :generated_wmes
     attr_accessor :owner, :parent
-    attr_reader :neg_join_results
-    attr_reader :opt_join_results
-    attr_reader :ncc_results
-    attr_reader :generated_wmes
     attr_predicate :optional
     attr_predicate :deleted
 

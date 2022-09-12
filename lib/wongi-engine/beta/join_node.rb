@@ -17,8 +17,7 @@ module Wongi
 
     class BetaTest
 
-      attr_reader :field
-      attr_reader :variable
+      attr_reader :field, :variable
 
       def initialize(field, variable)
         @field = field
@@ -41,8 +40,7 @@ module Wongi
     class JoinNode < BetaNode
 
       attr_accessor :alpha
-      attr_reader :tests
-      attr_reader :assignment_pattern
+      attr_reader :tests, :assignment_pattern
 
       def initialize(parent, tests, assignment)
         super(parent)

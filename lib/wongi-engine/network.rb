@@ -4,18 +4,14 @@ require 'wongi-engine/network/debug'
 module Wongi::Engine
   class Network
 
-    attr_reader :alpha_top, :beta_top
-    attr_reader :queries, :results
-    attr_reader :productions
-    attr_reader :overlays
+    attr_reader :alpha_top, :beta_top, :queries, :results, :productions, :overlays
 
     include NetworkParts::Collectable
 
     protected
 
     attr_accessor :alpha_hash
-    attr_writer :alpha_top, :beta_top
-    attr_writer :queries, :results
+    attr_writer :alpha_top, :beta_top, :queries, :results
 
     public
 

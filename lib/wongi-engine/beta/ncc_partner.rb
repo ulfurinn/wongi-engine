@@ -3,8 +3,7 @@ module Wongi
     class NccPartner < BetaNode
       include TokenContainer
 
-      attr_accessor :ncc
-      attr_accessor :divergent
+      attr_accessor :ncc, :divergent
 
       def beta_activate(token)
         t = Token.new self, token, nil, {}

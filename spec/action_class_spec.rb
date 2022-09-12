@@ -12,8 +12,7 @@ describe 'action classes' do
   let :action_class do
   	Class.new do
   		class << self
-  			attr_accessor :execute_body
-  			attr_accessor :deexecute_body
+  			attr_accessor :execute_body, :deexecute_body
   		end
 
   		def execute(token)
