@@ -7,7 +7,7 @@ module Wongi::Engine::DSL
     end
 
     def build(&definition)
-      instance_eval &definition
+      instance_eval(&definition)
       @clauses.each do |c|
         Wongi::Engine::DSL.sections[c[:section]] ||= Class.new do
           include Generated

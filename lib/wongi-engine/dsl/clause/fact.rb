@@ -27,7 +27,7 @@ module Wongi::Engine
 
       def parse_variables(context)
         tests = []
-        assignment_mapping = [:subject, :predicate, :object].map do |member|
+        assignment_mapping = %i[subject predicate object].map do |member|
           value = send(member)
           if Template.variable?(value)
             if context.declares_variable?(value)

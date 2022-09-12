@@ -25,11 +25,11 @@ module Wongi::Engine
       end
 
       def compile(*args)
-        action.call *args
+        action.call(*args)
       end
 
       def execute(*args)
-        action.call *args
+        action.call(*args)
       end
     end
   end

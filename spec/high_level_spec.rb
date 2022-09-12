@@ -71,7 +71,7 @@ describe 'the engine' do
       }
 
       rete << [:p, "reflexive", true]
-      rete << [:x, :p, :y]
+      rete << %i[x p y]
 
       expect(rete.wmes.to_a.length).to eq(4)
       expect(rete.select(:x, :p, :x).length).to eq(1)

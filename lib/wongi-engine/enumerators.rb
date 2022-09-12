@@ -14,7 +14,7 @@ module Wongi::Engine
         collection.dup.each do |e|
           y << e unless e.deleted?
         end
-        collection.reject! &:deleted?
+        collection.reject!(&:deleted?)
       end
     end
   end

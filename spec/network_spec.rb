@@ -133,58 +133,58 @@ describe Wongi::Engine::Network do
     let(:prod) { engine.productions['retract'] }
 
     specify 'case 1' do
-      engine << [:x, :u, :y]
+      engine << %i[x u y]
       expect_tokens 1
 
-      engine << [:y, :w, :z]
+      engine << %i[y w z]
       expect_tokens 0
 
-      engine.retract [:y, :w, :z]
+      engine.retract %i[y w z]
       expect_tokens 1
 
-      engine.retract [:x, :u, :y]
+      engine.retract %i[x u y]
       expect_tokens 0
     end
 
     specify 'case 2' do
-      engine << [:x, :u, :y]
+      engine << %i[x u y]
       expect_tokens 1
 
-      engine << [:y, :w, :z]
+      engine << %i[y w z]
       expect_tokens 0
 
-      engine.retract [:x, :u, :y]
+      engine.retract %i[x u y]
       expect_tokens 0
 
-      engine.retract [:y, :w, :z]
+      engine.retract %i[y w z]
       expect_tokens 0
     end
 
     specify 'case 3' do
-      engine << [:y, :w, :z]
+      engine << %i[y w z]
       expect_tokens 0
 
-      engine << [:x, :u, :y]
+      engine << %i[x u y]
       expect_tokens 0
 
-      engine.retract [:x, :u, :y]
+      engine.retract %i[x u y]
       expect_tokens 0
 
-      engine.retract [:y, :w, :z]
+      engine.retract %i[y w z]
       expect_tokens 0
     end
 
     specify 'case 4' do
-      engine << [:y, :w, :z]
+      engine << %i[y w z]
       expect_tokens 0
 
-      engine << [:x, :u, :y]
+      engine << %i[x u y]
       expect_tokens 0
 
-      engine.retract [:y, :w, :z]
+      engine.retract %i[y w z]
       expect_tokens 1
 
-      engine.retract [:x, :u, :y]
+      engine.retract %i[x u y]
       expect_tokens 0
     end
   end

@@ -32,9 +32,7 @@ module Wongi::Engine
       self.node = if (existing = node.children.find { |n| n.is_a?(BetaMemory) })
                     existing
                   else
-                    BetaMemory.new(node).tap do |memory|
-                      memory.refresh
-                    end
+                    BetaMemory.new(node).tap(&:refresh)
                   end
     end
 
@@ -44,15 +42,13 @@ module Wongi::Engine
       self.node = if (existing = node.children.find { |n| n.is_a?(SingletonBetaMemory) })
                     existing
                   else
-                    SingletonBetaMemory.new(node).tap do |memory|
-                      memory.refresh
-                    end
+                    SingletonBetaMemory.new(node).tap(&:refresh)
                   end
     end
 
     def assignment_node(variable, body)
       beta_memory
-      self.node = AssignmentNode.new(node, variable, body).tap &:refresh
+      self.node = AssignmentNode.new(node, variable, body).tap(&:refresh)
       declare(variable)
     end
 

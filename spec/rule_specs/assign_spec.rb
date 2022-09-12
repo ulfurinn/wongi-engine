@@ -63,7 +63,7 @@ describe "ASSIGN rule" do
 
   it 'should be evaluated once' do
     x = 0
-    prod = engine << rule {
+    engine << rule {
       forall {
         has :a, :b, :c
         assign :T do
@@ -75,7 +75,7 @@ describe "ASSIGN rule" do
         gen :f, :g, :T
       }
     }
-    engine << [:a, :b, :c]
+    engine << %i[a b c]
     expect(x).to be == 1
   end
 
@@ -91,6 +91,6 @@ describe "ASSIGN rule" do
         gen :d, :e, :X
       }
     end
-    engine << [:a, :b, :c]
+    engine << %i[a b c]
   end
 end

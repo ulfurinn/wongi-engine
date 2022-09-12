@@ -7,7 +7,7 @@ module Wongi::Engine
             overlay.raw_tokens(self).dup.each do |token|
               y << token unless token.deleted?
             end
-            overlay.raw_tokens(self).reject! &:deleted?
+            overlay.raw_tokens(self).reject!(&:deleted?)
           end
         end
       end
