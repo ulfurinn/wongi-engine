@@ -4,7 +4,7 @@ describe "issue 4" do
   it "should correctly retract pre-added items from within a rule" do
     engine = Wongi::Engine.create
 
-    10.times{ |i| engine << [i, :is_number, true] }
+    10.times { |i| engine << [i, :is_number, true] }
 
     engine.rule 'segregate' do
       forall {
@@ -42,7 +42,7 @@ describe "issue 4" do
       }
     end
 
-    10.times{ |i| engine << [i, :is_number, true] }
+    10.times { |i| engine << [i, :is_number, true] }
 
     numbers = engine.select :_, :is_number, true
     evens = engine.select :_, :is_even, true
@@ -55,7 +55,7 @@ describe "issue 4" do
   it "should not retract later items from within a rule" do
     engine = Wongi::Engine.create
 
-    10.times{ |i| engine << [i, :is_number, true] }
+    10.times { |i| engine << [i, :is_number, true] }
 
     engine.rule 'segregate' do
       forall {
@@ -89,7 +89,7 @@ describe "issue 4" do
   it "should not lose track when another rule affects a set" do
     engine = Wongi::Engine.create
 
-    10.times{ |i| engine << [i, :is_number, true] }
+    10.times { |i| engine << [i, :is_number, true] }
 
     engine.rule 'find odds' do
       forall {
