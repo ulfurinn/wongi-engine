@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class Graph
-
     def initialize(rete)
       @rete = rete
     end
@@ -66,7 +65,6 @@ module Wongi::Engine
         dump_beta child, opts
       end
     end
-
   end
 
 end

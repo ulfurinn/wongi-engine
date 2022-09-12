@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class LessThanTest < FilterTest
-
     attr_reader :x, :y
 
     def initialize(x, y)
@@ -32,7 +31,6 @@ module Wongi::Engine
     def ==(other)
       super && x == other.x && y == other.y
     end
-
   end
 
 end

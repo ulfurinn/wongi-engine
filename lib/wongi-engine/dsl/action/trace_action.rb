@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL::Action
     class TraceAction < Base
-
       class DefaultTracer
         attr_accessor :action
 

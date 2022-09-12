@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL
     class NccSubrule < Rule
-
       def initialize(name = nil, &block)
         super
         forall &block if block

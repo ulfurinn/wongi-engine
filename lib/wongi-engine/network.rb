@@ -3,7 +3,6 @@ require 'wongi-engine/network/debug'
 
 module Wongi::Engine
   class Network
-
     attr_reader :alpha_top, :beta_top, :queries, :results, :productions, :overlays
 
     include NetworkParts::Collectable
@@ -403,7 +402,6 @@ module Wongi::Engine
       end
 
     end
-
   end
 
 end

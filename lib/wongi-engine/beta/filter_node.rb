@@ -2,7 +2,6 @@ module Wongi
   module Engine
 
     class FilterNode < BetaNode
-
       # @return [Wongi::Engine::FilterTest]
       attr_accessor :test
 
@@ -42,7 +41,6 @@ module Wongi
         end
         self.children = tmp
       end
-
     end
 
   end

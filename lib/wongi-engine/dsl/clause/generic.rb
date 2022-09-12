@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL::Clause
     class Generic
-
       attr_accessor :name, :action, :rule
 
       def initialize(*args, &block)
@@ -32,7 +31,6 @@ module Wongi::Engine
       def execute(*args)
         action.call *args
       end
-
     end
   end
 end

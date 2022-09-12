@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class FilterTest
-
     def passes?(token)
       raise "#{self.class} must implement #passes?"
     end

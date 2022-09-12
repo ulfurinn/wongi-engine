@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL::Action
     class ErrorGenerator < Base
-
       def initialize message = nil, &messenger
         @message = message
         @messenger = messenger
@@ -26,7 +25,6 @@ module Wongi::Engine
       def literate?
         not @messenger.nil?
       end
-
     end
   end
 end

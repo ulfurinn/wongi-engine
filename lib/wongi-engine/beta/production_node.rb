@@ -2,7 +2,6 @@ module Wongi
   module Engine
 
     class ProductionNode < BetaMemory
-
       attr_accessor :tracer, :compilation_context
 
       def initialize(parent, actions)
@@ -25,7 +24,6 @@ module Wongi
           action.deexecute token if action.respond_to? :deexecute
         end
       end
-
     end
 
   end

@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL
     class AnyRule
-
       attr_reader :variants
 
       def initialize(&block)
@@ -18,7 +17,6 @@ module Wongi::Engine
       def compile(context)
         context.tap { |c| c.or_node(variants) }
       end
-
     end
 
     class VariantRule < Rule

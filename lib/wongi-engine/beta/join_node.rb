@@ -16,7 +16,6 @@ module Wongi
     end
 
     class BetaTest
-
       attr_reader :field, :variable
 
       def initialize(field, variable)
@@ -34,11 +33,9 @@ module Wongi
       def equivalent?(other)
         other.field == self.field && other.variable == self.variable
       end
-
     end
 
     class JoinNode < BetaNode
-
       attr_accessor :alpha
       attr_reader :tests, :assignment_pattern
 
@@ -125,7 +122,6 @@ module Wongi
         assignments[assignment_pattern.object] = TokenAssignment.new(wme, :object) if assignment_pattern.object != :_
         assignments
       end
-
     end
   end
 end

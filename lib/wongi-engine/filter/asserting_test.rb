@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class AssertingTest < FilterTest
-
     def initialize(*vars, &body)
       @vars = vars
       @body = body
@@ -14,7 +13,6 @@ module Wongi::Engine
         @body.call *(@vars.map { |var| token[var] })
       end
     end
-
   end
 
 end

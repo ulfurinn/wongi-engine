@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL::Action
     class SimpleCollector < Base
-
       def self.collector
         Class.new self
       end
@@ -32,17 +31,14 @@ module Wongi::Engine
       def collect(var)
         production.tokens.map { |token| token[var] }
       end
-
     end
 
     class GenericCollectClause
-
       def initialize(name, variable) end
 
       def import_into(rete)
         collector = SimpleCollector.new @variable
       end
-
     end
 
   end

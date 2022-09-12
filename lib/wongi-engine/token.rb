@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class Token
-
     include CoreExt
 
     attr_reader :children, :wme, :node, :overlay, :neg_join_results, :opt_join_results, :ncc_results, :generated_wmes
@@ -104,7 +103,6 @@ module Wongi::Engine
         @assignments
       end
     end
-
   end
 
   class FakeToken < Token

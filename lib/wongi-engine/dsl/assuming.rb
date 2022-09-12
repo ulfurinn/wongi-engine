@@ -11,7 +11,6 @@ module Wongi::Engine
   end
 
   class AssumingClause
-
     attr_reader :base_rule_name
 
     def initialize(base_rule_name)
@@ -26,7 +25,6 @@ module Wongi::Engine
 
       base_production.compilation_context.dup
     end
-
   end
 
 end

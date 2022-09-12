@@ -1,9 +1,7 @@
 module Wongi
   module Engine
     class Ruleset
-
       class << self
-
         def [](name)
           raise Error, "undefined ruleset #{name}" unless rulesets.has_key?(name)
 
@@ -23,7 +21,6 @@ module Wongi
         def reset
           @rulesets = { }
         end
-
       end
 
       def initialize(name = nil)
@@ -70,7 +67,6 @@ module Wongi
         @rules << r
         r
       end
-
     end
   end
 end

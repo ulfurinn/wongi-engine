@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL::Clause
     class Gen
-
       def initialize(s, p, o)
         @triple = Template.new(s, p, o)
       end
@@ -11,7 +10,6 @@ module Wongi::Engine
         generator.rete = rete
         generator
       end
-
     end
   end
 end

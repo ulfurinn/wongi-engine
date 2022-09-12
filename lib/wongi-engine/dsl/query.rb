@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL
     class Query < Rule
-
       def search_on(*terms)
         terms.each { |term| parameters << term }
       end
@@ -17,7 +16,6 @@ module Wongi::Engine
       def install(rete)
         rete.install_query(self)
       end
-
     end
 
   end

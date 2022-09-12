@@ -1,11 +1,9 @@
 module Wongi::Engine
   module DSL
     class Rule
-
       attr_reader :name
 
       class << self
-
         def section(s, *aliases)
           unless sections.include?(s)
             sections << s
@@ -22,7 +20,6 @@ module Wongi::Engine
         def sections
           @sections ||= []
         end
-
       end
 
       section :forall, :for_all
@@ -75,7 +72,6 @@ module Wongi::Engine
       def accept(stuff)
         acceptors[@current_section] << stuff
       end
-
     end
   end
 end

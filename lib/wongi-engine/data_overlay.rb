@@ -1,6 +1,5 @@
 module Wongi::Engine
   class DataOverlay
-
     attr_reader :rete, :parent
 
     def initialize(rete, parent = nil)

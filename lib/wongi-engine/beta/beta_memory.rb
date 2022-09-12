@@ -46,7 +46,6 @@ module Wongi::Engine
         child.beta_activate token
       end
     end
-
   end
 
   # SingletonBetaMemory is a memory node that only holds one token at a time.

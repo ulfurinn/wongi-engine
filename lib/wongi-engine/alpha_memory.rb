@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class AlphaMemory
-
     attr_reader :betas, :template, :rete
 
     def initialize(template, rete = nil)
@@ -54,7 +53,6 @@ module Wongi::Engine
         end
       end
     end
-
   end
 
 end

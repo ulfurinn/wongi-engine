@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL::Action
     class StatementGenerator < Base
-
       def initialize(template)
         @template = template
       end

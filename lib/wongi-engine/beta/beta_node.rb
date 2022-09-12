@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class BetaNode
-
     module TokenContainer
       def tokens
         Enumerator.new do |y|
@@ -83,7 +82,6 @@ module Wongi::Engine
     def indent
       '  ' * depth
     end
-
   end
 
 end

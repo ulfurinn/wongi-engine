@@ -1,7 +1,6 @@
 module Wongi::Engine
   module DSL::Clause
     class Assign
-
       def initialize(variable, &body)
         @variable = variable
         @body = body

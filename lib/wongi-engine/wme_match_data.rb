@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class WMEMatchData
-
     attr_reader :assignments
 
     def initialize(assignments = {}, match = false)
@@ -28,7 +27,6 @@ module Wongi::Engine
     def &(other)
       WMEMatchData.new(assignments.merge(other.assignments), match? && other.match?)
     end
-
   end
 
 end

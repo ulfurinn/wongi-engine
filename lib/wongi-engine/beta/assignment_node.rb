@@ -1,7 +1,6 @@
 module Wongi::Engine
 
   class AssignmentNode < BetaNode
-
     def initialize(parent, variable, body)
       super(parent)
       @variable = variable
@@ -35,7 +34,6 @@ module Wongi::Engine
       end
       self.children = tmp
     end
-
   end
 
 end

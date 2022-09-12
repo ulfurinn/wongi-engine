@@ -1,6 +1,5 @@
 module Wongi::Engine::DSL
   class Builder
-
     def initialize
       @current_section = nil
       @current_clause = nil
@@ -45,6 +44,5 @@ module Wongi::Engine::DSL
       @clauses << { section: @current_section, clause: @current_clause, accept: klass }
       @current_clause = nil
     end
-
   end
 end

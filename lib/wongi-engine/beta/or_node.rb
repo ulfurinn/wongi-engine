@@ -1,7 +1,6 @@
 module Wongi
   module Engine
     class OrNode < BetaMemory
-
       attr_reader :parents, :rete
 
       def initialize(parents)
@@ -30,7 +29,6 @@ module Wongi
           parent.refresh_child self
         end
       end
-
     end
   end
 end
