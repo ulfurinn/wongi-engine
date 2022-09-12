@@ -31,4 +31,3 @@ ds.retract WME.new("Alice", "friend", "Bob")
 
 puts "Should print 1 fact:"
 puts ds.wmes.to_a
-

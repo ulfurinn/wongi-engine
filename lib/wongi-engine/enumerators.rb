@@ -8,6 +8,7 @@ module Wongi::Engine
       end
     end
   end
+
   class DeleteSafeEnumerator
     def self.new(collection)
       Enumerator.new do |y|

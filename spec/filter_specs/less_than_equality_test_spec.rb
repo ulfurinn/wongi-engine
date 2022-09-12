@@ -27,7 +27,7 @@ describe 'Less Than Or Equal test' do
 
     engine << [5, :assign_check, nil]
     engine << [6, :assign_check, nil]
-    engine << [7, :assign_check, nil] #should not pass
+    engine << [7, :assign_check, nil] # should not pass
     expect(@production.size).to eq(2)
   end
 end

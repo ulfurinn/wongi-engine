@@ -22,7 +22,6 @@ module Wongi::Engine
       dump_betas(opts)
 
       @io.puts "}"
-
     ensure
       @io = nil
     end

@@ -203,10 +203,10 @@ describe 'the engine' do
 
   it 'should process negative nodes' do
     production = (rete << rule('negative') {
-        forall {
-          neg :_, :_, 42
-        }
-      })
+                    forall {
+                      neg :_, :_, 42
+                    }
+                  })
 
     expect(production.size).to eq(1)
 
@@ -280,13 +280,13 @@ describe 'the engine' do
           forall {
             asserted 1, 2, 3
           }
-          make { action { count += 1} }
+          make { action { count += 1 } }
         end
         expect(production.size).to eq(0)
         rete.snapshot!
         rete << [1, 2, 3]
         expect(production.size).to eq(1)
-        #puts count
+        # puts count
       end
 
       it 'should not match kept items' do
@@ -295,13 +295,13 @@ describe 'the engine' do
           forall {
             asserted 1, 2, 3
           }
-          make { action { count += 1} }
+          make { action { count += 1 } }
         end
         rete << [1, 2, 3]
         expect(production.size).to eq(1)
         rete.snapshot!
         expect(production.size).to eq(0)
-        #puts count
+        # puts count
       end
     end
 
@@ -312,13 +312,13 @@ describe 'the engine' do
           forall {
             kept 1, 2, 3
           }
-          make { action { count += 1} }
+          make { action { count += 1 } }
         end
         rete << [1, 2, 3]
         expect(production.size).to eq(0)
         rete.snapshot!
         expect(production.size).to eq(1)
-        #puts count
+        # puts count
       end
 
       it 'should not match asserted wmes' do
@@ -327,13 +327,13 @@ describe 'the engine' do
           forall {
             kept 1, 2, 3
           }
-          make { action { count += 1} }
+          make { action { count += 1 } }
         end
         expect(production.size).to eq(0)
         rete.snapshot!
         rete << [1, 2, 3]
         expect(production.size).to eq(0)
-        #puts count
+        # puts count
       end
     end
   end

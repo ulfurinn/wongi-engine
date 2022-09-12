@@ -29,6 +29,7 @@ module Wongi
         assignments = collect_assignments(wme)
         tokens.each do |token|
           next unless matches? token, wme
+
           children.each do |child|
             if token.optional?
               token.no_optional!
@@ -49,6 +50,7 @@ module Wongi
 
             ojr.unlink
             next unless token.opt_join_results.empty?
+
             children.each do |child|
               child.tokens.each do |ct|
                 child.beta_deactivate(ct) if ct.parent == token
@@ -69,6 +71,7 @@ module Wongi
         alpha.wmes.each do |wme|
           assignments = collect_assignments(wme)
           next unless matches? token, wme
+
           match = true
           children.each do |child|
             child.beta_activate Token.new(child, token, wme, assignments)

@@ -25,7 +25,7 @@ module Wongi
       def matches?(token, wme)
         assignment = token[variable]
         field = wme.send(self.field)
-        #field.nil? ||
+        # field.nil? ||
         !token.has_var?(variable) || field == assignment
       end
 
@@ -60,6 +60,7 @@ module Wongi
         assignments = collect_assignments(wme)
         parent.tokens.each do |token|
           next unless matches?(token, wme)
+
           children.each do |beta|
             beta.beta_activate Token.new(beta, token, wme, assignments)
           end
@@ -77,6 +78,7 @@ module Wongi
       def beta_activate(token)
         alpha.wmes.each do |wme|
           next unless matches?(token, wme)
+
           assignments = collect_assignments(wme)
           children.each do |beta|
             beta.beta_activate Token.new(beta, token, wme, assignments)

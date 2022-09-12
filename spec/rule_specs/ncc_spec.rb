@@ -92,7 +92,7 @@ describe Wongi::Engine::NccNode do
         has :light_kitchen, :value, :on
       }
       make {
-        #trace values: true, generation: true
+        # trace values: true, generation: true
         gen rule.name, :light_bathroom, :on
         gen rule.name, :want_action_for, :light_bathroom
       }
@@ -111,7 +111,7 @@ describe Wongi::Engine::NccNode do
         }
       }
       make {
-        #trace values: true, generation: true
+        # trace values: true, generation: true
         gen :Actor, :value, :Value
         gen :Actor, :last_user, :Requestor
       }
@@ -148,7 +148,7 @@ describe Wongi::Engine::NccNode do
         has :light_kitchen, :value, :on
       }
       make {
-        #trace values: true, generation: true
+        # trace values: true, generation: true
         gen rule.name, :light_bathroom, :on
         gen rule.name, :want_action_for, :light_bathroom
       }
@@ -167,7 +167,7 @@ describe Wongi::Engine::NccNode do
         }
       }
       make {
-        #trace values: true, generation: true
+        # trace values: true, generation: true
         gen :Actor, :value, :Value
         gen :Actor, :last_user, :Requestor
       }

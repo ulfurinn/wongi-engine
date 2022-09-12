@@ -1,3 +1,4 @@
+require 'English'
 require File.expand_path('lib/wongi-engine/version', __dir__)
 
 module GemHelper
@@ -19,9 +20,9 @@ Gem::Specification.new do |gem|
   gem.licenses      = %w[MIT]
 
   if GemHelper.git?
-    gem.files       = `git ls-files`.split($\)
+    gem.files       = `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
   elsif GemHelper.hg?
-    gem.files       = `hg st -cn`.split($\)
+    gem.files       = `hg st -cn`.split($OUTPUT_RECORD_SEPARATOR)
   else
     raise 'cannot enumerate files: not a git or hg repository'
   end

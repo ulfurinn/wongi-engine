@@ -82,7 +82,7 @@ describe "negative rule" do
           neg :a, :b, :_, unsafe: true
         }
         make {
-          action { counter += 1 ; raise exception.new if counter > 5 }
+          action { counter += 1; raise exception.new if counter > 5 }
           gen :a, :b, :c
         }
       }

@@ -84,6 +84,6 @@ describe "MAYBE rule" do
     engine.retract [1, 2, 3]
 
     expect(prod).to have(0).tokens
-    expect(engine.find(3,4,5).opt_join_results).to be_empty
+    expect(engine.find(3, 4, 5).opt_join_results).to be_empty
   end
 end

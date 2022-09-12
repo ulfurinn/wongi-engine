@@ -54,6 +54,5 @@ describe Wongi::Engine::AssumingClause do
     }
 
     expect(&f).to raise_error Wongi::Engine::DefinitionError
-
   end
 end

@@ -32,13 +32,13 @@ describe Wongi::Engine::WME do
 
     # end
 
-  it {
-    should be_manual
-  }
+    it {
+      should be_manual
+    }
 
-  it {
-    should_not be_generated
-  }
+    it {
+      should_not be_generated
+    }
   end
 
   # it 'should be able to import into rete' do

@@ -8,7 +8,7 @@ engine = Wongi::Engine.create
 
 engine.debug!
 
-engine.compile_alpha Wongi::Engine::Template.new(:_, :_, :_,  0)
+engine.compile_alpha Wongi::Engine::Template.new(:_, :_, :_, 0)
 engine.compile_alpha Wongi::Engine::Template.new(:_, :_, :_, -1)
 engine.compile_alpha Wongi::Engine::Template.new(:_, :_, :_, -2)
 engine.compile_alpha Wongi::Engine::Template.new(:_, :_, :_, -3)

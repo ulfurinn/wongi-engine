@@ -40,7 +40,7 @@ describe Wongi::Engine::Ruleset do
     rete = double 'rete'
 
     ruleset = Wongi::Engine::Ruleset.new
-    rule = ruleset.rule('test-rule') { }
+    rule = ruleset.rule('test-rule') {}
 
     expect(rete).to receive(:<<).with(rule).once
     ruleset.install rete

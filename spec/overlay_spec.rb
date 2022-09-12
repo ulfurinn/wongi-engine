@@ -12,7 +12,7 @@ describe Wongi::Engine::DataOverlay do
       }
     }
     engine.with_overlay { |overlay|
-      overlay << [1,2,3]
+      overlay << [1, 2, 3]
       expect(production).to have(1).token
     }
     expect(production).to have(0).tokens
@@ -28,7 +28,7 @@ describe Wongi::Engine::DataOverlay do
       }
     }
     engine.with_overlay { |overlay|
-      overlay << [1,2,3]
+      overlay << [1, 2, 3]
       expect(production).to have(1).token
       expect(engine.find(3, 4, 5)).not_to be_nil
     }
@@ -49,7 +49,7 @@ describe Wongi::Engine::DataOverlay do
     }
 
     engine.with_overlay { |overlay|
-      overlay << [1,2,3]
+      overlay << [1, 2, 3]
       expect(production).to have(1).token
       expect(engine.find(:person, 'stuff', 6)).not_to be_nil
     }

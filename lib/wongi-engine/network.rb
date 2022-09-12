@@ -199,7 +199,7 @@ module Wongi::Engine
           assert something
           # when Wongi::RDF::Statement
           #   assert WME.new( something.subject, something.predicate, something.object, self )
-          #when Wongi::RDF::Document
+          # when Wongi::RDF::Document
           #  something.statements.each do |st|
           #    assert WME.new( st.subject, st.predicate, st.object, self )
           #  end

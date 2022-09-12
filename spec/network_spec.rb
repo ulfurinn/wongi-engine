@@ -7,25 +7,25 @@ describe Wongi::Engine::Network do
   subject { engine }
 
   it 'should assert facts' do
-    subject << [1,2,3]
+    subject << [1, 2, 3]
     expect(subject.select(:_, 2, :_)).to have(1).item
   end
 
   it 'should retract facts' do
-    subject << [1,2,3]
-    subject.retract [1,2,3]
+    subject << [1, 2, 3]
+    subject.retract [1, 2, 3]
     expect(subject.select(:_, 2, :_)).to be_empty
   end
 
   it 'asserted facts end up in productions' do
     prod = subject << rule { forall { has :X, 2, :Z } }
-    subject << [1,2,3]
+    subject << [1, 2, 3]
     expect(prod).to have(1).tokens
   end
 
   it 'rules can be removed from engine' do
-    subject << [1,2,3]
-    subject << [4,5,6]
+    subject << [1, 2, 3]
+    subject << [4, 5, 6]
 
     prod1 = subject << rule { forall { has :X, 2, :Z } }
     prod2 = subject << rule { forall { has :X, 5, :Z } }
@@ -40,8 +40,8 @@ describe Wongi::Engine::Network do
   end
 
   it 'new rules can be added to engine after a rule has been been removed' do
-    subject << [1,2,3]
-    subject << [4,5,6]
+    subject << [1, 2, 3]
+    subject << [4, 5, 6]
 
     prod1 = subject << rule { forall { has :X, 2, :Z } }
 
@@ -56,8 +56,8 @@ describe Wongi::Engine::Network do
 
   it 'retracted facts are removed from productions' do
     prod = subject << rule { forall { has :X, 2, :Z } }
-    subject << [1,2,3]
-    subject.retract [1,2,3]
+    subject << [1, 2, 3]
+    subject.retract [1, 2, 3]
     expect(prod).to have(0).tokens
   end
 
@@ -72,10 +72,10 @@ describe Wongi::Engine::Network do
                deactivate: ->(token) { deactivated_z = token[:Z] }
       }
     }
-    subject << [1,2,3]
+    subject << [1, 2, 3]
     expect(activated_z).to be == 3
 
-    subject.retract [1,2,3]
+    subject.retract [1, 2, 3]
     expect(deactivated_z).to be == 3
   end
 
@@ -105,11 +105,11 @@ describe Wongi::Engine::Network do
   end
 
   it 'retraction should reactivate neg nodes' do
-    prod = engine << rule { forall { neg 1, 2, 3} }
+    prod = engine << rule { forall { neg 1, 2, 3 } }
 
     expect(prod).to have(1).tokens
 
-    engine << [1, 2 ,3]
+    engine << [1, 2, 3]
     expect(prod).to have(0).tokens
 
     engine.retract [1, 2, 3]

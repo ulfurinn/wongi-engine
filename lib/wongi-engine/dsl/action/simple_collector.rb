@@ -8,7 +8,7 @@ module Wongi::Engine
       def initialize(variable, name = nil)
         @variable = variable
         @name = name if name
-        #(class << self; self; end).instance_eval do
+        # (class << self; self; end).instance_eval do
         #        define_method method do
         #          collect variable
         #        end

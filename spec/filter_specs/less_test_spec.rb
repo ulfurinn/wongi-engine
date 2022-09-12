@@ -23,7 +23,7 @@ describe "LESS test" do
     test_rule {
       forall {
         maybe "Z", "Z", "Z"
-        less 6,4 # this should fail
+        less 6, 4 # this should fail
       }
 
       make {

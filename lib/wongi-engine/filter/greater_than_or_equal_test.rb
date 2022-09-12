@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Wongi::Engine
   class GreaterThanOrEqualTest < FilterTest
     attr_reader :x, :y

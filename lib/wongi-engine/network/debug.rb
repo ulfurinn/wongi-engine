@@ -3,7 +3,7 @@ module Wongi::Engine
     module Debug
       def full_wme_dump
         @timeline.each_with_index do |slice, index|
-          puts "time #{ index - @timeline.length }"
+          puts "time #{index - @timeline.length}"
           slice.each do |_key, alpha|
             puts "\t#{alpha.template} -> [#{alpha.wmes.map(&:to_s).join ", "}]"
           end
