@@ -2,7 +2,7 @@ include Wongi::Engine
 
 ds = Network.new
 
-ds << WME.new( "Alice", "friend", "Bob" )
+ds << WME.new("Alice", "friend", "Bob")
 
 puts "Enumerate all:"
 

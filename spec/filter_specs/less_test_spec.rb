@@ -15,7 +15,7 @@ describe "LESS test" do
   end
 
   def test_rule &block
-    @production = ( engine << rule( 'test-rule', &block ) )
+    @production = (engine << rule('test-rule', &block))
   end
 
   it "should interact with optional node correctly" do

@@ -2,8 +2,8 @@ require "spec_helper"
 
 describe "MAYBE rule" do
 
-  let( :engine ) { Wongi::Engine.create }
-  let( :maybe_rule ) {
+  let(:engine) { Wongi::Engine.create }
+  let(:maybe_rule) {
     rule {
       forall {
         has 1, 2, :X

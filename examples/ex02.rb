@@ -21,8 +21,8 @@ ds << ruleset {
 
 puts "Installed ruleset"
 
-ds << WME.new( "friend", "symmetric", true )
-ds << WME.new( "Alice", "friend", "Bob" )
+ds << WME.new("friend", "symmetric", true)
+ds << WME.new("Alice", "friend", "Bob")
 
 puts "Asserted facts:"
 
@@ -30,7 +30,7 @@ puts "Should print 3 facts:"
 puts ds.wmes.to_a
 
 
-ds.retract WME.new( "Alice", "friend", "Bob" )
+ds.retract WME.new("Alice", "friend", "Bob")
 
 puts "Should print 1 fact:"
 puts ds.wmes.to_a

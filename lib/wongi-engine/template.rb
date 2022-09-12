@@ -1,6 +1,6 @@
 module Wongi::Engine
 
-  Template = Struct.new( :subject, :predicate, :object ) do
+  Template = Struct.new(:subject, :predicate, :object) do
 
     def self.variable?(thing)
       return false unless thing.is_a?(Symbol)
@@ -15,9 +15,9 @@ module Wongi::Engine
 
     def variables
       [].tap do |a|
-        a << subject if Template.variable?( subject )
-        a << predicate if Template.variable?( predicate )
-        a << object if Template.variable?( object )
+        a << subject if Template.variable?(subject)
+        a << predicate if Template.variable?(predicate)
+        a << object if Template.variable?(object)
       end
     end
 

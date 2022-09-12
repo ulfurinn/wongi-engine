@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Wongi::Engine::DSL::Action::StatementGenerator do
 
-  let( :engine ) { Wongi::Engine.create }
+  let(:engine) { Wongi::Engine.create }
 
-  let( :transitive_rule ) {
+  let(:transitive_rule) {
     rule {
       forall {
         has :P, :transitive, true
@@ -17,7 +17,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
     }
   }
 
-  let( :production ) { engine << transitive_rule }
+  let(:production) { engine << transitive_rule }
 
   shared_examples 'generation' do
 
@@ -25,8 +25,8 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       engine << %w( Alice relative Bob )
       engine << %w( Bob relative Dwight )
 
-      expect( production ).to have(1).token
-      expect( engine.find *%w( Alice relative Dwight ) ).not_to be_nil
+      expect(production).to have(1).token
+      expect(engine.find *%w( Alice relative Dwight )).not_to be_nil
     end
 
     it 'should retrct generated facts' do
@@ -34,8 +34,8 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       engine << %w( Bob relative Dwight )
       engine.retract %w( Bob relative Dwight )
 
-      expect( production ).to have(0).tokens
-      expect( engine.find *%w( Alice relative Dwight ) ).to be_nil
+      expect(production).to have(0).tokens
+      expect(engine.find *%w( Alice relative Dwight )).to be_nil
     end
 
     context 'transitive diamond' do
@@ -48,23 +48,23 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       end
 
       it 'should be created' do
-        expect( production ).to have(2).tokens
-        expect( engine.find *%w( Alice relative Dwight ) ).not_to be_nil
+        expect(production).to have(2).tokens
+        expect(engine.find *%w( Alice relative Dwight )).not_to be_nil
       end
 
       it 'should remain after a single retraction' do
         engine.retract %w( Claire relative Dwight )
 
-        expect( production ).to have(1).token
-        expect( engine.find *%w( Alice relative Dwight ) ).not_to be_nil
+        expect(production).to have(1).token
+        expect(engine.find *%w( Alice relative Dwight )).not_to be_nil
       end
 
       it 'should be destroyed after both retractions' do
         engine.retract %w( Claire relative Dwight )
         engine.retract %w( Alice relative Bob )
 
-        expect( production ).to have(0).tokens
-        expect( engine.find *%w( Alice relative Dwight ) ).to be_nil
+        expect(production).to have(0).tokens
+        expect(engine.find *%w( Alice relative Dwight )).to be_nil
       end
 
     end
@@ -96,8 +96,8 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       engine << %w( Alice relative Dwight )
       engine.retract %w( Alice relative Bob )
 
-      expect( production ).to have(0).tokens
-      expect( engine.find *%w( Alice relative Dwight ) ).not_to be_nil
+      expect(production).to have(0).tokens
+      expect(engine.find *%w( Alice relative Dwight )).not_to be_nil
     end
 
     it 'should retract generated facts unmarked as manual', :wip do
@@ -107,8 +107,8 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       engine.retract %w( Alice relative Dwight )
       engine.retract %w( Alice relative Bob )
 
-      expect( production ).to have(0).tokens
-      expect( engine.find *%w( Alice relative Dwight ) ).to be_nil
+      expect(production).to have(0).tokens
+      expect(engine.find *%w( Alice relative Dwight )).to be_nil
     end
 
   end

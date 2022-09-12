@@ -34,19 +34,19 @@ describe 'the engine' do
         }
       }
 
-      rete << Wongi::Engine::WME.new( "friend", "symmetric", true )
-      rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
+      rete << Wongi::Engine::WME.new("friend", "symmetric", true)
+      rete << Wongi::Engine::WME.new("Alice", "friend", "Bob")
       
       expect(rete.facts.to_a.length).to eq(3)
-      expect(rete.facts.select( &:manual? ).length).to eq(2)
-      generated = rete.facts.find( &:generated? )
-      expect( generated ).to be == Wongi::Engine::WME.new( "Bob", "friend", "Alice" )
+      expect(rete.facts.select(&:manual?).length).to eq(2)
+      generated = rete.facts.find(&:generated?)
+      expect(generated).to be == Wongi::Engine::WME.new("Bob", "friend", "Alice")
     end
 
     it 'should generate wmes with an added rule' do
 
-      rete << Wongi::Engine::WME.new( "friend", "symmetric", true )
-      rete << Wongi::Engine::WME.new( "Alice", "friend", "Bob" )
+      rete << Wongi::Engine::WME.new("friend", "symmetric", true)
+      rete << Wongi::Engine::WME.new("Alice", "friend", "Bob")
 
       expect(rete.facts.to_a.length).to eq(2)
 
@@ -61,7 +61,7 @@ describe 'the engine' do
       }
 
       expect(rete.facts.to_a.length).to eq(3)
-      expect(rete.facts.select( &:manual? ).size).to eq(2)
+      expect(rete.facts.select(&:manual?).size).to eq(2)
     end
 
     it 'should not get confused by recursive activations' do

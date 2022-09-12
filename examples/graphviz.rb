@@ -12,5 +12,5 @@ ds << rule('demo') {
 }
 
 File.open "rete.dot", "w" do |io|
-  Graph.new( ds ).dot( io )
+  Graph.new(ds).dot(io)
 end

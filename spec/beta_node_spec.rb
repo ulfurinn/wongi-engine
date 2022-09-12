@@ -4,7 +4,7 @@ describe Wongi::Engine::BetaNode do
 
   include Wongi::Engine::DSL
 
-  let( :engine ) { Wongi::Engine.create }
+  let(:engine) { Wongi::Engine.create }
 
   describe '#tokens' do
 
@@ -20,7 +20,7 @@ describe Wongi::Engine::BetaNode do
       engine << [:x, :y, 2]
       engine << [:x, :y, 3]
       zs = production.tokens.map { |token| token[:Z] }
-      expect( zs ).to be == [1, 2, 3]
+      expect(zs).to be == [1, 2, 3]
 
     end
 

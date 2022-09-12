@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "ASSIGN rule" do
 
-  let( :engine ) { Wongi::Engine.create }
+  let(:engine) { Wongi::Engine.create }
 
   it "should assign simple expressions" do
 
@@ -64,7 +64,7 @@ describe "ASSIGN rule" do
     engine << [1, 2, 5]
     engine.retract [1, 2, 5]
 
-    expect( prod ).to have(0).tokens
+    expect(prod).to have(0).tokens
 
   end
 

@@ -27,7 +27,7 @@ describe "negative rule" do
 
     }
 
-    expect( &proc ).to raise_error( Wongi::Engine::DefinitionError )
+    expect(&proc).to raise_error(Wongi::Engine::DefinitionError)
 
   end
 
@@ -41,10 +41,10 @@ describe "negative rule" do
     }
 
     engine << [:x, :y, 1]
-    expect( prod ).to have(1).tokens
+    expect(prod).to have(1).tokens
 
     engine << [:a, :b, 1]
-    expect( prod ).to have(0).tokens
+    expect(prod).to have(0).tokens
 
   end
 
@@ -59,10 +59,10 @@ describe "negative rule" do
 
     engine << [:a, :b, 1]
     engine << [:x, :y, 1]
-    expect( prod ).to have(0).tokens
+    expect(prod).to have(0).tokens
 
     engine.retract [:a, :b, 1]
-    expect( prod ).to have(1).tokens
+    expect(prod).to have(1).tokens
 
   end
 
@@ -84,7 +84,7 @@ describe "negative rule" do
   it "should create infinite feedback loops with unsafe option" do
 
     counter = 0
-    exception = Class.new( StandardError )
+    exception = Class.new(StandardError)
 
     proc = lambda {
       engine << rule('feedback') {
@@ -98,7 +98,7 @@ describe "negative rule" do
       }
     }
 
-    expect( &proc ).to raise_error( exception )
+    expect(&proc).to raise_error(exception)
 
   end
 

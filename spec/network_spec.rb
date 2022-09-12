@@ -3,25 +3,25 @@ require 'spec_helper'
 describe Wongi::Engine::Network do
   include Wongi::Engine::DSL
 
-  let( :engine ) { Wongi::Engine.create }
+  let(:engine) { Wongi::Engine.create }
   subject { engine }
 
   it 'should assert facts' do
     subject << [1,2,3]
-    expect( subject.select( :_, 2, :_) ).to have(1).item
+    expect(subject.select(:_, 2, :_)).to have(1).item
   end
 
   it 'should retract facts' do
     subject << [1,2,3]
     subject.retract [1,2,3]
-    expect( subject.select( :_, 2, :_) ).to be_empty
+    expect(subject.select(:_, 2, :_)).to be_empty
   end
 
   it 'asserted facts end up in productions' do
 
     prod = subject << rule { forall { has :X, 2, :Z } }
     subject << [1,2,3]
-    expect( prod ).to have(1).tokens
+    expect(prod).to have(1).tokens
 
   end
 
@@ -33,13 +33,13 @@ describe Wongi::Engine::Network do
     prod1 = subject << rule { forall { has :X, 2, :Z } }
     prod2 = subject << rule { forall { has :X, 5, :Z } }
 
-    expect( prod1 ).to have(1).tokens
-    expect( prod2 ).to have(1).tokens
+    expect(prod1).to have(1).tokens
+    expect(prod2).to have(1).tokens
 
     subject.remove_production(prod1)
 
-    expect( prod1 ).to have(0).tokens
-    expect( prod2 ).to have(1).tokens
+    expect(prod1).to have(0).tokens
+    expect(prod2).to have(1).tokens
 
   end
 
@@ -50,13 +50,13 @@ describe Wongi::Engine::Network do
 
     prod1 = subject << rule { forall { has :X, 2, :Z } }
 
-    expect( prod1 ).to have(1).tokens
+    expect(prod1).to have(1).tokens
 
     subject.remove_production(prod1)
-    expect( prod1 ).to have(0).tokens
+    expect(prod1).to have(0).tokens
 
     prod2 = subject << rule { forall { has :X, 5, :Z } }
-    expect( prod2 ).to have(1).tokens
+    expect(prod2).to have(1).tokens
 
   end
 
@@ -65,7 +65,7 @@ describe Wongi::Engine::Network do
     prod = subject << rule { forall { has :X, 2, :Z } }
     subject << [1,2,3]
     subject.retract [1,2,3]
-    expect( prod ).to have(0).tokens
+    expect(prod).to have(0).tokens
 
   end
 
@@ -82,10 +82,10 @@ describe Wongi::Engine::Network do
       }
     }
     subject << [1,2,3]
-    expect( activated_z ).to be == 3
+    expect(activated_z).to be == 3
 
     subject.retract [1,2,3]
-    expect( deactivated_z ).to be == 3
+    expect(deactivated_z).to be == 3
 
   end
 
@@ -106,13 +106,13 @@ describe Wongi::Engine::Network do
     engine << [1, :is, 2]
     engine << [2, :is, 3]
 
-    expect( prod ).to have(1).tokens
+    expect(prod).to have(1).tokens
 
     engine.retract [1, :is, 2]
-    expect( prod ).to have(0).tokens
-    expect( deactivated[:X] ).to be == 1
-    expect( deactivated[:Y] ).to be == 2
-    expect( deactivated[:Z] ).to be == 3
+    expect(prod).to have(0).tokens
+    expect(deactivated[:X]).to be == 1
+    expect(deactivated[:Y]).to be == 2
+    expect(deactivated[:Z]).to be == 3
 
   end
 
@@ -120,20 +120,20 @@ describe Wongi::Engine::Network do
 
     prod = engine << rule { forall { neg 1, 2, 3} }
 
-    expect( prod ).to have(1).tokens
+    expect(prod).to have(1).tokens
 
     engine << [1, 2 ,3]
-    expect( prod ).to have(0).tokens
+    expect(prod).to have(0).tokens
 
     engine.retract [1, 2, 3]
-    expect( prod ).to have(1).tokens
+    expect(prod).to have(1).tokens
 
   end
 
   describe 'retraction with neg nodes lower in the chain' do
 
     def expect_tokens n
-      expect( prod ).to have(n).tokens
+      expect(prod).to have(n).tokens
     end
 
     before :each do
@@ -147,7 +147,7 @@ describe Wongi::Engine::Network do
 
     end
 
-    let( :prod ) { engine.productions['retract'] }
+    let(:prod) { engine.productions['retract'] }
 
     specify 'case 1' do
 
