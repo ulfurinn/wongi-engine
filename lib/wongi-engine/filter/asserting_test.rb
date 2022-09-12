@@ -1,6 +1,7 @@
 module Wongi::Engine
   class AssertingTest < FilterTest
     def initialize(*vars, &body)
+      super()
       @vars = vars
       @body = body
     end
@@ -9,7 +10,7 @@ module Wongi::Engine
       if @vars.empty?
         @body.call token
       else
-        @body.call *(@vars.map { |var| token[var] })
+        @body.call(*(@vars.map { |var| token[var] }))
       end
     end
   end

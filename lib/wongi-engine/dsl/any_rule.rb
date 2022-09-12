@@ -5,12 +5,12 @@ module Wongi::Engine
 
       def initialize(&block)
         @variants = []
-        instance_eval &block if block
+        instance_eval(&block) if block
       end
 
       def option(&block)
         var = VariantRule.new
-        var.forall &block
+        var.forall(&block)
         variants << var
       end
 

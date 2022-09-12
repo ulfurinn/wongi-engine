@@ -23,6 +23,7 @@ module Wongi::Engine
       attr_predicate :generation, :values
 
       def initialize(opts = {})
+        super()
         [:generation, :values, :tracer, :tracer_class, :io].each do |option|
           instance_variable_set "@#{option}", opts[option] if opts.has_key? option
         end
