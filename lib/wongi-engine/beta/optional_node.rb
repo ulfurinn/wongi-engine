@@ -29,18 +29,17 @@ module Wongi
       def alpha_activate(wme)
         assignments = collect_assignments(wme)
         tokens.each do |token|
-          if matches? token, wme
-            children.each do |child|
-              if token.optional?
-                token.no_optional!
-                child.tokens.each do |ct|
-                  child.beta_deactivate(ct) if ct.parent == token
-                end
+          next unless matches? token, wme
+          children.each do |child|
+            if token.optional?
+              token.no_optional!
+              child.tokens.each do |ct|
+                child.beta_deactivate(ct) if ct.parent == token
               end
-              child.beta_activate Token.new(child, token, wme, assignments)
             end
-            make_opt_result token, wme
+            child.beta_activate Token.new(child, token, wme, assignments)
           end
+          make_opt_result token, wme
         end
       end
 
@@ -50,14 +49,13 @@ module Wongi
             next unless token == ojr.token
 
             ojr.unlink
-            if token.opt_join_results.empty?
-              children.each do |child|
-                child.tokens.each do |ct|
-                  child.beta_deactivate(ct) if ct.parent == token
-                end
-                token.optional!
-                child.beta_activate Token.new(child, token, nil, {})
+            next unless token.opt_join_results.empty?
+            children.each do |child|
+              child.tokens.each do |ct|
+                child.beta_deactivate(ct) if ct.parent == token
               end
+              token.optional!
+              child.beta_activate Token.new(child, token, nil, {})
             end
           end
         end
@@ -71,13 +69,12 @@ module Wongi
         match = false
         alpha.wmes.each do |wme|
           assignments = collect_assignments(wme)
-          if matches? token, wme
-            match = true
-            children.each do |child|
-              child.beta_activate Token.new(child, token, wme, assignments)
-            end
-            make_opt_result token, wme
+          next unless matches? token, wme
+          match = true
+          children.each do |child|
+            child.beta_activate Token.new(child, token, wme, assignments)
           end
+          make_opt_result token, wme
         end
         unless match
           token.optional!

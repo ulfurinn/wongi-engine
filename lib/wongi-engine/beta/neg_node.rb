@@ -22,16 +22,15 @@ module Wongi
 
       def alpha_activate(wme)
         tokens.each do |token|
-          if matches?(token, wme) && (@unsafe || !token.generated?(wme)) # feedback loop protection
-            # order matters for proper invalidation
-            make_join_result(token, wme)
-            #token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things
-            children.each do |child|
-              child.tokens.each do |t|
-                if t.parent == token
-                  child.beta_deactivate t
-                  #token.destroy
-                end
+          next unless matches?(token, wme) && (@unsafe || !token.generated?(wme)) # feedback loop protection
+          # order matters for proper invalidation
+          make_join_result(token, wme)
+          #token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things
+          children.each do |child|
+            child.tokens.each do |t|
+              if t.parent == token
+                child.beta_deactivate t
+                #token.destroy
               end
             end
           end
@@ -44,10 +43,9 @@ module Wongi
             next unless token == njr.token
 
             njr.unlink
-            if token.neg_join_results.empty?
-              children.each do |child|
-                child.beta_activate Token.new(child, token, nil, {})
-              end
+            next unless token.neg_join_results.empty?
+            children.each do |child|
+              child.beta_activate Token.new(child, token, nil, {})
             end
           end
         end

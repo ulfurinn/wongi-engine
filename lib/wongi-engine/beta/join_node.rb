@@ -63,10 +63,9 @@ module Wongi
       def alpha_activate(wme)
         assignments = collect_assignments(wme)
         parent.tokens.each do |token|
-          if matches?(token, wme)
-            children.each do |beta|
-              beta.beta_activate Token.new(beta, token, wme, assignments)
-            end
+          next unless matches?(token, wme)
+          children.each do |beta|
+            beta.beta_activate Token.new(beta, token, wme, assignments)
           end
         end
       end
@@ -81,11 +80,10 @@ module Wongi
 
       def beta_activate(token)
         self.alpha.wmes.each do |wme|
-          if matches?(token, wme)
-            assignments = collect_assignments(wme)
-            children.each do |beta|
-              beta.beta_activate Token.new(beta, token, wme, assignments)
-            end
+          next unless matches?(token, wme)
+          assignments = collect_assignments(wme)
+          children.each do |beta|
+            beta.beta_activate Token.new(beta, token, wme, assignments)
           end
         end
       end
