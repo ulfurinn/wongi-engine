@@ -28,6 +28,7 @@ module Wongi::Engine
     # @return [Wongi::Engine::BetaNode]
     attr_reader :parent
     attr_accessor :children
+
     attr_predicate :debug
 
     def initialize(parent = nil)

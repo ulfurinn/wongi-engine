@@ -19,6 +19,7 @@ module Wongi::Engine
       end
 
       attr_reader :io
+
       attr_predicate :generation, :values
 
       def initialize(opts = {})

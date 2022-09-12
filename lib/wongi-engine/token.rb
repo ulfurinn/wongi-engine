@@ -5,6 +5,7 @@ module Wongi::Engine
 
     attr_reader :children, :wme, :node, :overlay, :neg_join_results, :opt_join_results, :ncc_results, :generated_wmes
     attr_accessor :owner, :parent
+
     attr_predicate :optional
     attr_predicate :deleted
 

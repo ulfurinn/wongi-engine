@@ -8,6 +8,7 @@ module Wongi::Engine
     attr_reader :generating_tokens
     attr_reader :neg_join_results, :opt_join_results
     attr_accessor :overlay
+
     attr_predicate :deleted
     attr_predicate :manual
 
