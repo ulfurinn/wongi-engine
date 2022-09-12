@@ -2,56 +2,56 @@ require 'spec_helper'
 
 
 describe 'action classes' do
-	include Wongi::Engine::DSL
+  include Wongi::Engine::DSL
 
   let :engine do
-  	Wongi::Engine.create
+    Wongi::Engine.create
   end
 
   let :action_class do
-  	Class.new do
-  		class << self
-  			attr_accessor :execute_body, :deexecute_body
-  		end
+    Class.new do
+      class << self
+        attr_accessor :execute_body, :deexecute_body
+      end
 
-  		def execute(token)
-  			self.class.execute_body.call(token)
-  		end
+      def execute(token)
+        self.class.execute_body.call(token)
+      end
 
-  		def deexecute(token)
-  			self.class.deexecute_body.call(token)
-  		end
-  	end
+      def deexecute(token)
+        self.class.deexecute_body.call(token)
+      end
+    end
   end
 
   it 'should have appropriate callbacks executed' do
-  	executed = 0
-  	deexecuted = 0
+    executed = 0
+    deexecuted = 0
 
-  	klass = action_class
+    klass = action_class
 
-  	klass.execute_body = lambda do |token|
-  		executed += 1
-  	end
-  	klass.deexecute_body = lambda do |token|
-  		deexecuted += 1
-  	end
+    klass.execute_body = lambda do |token|
+      executed += 1
+    end
+    klass.deexecute_body = lambda do |token|
+      deexecuted += 1
+    end
 
-  	engine << rule {
-  		forall {
-  			has :A, :x, :B
-  		}
-  		make {
-  			action klass
-  		}
-  	}
+    engine << rule {
+      forall {
+        has :A, :x, :B
+      }
+      make {
+        action klass
+      }
+    }
 
-  	engine << [1, :x, 2]
-  	expect(executed).to be == 1
-  	expect(deexecuted).to be == 0
+    engine << [1, :x, 2]
+    expect(executed).to be == 1
+    expect(deexecuted).to be == 0
 
-  	engine.retract [1, :x, 2]
-  	expect(executed).to be == 1
-  	expect(deexecuted).to be == 1
+    engine.retract [1, :x, 2]
+    expect(executed).to be == 1
+    expect(deexecuted).to be == 1
   end
 end
