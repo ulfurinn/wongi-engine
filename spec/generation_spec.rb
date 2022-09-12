@@ -68,7 +68,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
 
   context "pre-asserted", :pre do
     before :each do
-      engine << [ "relative", :transitive, true ]
+      engine << ["relative", :transitive, true]
     end
 
     it_behaves_like 'generation'
@@ -77,7 +77,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
   context "post-asserted", :post do
     before :each do
       production
-      engine << [ "relative", :transitive, true ]
+      engine << ["relative", :transitive, true]
     end
 
     it_behaves_like 'generation'

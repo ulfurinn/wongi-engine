@@ -21,7 +21,7 @@ describe Wongi::Engine::AssumingClause do
     engine << [:x, :y, 2]
     engine << [1, :u, :a]
     engine << [2, :u, :b]
-    result = Hash[ extended.tokens.map { |token| [ token[:Z], token[:W] ] } ]
+    result = Hash[ extended.tokens.map { |token| [token[:Z], token[:W]] } ]
     expect(result).to eq(1 => :a, 2 => :b)
   end
 

@@ -89,7 +89,7 @@ describe 'the engine' do
       }
     }
 
-    rete << [ 42, "same", 42 ]
+    rete << [42, "same", 42]
     expect(node.size).to eq(1)
   end
 
@@ -136,8 +136,8 @@ describe 'the engine' do
       }
     }
 
-    rete << [ "answer", "is", 42 ]
-    rete << [ "question", "is", -1 ]
+    rete << ["answer", "is", 42]
+    rete << ["question", "is", -1]
 
     collection = rete.collection(:test_collector)
     expect(collection.size).to eq(1)
@@ -155,7 +155,7 @@ describe 'the engine' do
       }
     }
 
-    rete << [ "A", "B", 1 ]
+    rete << ["A", "B", 1]
 
     error_messages = rete.errors.map(&:message)
     expect(error_messages).to eq(["An error has occurred"])
@@ -171,8 +171,8 @@ describe 'the engine' do
       }
     }
 
-    rete << [ "answer", "is", 42 ]
-    rete << [ "question", "is", -1 ]
+    rete << ["answer", "is", 42]
+    rete << ["question", "is", -1]
 
     collection = rete.collection(:things_that_are_42)
     expect(collection.size).to eq(1)
@@ -210,7 +210,7 @@ describe 'the engine' do
 
     expect(production.size).to eq(1)
 
-    rete << [ "answer", "is", 42 ]
+    rete << ["answer", "is", 42]
 
     expect(production.size).to eq(0)
   end
