@@ -85,7 +85,6 @@ describe "issue 4" do
     expect(odds).to have(5).items
   end
 
-
   it "should not lose track when another rule affects a set" do
     engine = Wongi::Engine.create
 

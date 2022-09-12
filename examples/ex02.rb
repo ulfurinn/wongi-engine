@@ -27,7 +27,6 @@ puts "Asserted facts:"
 puts "Should print 3 facts:"
 puts ds.wmes.to_a
 
-
 ds.retract WME.new("Alice", "friend", "Bob")
 
 puts "Should print 1 fact:"

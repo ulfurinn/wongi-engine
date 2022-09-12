@@ -32,7 +32,6 @@ describe Wongi::Engine::WME do
 
     # end
 
-
   it {
     should be_manual
   }

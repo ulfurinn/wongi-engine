@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-
 describe 'action classes' do
   include Wongi::Engine::DSL
 
