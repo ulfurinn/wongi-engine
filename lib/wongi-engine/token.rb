@@ -59,7 +59,7 @@ module Wongi::Engine
 
     # TODO ignore assignments?
     def duplicate?(other)
-      self.parent.equal?(other.parent) && @wme.equal?(other.wme) && self.assignments == other.assignments
+      parent.equal?(other.parent) && @wme.equal?(other.wme) && assignments == other.assignments
     end
 
     def to_s

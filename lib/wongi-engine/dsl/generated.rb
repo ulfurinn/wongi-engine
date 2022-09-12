@@ -21,7 +21,7 @@ module Wongi::Engine::DSL
             c = Clause::Generic.new *args, &block
             c.name = clause.first
             c.action = action
-            c.rule = self.rule
+            c.rule = rule
             rule.accept c
 
           end

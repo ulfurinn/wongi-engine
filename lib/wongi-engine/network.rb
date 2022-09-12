@@ -46,8 +46,8 @@ module Wongi::Engine
       self.alpha_top = AlphaMemory.new(Template.new(:_, :_, :_), self)
       self.alpha_hash = { alpha_top.template.hash => alpha_top }
       self.beta_top = BetaMemory.new(nil)
-      self.beta_top.rete = self
-      self.beta_top.seed
+      beta_top.rete = self
+      beta_top.seed
       self.queries = {}
       self.results = {}
       @revns = {}
@@ -234,7 +234,7 @@ module Wongi::Engine
       hash = template.hash
       # puts "COMPILED CONDITION #{condition} WITH KEY #{key}"
       if time == 0
-        return self.alpha_hash[hash] if self.alpha_hash.has_key?(hash)
+        return alpha_hash[hash] if alpha_hash.has_key?(hash)
       else
         return @timeline[time + 1][hash] if @timeline[time + 1] && @timeline[time + 1].has_key?(hash)
       end
@@ -242,7 +242,7 @@ module Wongi::Engine
       alpha = AlphaMemory.new(template, self)
 
       if time == 0
-        self.alpha_hash[hash] = alpha
+        alpha_hash[hash] = alpha
         initial_fill alpha
       else
         if @timeline[time + 1].nil?
@@ -271,14 +271,14 @@ module Wongi::Engine
     end
 
     def prepare_query(name, conditions, parameters, actions = [])
-      query = self.queries[name] = BetaMemory.new(nil)
+      query = queries[name] = BetaMemory.new(nil)
       query.rete = self
       query.seed(Hash[parameters.map { |param| [param, nil] }])
-      self.results[name] = build_production query, conditions, parameters, actions, true
+      results[name] = build_production query, conditions, parameters, actions, true
     end
 
     def execute(name, valuations)
-      beta = self.queries[name]
+      beta = queries[name]
       raise Error, "Undefined query #{name}; known queries are #{queries.keys}" unless beta
 
       beta.subst valuations
@@ -357,7 +357,7 @@ module Wongi::Engine
     def lookup(s, p, o)
       key = Template.hash_for(s, p, o)
       # puts "Lookup for #{key}"
-      self.alpha_hash[key]
+      alpha_hash[key]
     end
 
     def alpha_activate(alpha, wme)

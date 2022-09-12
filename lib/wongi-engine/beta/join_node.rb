@@ -23,14 +23,14 @@ module Wongi
       end
 
       def matches?(token, wme)
-        assignment = token[self.variable]
+        assignment = token[variable]
         field = wme.send(self.field)
         #field.nil? ||
-        !token.has_var?(self.variable) || field == assignment
+        !token.has_var?(variable) || field == assignment
       end
 
       def equivalent?(other)
-        other.field == self.field && other.variable == self.variable
+        other.field == field && other.variable == variable
       end
     end
 
@@ -75,7 +75,7 @@ module Wongi
       end
 
       def beta_activate(token)
-        self.alpha.wmes.each do |wme|
+        alpha.wmes.each do |wme|
           next unless matches?(token, wme)
           assignments = collect_assignments(wme)
           children.each do |beta|

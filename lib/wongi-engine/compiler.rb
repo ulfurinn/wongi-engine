@@ -52,7 +52,7 @@ module Wongi::Engine
 
     def assignment_node(variable, body)
       beta_memory
-      self.node = AssignmentNode.new(self.node, variable, body).tap &:refresh
+      self.node = AssignmentNode.new(node, variable, body).tap &:refresh
       declare(variable)
     end
 

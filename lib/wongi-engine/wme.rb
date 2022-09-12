@@ -29,14 +29,14 @@ module Wongi::Engine
     def import_into(r)
       self.class.new(subject, predicate, object, r).tap do |wme|
         wme.overlay = overlay
-        wme.manual = self.manual?
+        wme.manual = manual?
       end
     end
 
     def dup
       self.class.new(subject, predicate, object, rete).tap do |wme|
         wme.overlay = overlay
-        wme.manual = self.manual?
+        wme.manual = manual?
       end
     end
 
@@ -47,7 +47,7 @@ module Wongi::Engine
     def =~(template)
       raise Wongi::Engine::Error, "Cannot match a WME against a #{template.class}" unless Template === template
 
-      result = match_member(self.subject, template.subject) & match_member(self.predicate, template.predicate) & match_member(self.object, template.object)
+      result = match_member(subject, template.subject) & match_member(predicate, template.predicate) & match_member(object, template.object)
       result if result.match?
     end
 
