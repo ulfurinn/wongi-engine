@@ -3,7 +3,7 @@ module Wongi::Engine
     class NccSubrule < Rule
       def initialize(name = nil, &block)
         super
-        forall &block if block
+        forall(&block) if block
       end
 
       def compile(context)

@@ -31,12 +31,14 @@ module Wongi::Engine
       end
 
       def deexecute(token)
-        token.generated_wmes.reject(&:manual?).inject([]) do |list, wme|
-          list.tap do |l|
-            wme.generating_tokens.delete token
-            l << wme if wme.generating_tokens.empty?
-          end
-        end.each do |wme|
+        generated = token.generated_wmes.reject(&:manual?)
+
+        wmes_for_deletion = generated.each_with_object([]) do |wme, acc|
+          wme.generating_tokens.delete token
+          acc << wme if wme.generating_tokens.empty?
+        end
+
+        wmes_for_deletion.each do |wme|
           wme.overlay.retract wme, automatic: true
         end
       end

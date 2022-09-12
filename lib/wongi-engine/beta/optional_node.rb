@@ -87,7 +87,7 @@ module Wongi
       end
 
       def beta_deactivate(t)
-        token = tokens.find { |token| token.parent == t }
+        token = tokens.find { |own_token| own_token.parent == t }
         return unless token
 
         token.overlay.remove_token(token, self)

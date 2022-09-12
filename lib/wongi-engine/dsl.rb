@@ -1,31 +1,29 @@
 module Wongi::Engine
   module DSL
-    extend self
-
-    def sections
+    module_function def sections
       @sections ||= {}
     end
 
-    def ruleset(name = nil, &definition)
+    module_function def ruleset(name = nil, &definition)
       rs = Ruleset.new
       rs.name name if name
       rs.instance_eval(&definition) if block_given?
       rs
     end
 
-    def rule(name = nil, &definition)
+    module_function def rule(name = nil, &definition)
       r = Rule.new name
       r.instance_eval(&definition)
       r
     end
 
-    def query(name, &definition)
+    module_function def query(name, &definition)
       q = Query.new name
       q.instance_eval(&definition)
       q
     end
 
-    def dsl(&definition)
+    module_function def dsl(&definition)
       Builder.new.build(&definition)
     end
   end

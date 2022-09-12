@@ -134,11 +134,9 @@ module Wongi::Engine
       return if real.nil?
 
       if real.generated? # still some generator tokens left
-        if real.manual?
-          real.manual = false
-        else
-          raise Error, "cannot retract automatic facts"
-        end
+        raise Error, "cannot retract automatic facts" unless real.manual?
+
+        real.manual = false
       elsif options[:automatic] && real.manual?
         return
       end
@@ -166,8 +164,8 @@ module Wongi::Engine
                  end
         # puts "source = #{source}"
         wmes = {}
-        slice.each { |key, alpha| wmes[key] = alpha.wmes }
         slice.each do |key, alpha|
+          wmes[key] = alpha.wmes
           in_snapshot {
             wmes[key].dup.each(&:destroy)
           }
@@ -194,7 +192,7 @@ module Wongi::Engine
       else
         case something
         when Array
-          assert WME.new(*something).tap { |wme| wme.overlay = default_overlay }
+          assert(WME.new(*something).tap { |wme| wme.overlay = default_overlay })
         when WME
           assert something
           # when Wongi::RDF::Statement
@@ -233,15 +231,15 @@ module Wongi::Engine
 
       hash = template.hash
       # puts "COMPILED CONDITION #{condition} WITH KEY #{key}"
-      if time == 0
-        return alpha_hash[hash] if alpha_hash.has_key?(hash)
-      elsif @timeline[time + 1] && @timeline[time + 1].has_key?(hash)
+      if time.zero?
+        return alpha_hash[hash] if alpha_hash.key?(hash)
+      elsif @timeline[time + 1] && @timeline[time + 1].key?(hash)
         return @timeline[time + 1][hash]
       end
 
       alpha = AlphaMemory.new(template, self)
 
-      if time == 0
+      if time.zero?
         alpha_hash[hash] = alpha
         initial_fill alpha
       else
@@ -273,7 +271,7 @@ module Wongi::Engine
     def prepare_query(name, conditions, parameters, actions = [])
       query = queries[name] = BetaMemory.new(nil)
       query.rete = self
-      query.seed(parameters.map { |param| [param, nil] }.to_h)
+      query.seed(parameters.to_h { |param| [param, nil] })
       results[name] = build_production query, conditions, parameters, actions, true
     end
 
@@ -388,12 +386,12 @@ module Wongi::Engine
       # the root node should not be deleted
       return unless node.parent
 
-      node.tokens.first.destroy while node.tokens.first if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.is_a? klass }
-
-      if node.parent
-        node.parent.children.delete node
-        delete_node_with_ancestors(node.parent) if node.parent.children.empty?
+      if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.is_a? klass }
+        node.tokens.first.destroy while node.tokens.first
       end
+
+      node.parent.children.delete node
+      delete_node_with_ancestors(node.parent) if node.parent.children.empty?
     end
   end
 end

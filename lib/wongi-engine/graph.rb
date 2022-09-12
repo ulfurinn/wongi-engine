@@ -53,7 +53,7 @@ module Wongi::Engine
         @io.puts "node#{print_hash beta.partner.object_id} -> node#{print_hash beta.object_id};"
         @io.puts "{ rank=same; node#{print_hash beta.partner.object_id} node#{print_hash beta.object_id} }"
       end
-      if beta.respond_to? :alpha && opts[:alpha] != false
+      if beta.respond_to?(:alpha) && opts[:alpha] != false
         alpha = beta.alpha
         @io.puts "node#{print_hash alpha.object_id} -> node#{print_hash beta.object_id};" if alpha
       end

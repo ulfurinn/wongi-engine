@@ -107,7 +107,7 @@ module Wongi::Engine
   end
 
   class FakeToken < Token
-    def initialize(token, wme, assignments)
+    def initialize(token, wme, assignments) # rubocop:disable Lint/MissingSuper
       @parent = token
       @wme = wme
       @assignments = assignments

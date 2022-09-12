@@ -9,7 +9,7 @@ module Wongi::Engine
         @unsafe = options[:unsafe] || false
         debug! if options[:debug]
         raise "Cannot work with continuous time" unless time.integer?
-        raise "Cannot look into the future" if time > 0
+        raise "Cannot look into the future" if time.positive?
 
         super(s, p, o, time)
       end

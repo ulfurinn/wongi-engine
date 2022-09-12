@@ -59,10 +59,10 @@ module Wongi
         alpha.wmes.each do |wme|
           make_join_result(token, wme) if matches?(token, wme)
         end
-        if token.neg_join_results.empty?
-          children.each do |child|
-            child.beta_activate Token.new(child, token, nil, {})
-          end
+        return unless token.neg_join_results.empty?
+
+        children.each do |child|
+          child.beta_activate Token.new(child, token, nil, {})
         end
       end
 
@@ -74,7 +74,7 @@ module Wongi
         if token.parent
           token.parent.children.delete token # should this go into Token#destroy?
         end
-        token.neg_join_results.each &:unlink
+        token.neg_join_results.each(&:unlink)
         children.each do |child|
           child.tokens.each do |t|
             if t.parent == token
