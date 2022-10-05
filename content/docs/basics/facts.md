@@ -21,7 +21,7 @@ To remove facts, do:
 engine.retract ["Alice", :age, 35]
 ```
 
-There are no restrictions on what constitutes a subject vs a predicate. A term that is used as a predicate in one triple [can be a subject in another](07-more-facts.html), allowing you to build meta-models of your data.
+There are no restrictions on what constitutes a subject vs a predicate. A term that is used as a predicate in one triple [can be a subject in another](../more-facts), allowing you to build meta-models of your data.
 
 Any Ruby object that implements `#==` in a sensible way can be used in any position in a triple, except symbols that start with an uppercase latin letter and `:_`, which have special meaning; more on those later. Uppercase symbols were chosen because you never see them in idiomatic Ruby code, so they're fair game for overloading.
 

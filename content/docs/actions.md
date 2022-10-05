@@ -40,7 +40,7 @@ The action class may define the following accessors that will be populated with 
 
 * `rete`: the engine instance
 * `rule`: the rule in which the action is included
-* `name`: the [extension clause](../05-advanced-topics/02-dsl-extensions.html) through which the action was instantiated
+* `name`: the [extension clause](../advanced-topics/dsl-extensions) through which the action was instantiated
 * `production`: the production node
 
 A short way to define all 4 is to inherit from `Wongi::Engine::Action`, but this is not necessary.

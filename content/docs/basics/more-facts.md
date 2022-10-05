@@ -21,6 +21,6 @@ end
 engine << [:friend, :symmetric, true]
 ```
 
-If you do this on the engine with the [self-printer rule](05-taking-an-action.html) installed, you'll instantly see the new reciprocated friendships pop up.
+If you do this on the engine with the [self-printer rule](../taking-an-action) installed, you'll instantly see the new reciprocated friendships pop up.
 
 `gen` is an action that creates new facts based on the provided template and the variables bound in the token, and it's one of the most important elements in a rule. Generated actions can trigger other rules, which is a very powerful mechanism.
