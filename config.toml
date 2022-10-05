@@ -1,0 +1,9 @@
+baseURL = 'https://ulfurinn.github.io/wongi-engine/'
+languageCode = 'en-us'
+title = 'Wongi::Engine'
+theme = "hugo-book"
+# theme = "hugo-geekdoc"
+
+[params]
+  BookTheme = 'auto'
+  BookComments = false

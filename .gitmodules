@@ -1,4 +1,3 @@
-[submodule "build"]
-	path = build
-	url = git@github.com:ulfurinn/wongi-engine.git
-	branch = gh-pages
+[submodule "themes/hugo-book"]
+	path = themes/hugo-book
+	url = https://github.com/alex-shpak/hugo-book
