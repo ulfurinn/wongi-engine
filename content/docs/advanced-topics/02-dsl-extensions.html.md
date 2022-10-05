@@ -4,7 +4,9 @@ title: DSL extensions
 
 # DSL extensions
 
-You can define your own elements in the rule DSL; the built-in ones are themselves defined through this mechanism. Defining custom matchers is difficult, since they generally rely on special support from the engine core (filter matchers being an exception), but custom actions could improve the readability of your rules.
+You can define your own DSL clauses; the built-in ones are themselves defined through this mechanism.
+
+This is most useful if you want to define a custom filter rule, or group a frequently used sequence of clauses under a meanigful name.
 
 The basic form for an extension is:
 
