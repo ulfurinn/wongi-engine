@@ -101,7 +101,7 @@ module Wongi::Engine::DSL
 
     clause :count
     body { |s, p, o, opts|
-      aggregate s, p, o, map: ->(_) { 1 }, function: -> { _1.inject(&:+) }, assign: opts[:assign]
+      aggregate s, p, o, map: ->(_) { 1 }, function: ->(collection) { collection.inject(&:+) }, assign: opts[:assign]
     }
 
     clause :assert, :dynamic
