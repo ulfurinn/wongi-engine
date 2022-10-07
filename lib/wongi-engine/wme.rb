@@ -2,8 +2,7 @@ module Wongi::Engine
   WME = Struct.new(:subject, :predicate, :object) do
     include CoreExt
 
-    attr_reader :rete
-
+    attr_accessor :rete
     attr_reader :generating_tokens
     attr_reader :neg_join_results, :opt_join_results
     attr_accessor :overlay
@@ -24,13 +23,6 @@ module Wongi::Engine
 
       # TODO: reintroduce Network#import when bringing back RDF support
       super(s, p, o)
-    end
-
-    def import_into(r)
-      self.class.new(subject, predicate, object, r).tap do |wme|
-        wme.overlay = overlay
-        wme.manual = manual?
-      end
     end
 
     def dup

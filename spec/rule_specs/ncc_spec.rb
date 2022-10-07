@@ -219,6 +219,7 @@ describe Wongi::Engine::NccNode do
 
     %w[math science english bio].each { |req| engine << [req, :is_a, :requirement] }
     %w[CourseA CourseB CourseC].each  { |course| engine << [course, :is_a, :course] }
+
     engine << ["StudentA", :is_a, :student]
 
     engine << ["CourseA", "math", 50]

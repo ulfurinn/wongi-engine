@@ -18,6 +18,24 @@ describe Wongi::Engine::DataOverlay do
     expect(production).to have(0).tokens
   end
 
+  it 'works with retractions' do
+    production = engine << rule {
+      forall {
+        has 1, 2, :X
+      }
+    }
+
+    engine << [1, 2, 3]
+    expect(production).to have(1).token
+
+    engine.with_overlay do |overlay|
+      overlay.retract [1, 2, 3]
+      expect(production).to have(0).token
+    end
+
+    expect(production).to have(1).token
+  end
+
   it 'should generate into correct overlays' do
     production = engine << rule {
       forall {

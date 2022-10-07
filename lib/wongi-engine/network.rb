@@ -115,8 +115,6 @@ module Wongi::Engine
 
     # @private
     def real_assert(wme)
-      wme = wme.import_into self unless wme.rete == self
-
       # source = best_alpha(wme)
       if (existing = find(wme.subject, wme.predicate, wme.object))
         existing.manual! if wme.manual?
@@ -130,18 +128,15 @@ module Wongi::Engine
 
     # @private
     def real_retract(wme, options)
-      real = find(wme.subject, wme.predicate, wme.object)
-      return if real.nil?
+      if wme.generated? # still some generator tokens left
+        raise Error, "cannot retract automatic facts" unless wme.manual?
 
-      if real.generated? # still some generator tokens left
-        raise Error, "cannot retract automatic facts" unless real.manual?
-
-        real.manual = false
-      elsif options[:automatic] && real.manual?
+        wme.manual = false
+      elsif options[:automatic] && wme.manual?
         return
       end
 
-      alphas_for(real).each { |a| a.deactivate real }
+      alphas_for(wme).each { |a| a.deactivate wme }
     end
 
     def wmes
@@ -192,7 +187,10 @@ module Wongi::Engine
       else
         case something
         when Array
-          assert(WME.new(*something).tap { |wme| wme.overlay = default_overlay })
+          assert(WME.new(*something).tap { |wme|
+            wme.rete = self
+            wme.overlay = default_overlay
+          })
         when WME
           assert something
           # when Wongi::RDF::Statement
@@ -300,7 +298,7 @@ module Wongi::Engine
                    raise Error, "Network#each expect a template or nothing at all"
                  end
       source = best_alpha(template)
-      matching = current_overlay.wmes(source).select { |wme| wme =~ template }
+      matching = overlays.flat_map { |overlay| overlay.wmes(source).select { |wme| wme =~ template } }
       if block_given?
         matching.each(&block)
       else
@@ -311,7 +309,7 @@ module Wongi::Engine
     def select(s, p, o)
       template = Template.new(s, p, o)
       source = best_alpha(template)
-      matching = current_overlay.wmes(source).select { |wme| wme =~ template }
+      matching = overlays.flat_map { |overlay| overlay.wmes(source).select { |wme| wme =~ template } }
       matching.each { |st| yield st.subject, st.predicate, st.object } if block_given?
       matching
     end
@@ -319,8 +317,14 @@ module Wongi::Engine
     def find(s, p, o)
       template = Template.new(s, p, o)
       source = best_alpha(template)
-      # puts "looking for #{template} among #{source.wmes.size} triples of #{source.template}"
-      current_overlay.wmes(source).find { |wme| wme =~ template }
+      overlays.reverse.reduce(nil) do |found, overlay|
+        if found
+          found
+        else
+          print "looking for #{template} on overlay #{overlay.object_id}"
+          overlay.wmes(source).find { |wme| wme =~ template }.tap { puts " -> #{_1}"}
+        end
+      end
     end
 
     protected

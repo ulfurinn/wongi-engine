@@ -2,16 +2,15 @@ module Wongi::Engine
   class AlphaMemory
     attr_reader :betas, :template, :rete
 
-    def initialize(template, rete = nil)
+    def initialize(template, rete)
       @template = template
       @rete = rete
       @betas = []
-      @wmes = []
       @frozen = false
+      rete.default_overlay.index(template)
     end
 
     def activate(wme)
-      wme.overlay.add_wme(wme, self)
       # TODO: it used to activate before adding to the list. mandated by the original thesis. investigate. it appears to create duplicate tokens - needs a remedy in collecting nodes
       betas.each do |beta|
         beta.alpha_activate wme
@@ -19,7 +18,6 @@ module Wongi::Engine
     end
 
     def deactivate(wme)
-      wme.overlay.remove_wme(wme, self)
       betas.each do |beta|
         beta.alpha_deactivate wme
       end
@@ -37,20 +35,6 @@ module Wongi::Engine
 
     def to_s
       inspect
-    end
-
-    def size
-      wmes.count
-    end
-
-    def wmes
-      Enumerator.new do |y|
-        rete.overlays.each do |overlay|
-          overlay.raw_wmes(self).dup.each do |wme|
-            y << wme
-          end
-        end
-      end
     end
   end
 end

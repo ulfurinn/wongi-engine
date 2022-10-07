@@ -42,13 +42,13 @@ describe "issue 4" do
       }
     end
 
-    10.times { |i| engine << [i, :is_number, true] }
+    5.times { |i| engine << [i, :is_number, true] }
 
     numbers = engine.select :_, :is_number, true
     evens = engine.select :_, :is_even, true
 
     expect(numbers).to be_empty
-    expect(evens.length).to eq(10)
+    expect(evens.length).to eq(5)
   end
 
   # cascaded processing affects this
