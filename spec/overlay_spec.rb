@@ -36,6 +36,24 @@ describe Wongi::Engine::DataOverlay do
     expect(engine.find(3, 4, 5)).to be_nil
   end
 
+  it 'works with neg rules' do
+    prod = engine << rule {
+      forall {
+        neg :x, :y, :z
+      }
+    }
+
+    expect(prod).to have(1).tokens
+
+    engine.with_overlay do |overlay|
+      overlay << [:x, :y, :z]
+      expect(prod).to have(0).tokens
+    end
+
+    expect(prod).to have(1).tokens
+
+  end
+
   it 'works with assignments' do
     production = engine << rule {
       forall {

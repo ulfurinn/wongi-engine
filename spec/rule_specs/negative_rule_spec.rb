@@ -4,6 +4,22 @@ describe "negative rule" do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
+  it "works" do
+    prod = engine << rule {
+      forall {
+        neg :x, :y, :z
+      }
+    }
+
+    expect(prod).to have(1).tokens
+
+    engine << [:x, :y, 42]
+    expect(prod).to have(1).tokens
+
+    engine << [:x, :y, :z]
+    expect(prod).to have(0).tokens
+  end
+
   it "should not introduce variables" do
     proc = lambda {
       engine << rule('one-option') {
