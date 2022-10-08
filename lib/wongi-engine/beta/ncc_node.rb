@@ -1,15 +1,13 @@
 module Wongi
   module Engine
     class NccNode < BetaNode
-      include TokenContainer
-
       attr_accessor :partner
 
       def beta_activate(token)
         return if tokens.find { |t| t.parent == token }
 
         t = Token.new self, token, nil, {}
-        t.overlay.add_token(t, self)
+        t.overlay.add_token(t)
         partner.tokens.each do |ncc_token|
           next unless ncc_token.ancestors.find { |a| a.equal? token }
 
@@ -28,7 +26,7 @@ module Wongi
         return unless t
 
         t.overlay.remove_token(t, self)
-        t.deleted!
+        # t.deleted!
         partner.tokens.select { |ncc| ncc.owner == t }.each do |ncc_token|
           ncc_token.owner = nil
           t.ncc_results.delete(ncc_token)

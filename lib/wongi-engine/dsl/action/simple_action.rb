@@ -1,6 +1,6 @@
 module Wongi::Engine
   module DSL::Action
-    class SimpleAction < Base
+    class SimpleAction < BaseAction
       def initialize(action = nil, *args, &block)
         super()
         @args = args

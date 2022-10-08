@@ -1,6 +1,6 @@
 module Wongi
   module Engine
-    class ProductionNode < BetaMemory
+    class ProductionNode < BetaNode
       attr_accessor :tracer, :compilation_context
 
       def initialize(parent, actions)
@@ -9,7 +9,7 @@ module Wongi
       end
 
       def beta_activate(token)
-        return unless super
+        overlay.add_token(token)
 
         @actions.each do |action|
           action.execute token if action.respond_to? :execute
@@ -17,11 +17,11 @@ module Wongi
       end
 
       def beta_deactivate(token)
-        return unless super
-
         @actions.each do |action|
           action.deexecute token if action.respond_to? :deexecute
         end
+        # do not dispose before the actions have run
+        overlay.remove_token(token)
       end
     end
   end

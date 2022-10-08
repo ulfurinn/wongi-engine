@@ -1,5 +1,5 @@
 require 'wongi-engine/beta/beta_node'
-require 'wongi-engine/beta/beta_memory'
+require 'wongi-engine/beta/root_node'
 require 'wongi-engine/beta/filter_node'
 require 'wongi-engine/beta/assignment_node'
 require 'wongi-engine/beta/join_node'

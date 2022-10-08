@@ -1,6 +1,6 @@
 module Wongi::Engine
   module DSL::Action
-    class ErrorGenerator < Base
+    class ErrorGenerator < BaseAction
       def initialize(message = nil, &messenger)
         super()
         @message = message

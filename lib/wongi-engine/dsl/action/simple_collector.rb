@@ -1,6 +1,6 @@
 module Wongi::Engine
   module DSL::Action
-    class SimpleCollector < Base
+    class SimpleCollector < BaseAction
       def self.collector
         Class.new self
       end

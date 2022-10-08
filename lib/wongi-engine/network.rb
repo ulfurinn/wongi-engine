@@ -7,12 +7,9 @@ module Wongi::Engine
 
     include NetworkParts::Collectable
 
-    protected
-
-    attr_accessor :alpha_hash
-    attr_writer :alpha_top, :beta_top, :queries, :results
-
-    public
+    private attr_reader :overlays
+    private attr_accessor :alpha_hash
+    private attr_writer :alpha_top, :beta_top, :queries, :results
 
     def debug!
       extend NetworkParts::Debug
@@ -43,9 +40,12 @@ module Wongi::Engine
 
     def initialize
       @timeline = []
+
+      @overlays = [base_overlay]
+
       self.alpha_top = AlphaMemory.new(Template.new(:_, :_, :_), self)
       self.alpha_hash = { alpha_top.template.hash => alpha_top }
-      self.beta_top = BetaMemory.new(nil)
+      self.beta_top = RootNode.new(nil)
       beta_top.rete = self
       beta_top.seed
       self.queries = {}
@@ -63,7 +63,12 @@ module Wongi::Engine
     end
 
     def with_overlay(&block)
-      default_overlay.with_child(&block)
+      child = current_overlay.new_child
+      add_overlay(child)
+      block.call(child)
+    ensure
+      remove_overlay(child)
+      child.dispose!
     end
 
     def alphas
@@ -81,28 +86,26 @@ module Wongi::Engine
     #   end
     # end
 
-    def default_overlay
-      @default_overlay ||= DataOverlay.new(self)
+    def base_overlay
+      @base_overlay ||= Overlay.new(self)
     end
 
+    # TODO: deprecate this
+    alias_method :default_overlay, :base_overlay
+
     # @private
-    def add_overlay(o)
+    private def add_overlay(o)
       overlays << o
     end
 
     # @private
-    def remove_overlay(o)
+    private def remove_overlay(o)
       overlays.delete(o) unless o == default_overlay
     end
 
     # @private
     def current_overlay
       overlays.last
-    end
-
-    # @private
-    def overlays
-      @overlays ||= []
     end
 
     def assert(wme)
@@ -115,22 +118,15 @@ module Wongi::Engine
 
     # @private
     def real_assert(wme)
-      # source = best_alpha(wme)
-      if (existing = find(wme.subject, wme.predicate, wme.object))
-        existing.manual! if wme.manual?
-        return
-      end
-
       alphas_for(wme).each { |a| a.activate wme }
-
       wme
     end
 
     # @private
     def real_retract(wme, options)
-      if wme.generated? # still some generator tokens left
-        raise Error, "cannot retract automatic facts" unless wme.manual?
-
+      if wme.generated?
+        # this is still held by a gen action;
+        # clear the manual status
         wme.manual = false
       elsif options[:automatic] && wme.manual?
         return
@@ -140,7 +136,7 @@ module Wongi::Engine
     end
 
     def wmes
-      alpha_top.wmes
+      current_overlay.select(:_, :_, :_)
     end
 
     alias statements wmes
@@ -189,7 +185,7 @@ module Wongi::Engine
         when Array
           assert(WME.new(*something).tap { |wme|
             wme.rete = self
-            wme.overlay = default_overlay
+            # wme.overlay = default_overlay
           })
         when WME
           assert something
@@ -257,7 +253,7 @@ module Wongi::Engine
 
     # TODO: pick an alpha with fewer candidates to go through
     def initial_fill(alpha)
-      alpha_top.wmes.each do |wme|
+      default_overlay.select(:_, :_, :_).each do |wme|
         alpha.activate wme if wme =~ alpha.template
       end
     end
@@ -267,7 +263,7 @@ module Wongi::Engine
     end
 
     def prepare_query(name, conditions, parameters, actions = [])
-      query = queries[name] = BetaMemory.new(nil)
+      query = queries[name] = RootNode.new(nil)
       query.rete = self
       query.seed(parameters.to_h { |param| [param, nil] })
       results[name] = build_production query, conditions, parameters, actions, true
@@ -297,8 +293,7 @@ module Wongi::Engine
                  else
                    raise Error, "Network#each expect a template or nothing at all"
                  end
-      source = best_alpha(template)
-      matching = overlays.flat_map { |overlay| overlay.wmes(source).select { |wme| wme =~ template } }
+      matching = current_overlay.select(template)
       if block_given?
         matching.each(&block)
       else
@@ -307,24 +302,16 @@ module Wongi::Engine
     end
 
     def select(s, p, o)
-      template = Template.new(s, p, o)
-      source = best_alpha(template)
-      matching = overlays.flat_map { |overlay| overlay.wmes(source).select { |wme| wme =~ template } }
-      matching.each { |st| yield st.subject, st.predicate, st.object } if block_given?
-      matching
+      matching = current_overlay.select(s, p, o)
+      if block_given?
+        matching.each(&block)
+      else
+        matching.each
+      end
     end
 
     def find(s, p, o)
-      template = Template.new(s, p, o)
-      source = best_alpha(template)
-      overlays.reverse.reduce(nil) do |found, overlay|
-        if found
-          found
-        else
-          print "looking for #{template} on overlay #{overlay.object_id}"
-          overlay.wmes(source).find { |wme| wme =~ template }.tap { puts " -> #{_1}"}
-        end
-      end
+      current_overlay.select(s, p, o).first
     end
 
     protected
@@ -390,8 +377,10 @@ module Wongi::Engine
       # the root node should not be deleted
       return unless node.parent
 
-      if [BetaMemory, NegNode, NccNode, NccPartner].any? { |klass| node.is_a? klass }
-        node.tokens.first.destroy while node.tokens.first
+      node.tokens.dup.each do |token|
+        overlays.each do |overlay|
+          overlay.remove_own_token(token)
+        end
       end
 
       node.parent.children.delete node

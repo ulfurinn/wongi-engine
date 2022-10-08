@@ -1,18 +1,6 @@
 module Wongi
   module Engine
-    TokenAssignment = Struct.new(:wme, :field) do
-      def call(_token = nil)
-        wme.send field
-      end
 
-      def inspect
-        "#{field} of #{wme}"
-      end
-
-      def to_s
-        inspect
-      end
-    end
 
     class BetaTest
       attr_reader :field, :variable
@@ -58,7 +46,8 @@ module Wongi
 
       def alpha_activate(wme)
         assignments = collect_assignments(wme)
-        parent.tokens.each do |token|
+
+        tokens.each do |token|
           next unless matches?(token, wme)
 
           children.each do |beta|
@@ -68,15 +57,13 @@ module Wongi
       end
 
       def alpha_deactivate(wme)
-        children.each do |child|
-          child.tokens.each do |token|
-            child.beta_deactivate token if token.wme == wme
-          end
-        end
+        beta_deactivate_children(wme:)
       end
 
       def beta_activate(token)
-        alpha.wmes.each do |wme|
+        overlay.add_token(token)
+
+        select_wmes(alpha.template).each do |wme|
           next unless matches?(token, wme)
 
           assignments = collect_assignments(wme)
@@ -87,17 +74,14 @@ module Wongi
       end
 
       def beta_deactivate(token)
-        children.each do |child|
-          child.tokens.each do |t|
-            child.beta_deactivate t if t.parent == token
-          end
-        end
+        overlay.remove_token(token)
+        beta_deactivate_children(token:)
       end
 
       def refresh_child(child)
-        alpha.wmes.each do |wme|
+        select_wmes(alpha.template).each do |wme|
           assignments = collect_assignments(wme)
-          parent.tokens.each do |token|
+          tokens.each do |token|
             child.beta_activate Token.new(child, token, wme, assignments) if matches?(token, wme)
           end
         end

@@ -2,22 +2,17 @@ module Wongi::Engine
   class Token
     include CoreExt
 
-    attr_reader :children, :wme, :node, :overlay, :neg_join_results, :opt_join_results, :ncc_results, :generated_wmes
+    attr_reader :children, :wme, :node, :neg_join_results, :opt_join_results, :ncc_results, :generated_wmes
     attr_accessor :owner, :parent
 
     attr_predicate :optional
     attr_predicate :deleted
 
-    def initialize(node, token, wme, assignments)
+    def initialize(node, token, wme, assignments = {})
       @node = node
       @parent = token
       @wme = wme
       @assignments = assignments
-      @overlay = if wme
-                   wme.overlay.highest(token.overlay)
-                 else
-                   token ? token.overlay : node.rete.default_overlay
-                 end
       @children = []
       @deleted = false
       @neg_join_results = []
@@ -74,9 +69,9 @@ module Wongi::Engine
       to_s
     end
 
-    def destroy
-      deleted!
-    end
+    # def destroy
+    #   deleted!
+    # end
 
     def dispose!
       parent.children.delete(self) if parent

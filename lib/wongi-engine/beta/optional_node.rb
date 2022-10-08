@@ -8,8 +8,6 @@ module Wongi
     end
 
     class OptionalNode < BetaNode
-      include TokenContainer
-
       attr_reader :alpha, :tests, :assignment_pattern
 
       def initialize(parent, alpha, tests, assignments)
@@ -25,7 +23,7 @@ module Wongi
         wme.opt_join_results << jr
       end
 
-      def alpha_activate(wme)
+      def alpha_activate(wme, children: self.children)
         assignments = collect_assignments(wme)
         tokens.each do |token|
           next unless matches? token, wme
@@ -65,8 +63,7 @@ module Wongi
       def beta_activate(t)
         return if tokens.find { |token| token.parent == t }
 
-        token = Token.new(self, t, nil, {})
-        token.overlay.add_token(token, self)
+        overlay.add_token(token)
         match = false
         alpha.wmes.each do |wme|
           assignments = collect_assignments(wme)
@@ -86,30 +83,18 @@ module Wongi
         end
       end
 
-      def beta_deactivate(t)
-        token = tokens.find { |own_token| own_token.parent == t }
-        return unless token
-
-        token.overlay.remove_token(token, self)
-        token.deleted!
-        token.parent.children.delete token if token.parent
-        token.opt_join_results.each(&:unlink)
-        children.each do |child|
-          child.tokens.each do |child_token|
-            child.beta_deactivate(child_token) if child_token.parent == token
-          end
-        end
-        token
+      def beta_deactivate(token)
+        overlay.remove_token(token)
+        beta_deactivate_children(token:)
       end
 
       def refresh_child(child)
-        tmp = children
-        self.children = [child]
-        refresh # do the beta part
-        alpha.wmes.each do |wme|
-          alpha_activate wme
+        tokens.each do |token|
+          child.beta_activate(Token.new(child, token, nil, {}))
         end
-        self.children = tmp
+        select_wmes(alpha.template).each do |wme|
+          alpha_activate wme, children: [child]
+        end
       end
 
       private

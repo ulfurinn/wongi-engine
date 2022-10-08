@@ -14,7 +14,7 @@ describe Wongi::Engine::Network do
   it 'should retract facts' do
     subject << [1, 2, 3]
     subject.retract [1, 2, 3]
-    expect(subject.select(:_, 2, :_)).to be_empty
+    expect(subject.select(:_, 2, :_).count).to eq(0)
   end
 
   it 'asserted facts end up in productions' do
@@ -80,7 +80,7 @@ describe Wongi::Engine::Network do
   end
 
   it 'retracted facts should propagate through join chains' do
-    deactivated = nil
+    assignments = nil
 
     prod = engine << rule {
       forall {
@@ -88,7 +88,9 @@ describe Wongi::Engine::Network do
         has :Y, :is, :Z
       }
       make {
-        action deactivate: ->(token) { deactivated = token }
+        action deactivate: lambda { |token|
+          assignments = token.assignments
+        }
       }
     }
 
@@ -99,9 +101,9 @@ describe Wongi::Engine::Network do
 
     engine.retract [1, :is, 2]
     expect(prod).to have(0).tokens
-    expect(deactivated[:X]).to be == 1
-    expect(deactivated[:Y]).to be == 2
-    expect(deactivated[:Z]).to be == 3
+    expect(assignments[:X].call).to be == 1
+    expect(assignments[:Y].call).to be == 2
+    expect(assignments[:Z].call).to be == 3
   end
 
   it 'retraction should reactivate neg nodes' do

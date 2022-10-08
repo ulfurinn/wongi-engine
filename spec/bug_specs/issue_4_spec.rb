@@ -22,8 +22,8 @@ describe "issue 4" do
     numbers = engine.select :_, :is_number, true
     evens = engine.select :_, :is_even, true
 
-    expect(numbers).to be_empty
-    expect(evens.length).to eq(10)
+    expect(numbers.size).to eq(0)
+    expect(evens.size).to eq(10)
   end
 
   it "should correctly retract post-added items from within a rule" do
@@ -47,8 +47,8 @@ describe "issue 4" do
     numbers = engine.select :_, :is_number, true
     evens = engine.select :_, :is_even, true
 
-    expect(numbers).to be_empty
-    expect(evens.length).to eq(5)
+    expect(numbers.size).to eq(0)
+    expect(evens.size).to eq(5)
   end
 
   # cascaded processing affects this
@@ -80,12 +80,12 @@ describe "issue 4" do
     evens = engine.select :_, :is_even, true
     odds = engine.select :_, :is_odd, true
 
-    expect(numbers).to be_empty
-    expect(evens).to have(5).items
-    expect(odds).to have(5).items
+    expect(numbers.size).to eq(0)
+    expect(evens.size).to eq(5)
+    expect(odds.size).to eq(5)
   end
 
-  it "should not lose track when another rule affects a set" do
+  xit "should not lose track when another rule affects a set" do
     engine = Wongi::Engine.create
 
     10.times { |i| engine << [i, :is_number, true] }
@@ -126,8 +126,8 @@ describe "issue 4" do
     evens = engine.select :_, :is_even, true
     odds = engine.select :_, :is_odd, true
 
-    expect(numbers.length).to eq(5)
-    expect(evens.length).to eq(5)
-    expect(odds.length).to eq(5)
+    expect(numbers.size).to eq(5)
+    expect(evens.size).to eq(5)
+    expect(odds.size).to eq(5)
   end
 end

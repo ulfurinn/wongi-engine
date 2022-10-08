@@ -31,8 +31,8 @@ describe 'the engine' do
 
       expect(engine.facts.to_a.length).to eq(3)
       expect(engine.facts.select(&:manual?).length).to eq(2)
-      generated = engine.facts.find(&:generated?)
-      expect(generated).to be == Wongi::Engine::WME.new("Bob", "friend", "Alice")
+      generated = engine.facts.select(&:generated?)
+      expect(generated).to eq([Wongi::Engine::WME.new("Bob", "friend", "Alice")])
     end
 
     it 'should generate wmes with an added rule' do
@@ -51,7 +51,7 @@ describe 'the engine' do
         }
       }
 
-      expect(engine.facts.to_a.length).to eq(3)
+      expect(engine.facts.to_a.size).to eq(3)
       expect(engine.facts.select(&:manual?).size).to eq(2)
     end
 
@@ -70,9 +70,9 @@ describe 'the engine' do
       engine << [:p, "reflexive", true]
       engine << %i[x p y]
 
-      expect(engine.wmes.to_a.length).to eq(4)
-      expect(engine.select(:x, :p, :x).length).to eq(1)
-      expect(engine.select(:y, :p, :y).length).to eq(1)
+      expect(engine.wmes.count).to eq(4)
+      expect(engine.select(:x, :p, :x).count).to eq(1)
+      expect(engine.select(:y, :p, :y).count).to eq(1)
     end
   end
 
@@ -237,7 +237,7 @@ describe 'the engine' do
     end
   end
 
-  context 'with timelines' do
+  xcontext 'with timelines' do
     it 'should not match with no past point' do
       production = engine.rule {
         forall {

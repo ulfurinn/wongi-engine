@@ -1,14 +1,13 @@
 module Wongi
   module Engine
     class NccPartner < BetaNode
-      include TokenContainer
 
       attr_accessor :ncc, :divergent
 
       def beta_activate(token)
         t = Token.new self, token, nil, {}
         owner = owner_for(t)
-        t.overlay.add_token(t, self)
+        t.overlay.add_token(t)
         return unless owner
 
         owner.ncc_results << t
@@ -20,7 +19,7 @@ module Wongi
         token = tokens.find { |tok| tok.parent == t }
         return unless token
 
-        token.overlay.remove_token(token, self)
+        token.overlay.remove_token(token)
 
         owner = token.owner
         return unless owner

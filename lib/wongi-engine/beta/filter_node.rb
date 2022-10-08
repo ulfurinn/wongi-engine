@@ -12,20 +12,16 @@ module Wongi
       def beta_activate(token)
         return unless test.passes?(token)
 
+        overlay.add_token(token)
+
         children.each do |child|
           child.beta_activate Token.new(child, token, nil, {})
         end
       end
 
       def beta_deactivate(token)
-        children.each do |child|
-          child.tokens.each do |t|
-            if t.parent == token
-              child.beta_deactivate t
-              # token.destroy
-            end
-          end
-        end
+        overlay.remove_token(token)
+        beta_deactivate_children(token:)
       end
 
       def equivalent?(test)
@@ -35,7 +31,7 @@ module Wongi
       def refresh_child(child)
         tmp = children
         self.children = [child]
-        parent.tokens.each do |token|
+        tokens.each do |token|
           beta_activate token
         end
         self.children = tmp

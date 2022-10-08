@@ -5,10 +5,16 @@ module Wongi::Engine
     attr_accessor :rete
     attr_reader :generating_tokens
     attr_reader :neg_join_results, :opt_join_results
-    attr_accessor :overlay
+    # attr_accessor :overlay
 
     attr_predicate :deleted
     attr_predicate :manual
+
+    def self.from_concrete_template(template)
+      raise "template #{template} is not concrete" unless template.concrete?
+
+      new(template.subject, template.predicate, template.object)
+    end
 
     def initialize(s, p, o, r = nil)
       manual!
@@ -33,9 +39,10 @@ module Wongi::Engine
     end
 
     def ==(other)
-      subject == other.subject && predicate == other.predicate && object == other.object
+      other && subject == other.subject && predicate == other.predicate && object == other.object
     end
 
+    # @param template Wongi::Engine::Template
     def =~(template)
       raise Wongi::Engine::Error, "Cannot match a WME against a #{template.class}" unless template.is_a?(Template)
 

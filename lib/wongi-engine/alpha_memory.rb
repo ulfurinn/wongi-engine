@@ -7,7 +7,6 @@ module Wongi::Engine
       @rete = rete
       @betas = []
       @frozen = false
-      rete.default_overlay.index(template)
     end
 
     def activate(wme)

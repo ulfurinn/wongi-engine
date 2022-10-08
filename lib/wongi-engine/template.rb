@@ -1,15 +1,31 @@
 module Wongi::Engine
   Template = Struct.new(:subject, :predicate, :object) do
     def self.variable?(thing)
-      return false unless thing.is_a?(Symbol)
+      thing.is_a?(Symbol) && thing[0] >= 'A' && thing[0] <= 'Z'
+    end
 
-      thing[0] >= 'A' && thing[0] <= 'Z'
+    def self.placeholder?(thing)
+      thing.is_a?(Symbol) && thing.start_with?('_')
+    end
+
+    def self.concrete?(thing)
+      !variable?(thing) && !placeholder?(thing)
+    end
+
+    def self.match?(wme_element, template_element)
+      return true if variable?(template_element) || placeholder?(template_element)
+
+      wme_element == template_element
     end
 
     # TODO: reintroduce Network#import when bringing back RDF support
 
     def root?
       subject == :_ && predicate == :_ && object == :_
+    end
+
+    def concrete?
+      Template.concrete?(subject) && Template.concrete?(predicate) && Template.concrete?(object)
     end
 
     def variables

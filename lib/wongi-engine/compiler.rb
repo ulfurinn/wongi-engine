@@ -24,37 +24,13 @@ module Wongi::Engine
       end
     end
 
-    # TODO: should the following be the responsibility of Compiler or of each individual DSL clause?
-
-    def beta_memory
-      return if node.is_a?(BetaMemory)
-
-      self.node = if (existing = node.children.find { |n| n.is_a?(BetaMemory) })
-                    existing
-                  else
-                    BetaMemory.new(node).tap(&:refresh)
-                  end
-    end
-
-    def singleton_beta_memory
-      return if node.is_a?(SingletonBetaMemory)
-
-      self.node = if (existing = node.children.find { |n| n.is_a?(SingletonBetaMemory) })
-                    existing
-                  else
-                    SingletonBetaMemory.new(node).tap(&:refresh)
-                  end
-    end
-
     def assignment_node(variable, body)
-      beta_memory
       self.node = AssignmentNode.new(node, variable, body).tap(&:refresh)
       declare(variable)
     end
 
     def join_node(condition, tests, assignment)
       alpha = rete.compile_alpha(condition)
-      beta_memory
       self.node = if (existing = node.children.find { |n| n.is_a?(JoinNode) && n.equivalent?(alpha, tests, assignment) && !n.children.map(&:class).include?(Wongi::Engine::OrNode) })
                     existing
                   else
@@ -63,6 +39,7 @@ module Wongi::Engine
                       alpha.betas << join unless alpha_deaf
                     end
                   end
+      node.tap(&:refresh)
     end
 
     def neg_node(condition, tests, unsafe)
@@ -75,7 +52,6 @@ module Wongi::Engine
 
     def opt_node(condition, tests, assignment)
       alpha = rete.compile_alpha(condition)
-      beta_memory
       self.node = OptionalNode.new(node, alpha, tests, assignment).tap do |node|
         alpha.betas << node unless alpha_deaf
       end
@@ -84,15 +60,12 @@ module Wongi::Engine
     def aggregate_node(condition, tests, assignment, map, function, assign)
       declare(assign)
       alpha = rete.compile_alpha(condition)
-      beta_memory
       self.node = AggregateNode.new(node, alpha, tests, assignment, map, function, assign).tap do |node|
         alpha.betas << node unless alpha_deaf
       end
-      beta_memory
     end
 
     def or_node(variants)
-      beta_memory
       subvariables = []
       branches = variants.map do |variant|
         subcompiler = Compiler.new(rete, node, variant.conditions, parameters, false)
@@ -110,7 +83,6 @@ module Wongi::Engine
     end
 
     def ncc_node(subrule, alpha_deaf)
-      beta_memory
       subcompiler = Compiler.new(rete, node, subrule.conditions, parameters, alpha_deaf)
       declared_variables.each { |v| subcompiler.declare(v) }
       bottom = subcompiler.compile
@@ -130,8 +102,7 @@ module Wongi::Engine
     end
 
     def filter_node(filter)
-      beta_memory
-      self.node = FilterNode.new(node, filter)
+      self.node = FilterNode.new(node, filter).tap(&:refresh)
     end
   end
 end

@@ -8,8 +8,6 @@ module Wongi
     end
 
     class NegNode < BetaNode
-      include TokenContainer
-
       attr_reader :alpha, :tests
 
       def initialize(parent, tests, alpha, unsafe)
@@ -19,21 +17,13 @@ module Wongi
         @unsafe = unsafe
       end
 
-      def alpha_activate(wme)
+      def alpha_activate(wme, children: self.children)
         tokens.each do |token|
           next unless matches?(token, wme) && (@unsafe || !token.generated?(wme)) # feedback loop protection
 
           # order matters for proper invalidation
           make_join_result(token, wme)
-          # token.delete_children #if token.neg_join_results.empty? # TODO why was this check here? it seems to break things
-          children.each do |child|
-            child.tokens.each do |t|
-              if t.parent == token
-                child.beta_deactivate t
-                # token.destroy
-              end
-            end
-          end
+          beta_deactivate_children(token:, children:)
         end
       end
 
@@ -46,7 +36,7 @@ module Wongi
             next unless token.neg_join_results.empty?
 
             children.each do |child|
-              child.beta_activate Token.new(child, token, nil, {})
+              child.beta_activate(Token.new(child, token, nil))
             end
           end
         end
@@ -55,43 +45,28 @@ module Wongi
       def beta_activate(token)
         return if tokens.find { |et| et.duplicate? token }
 
-        token.overlay.add_token(token, self)
-        alpha.wmes.each do |wme|
+        overlay.add_token(token)
+        select_wmes(alpha.template).each do |wme|
           make_join_result(token, wme) if matches?(token, wme)
         end
-        return unless token.neg_join_results.empty?
+        return if token.neg_join_results.any?
 
         children.each do |child|
-          child.beta_activate Token.new(child, token, nil, {})
+          child.beta_activate(Token.new(child, token, nil, {}))
         end
       end
 
       def beta_deactivate(token)
-        return nil unless tokens.find token
-
-        token.overlay.remove_token(token, self)
-        token.deleted!
-        if token.parent
-          token.parent.children.delete token # should this go into Token#destroy?
-        end
-        token.neg_join_results.each(&:unlink)
-        children.each do |child|
-          child.tokens.each do |t|
-            if t.parent == token
-              child.beta_deactivate t
-              # token.destroy
-            end
-          end
-        end
-        token
+        overlay.remove_token(token)
+        beta_deactivate_children(token:)
       end
 
       def refresh_child(child)
         tokens.each do |token|
-          child.beta_activate Token.new(child, token, nil, {}) if token.neg_join_results.empty?
+          child.beta_activate(Token.new(child, token, nil, {})) if token.neg_join_results.empty?
         end
-        alpha.wmes.each do |wme|
-          alpha_activate wme
+        select_wmes(alpha.template).each do |wme|
+          alpha_activate wme, children: [child]
         end
       end
 
