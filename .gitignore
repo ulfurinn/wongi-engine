@@ -19,3 +19,4 @@ test/version_tmp
 tmp
 .ruby-version
 .idea
+.hugo_build.lock
