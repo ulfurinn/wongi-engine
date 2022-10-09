@@ -66,11 +66,7 @@ module Wongi::Engine
     def <<(thing)
       case thing
       when Array
-        wme = WME.new(*thing).tap { |wme|
-          wme.rete = rete
-          # wme.overlay = self
-        }
-        assert(wme)
+        assert(WME.new(*thing))
       when WME
         assert(thing)
       else

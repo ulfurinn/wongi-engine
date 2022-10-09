@@ -13,8 +13,7 @@ module Wongi::Engine
         # p execute: {token:}
         subject, predicate, object = template.resolve!(token)
 
-        # link to rete here to ensure proper linking with token
-        wme = WME.new subject, predicate, object, rete
+        wme = WME.new(subject, predicate, object)
 
         origin = GeneratorOrigin.new(token, self)
 

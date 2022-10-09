@@ -2,7 +2,6 @@ module Wongi::Engine
   WME = Struct.new(:subject, :predicate, :object) do
     include CoreExt
 
-    attr_accessor :rete
     # attr_reader :neg_join_results, :opt_join_results
 
     def self.from_concrete_template(template)
@@ -11,18 +10,8 @@ module Wongi::Engine
       new(template.subject, template.predicate, template.object)
     end
 
-    def initialize(s, p, o, r = nil)
-      # @neg_join_results = []
-      # @opt_join_results = []
-
-      @rete = r
-
-      # TODO: reintroduce Network#import when bringing back RDF support
-      super(s, p, o)
-    end
-
     def dup
-      self.class.new(subject, predicate, object, rete)
+      self.class.new(subject, predicate, object)
     end
 
     def ==(other)

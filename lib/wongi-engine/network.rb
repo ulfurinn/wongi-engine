@@ -176,10 +176,7 @@ module Wongi::Engine
       else
         case something
         when Array
-          assert(WME.new(*something).tap { |wme|
-            wme.rete = self
-            # wme.overlay = default_overlay
-          })
+          assert(WME.new(*something))
         when WME
           assert something
           # when Wongi::RDF::Statement
