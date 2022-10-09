@@ -44,7 +44,7 @@ module Wongi::Engine
       return if @seen_betas.include? beta
 
       @seen_betas << beta
-      io.puts "node#{print_hash beta.object_id} [label=\"#{beta.class.name.split('::').last}\"];"
+      io.puts "node#{print_hash beta.object_id} [label=\"#{beta.class.name.split('::').last}\\nid=#{beta.object_id}\"];"
       if beta.is_a? NccNode
         io.puts "node#{print_hash beta.partner.object_id} -> node#{print_hash beta.object_id};"
         io.puts "{ rank=same; node#{print_hash beta.partner.object_id} node#{print_hash beta.object_id} }"

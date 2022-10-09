@@ -4,47 +4,43 @@ module Wongi
       attr_accessor :partner
 
       def beta_activate(token)
-        return if tokens.find { |t| t.parent == token }
+        # p beta_activate: {class: self.class, object_id:, token:}
+        return if tokens.find { |t| t.duplicate? token }
 
-        t = Token.new self, token, nil, {}
-        t.overlay.add_token(t)
+        overlay.add_token(token)
         partner.tokens.each do |ncc_token|
-          next unless ncc_token.ancestors.find { |a| a.equal? token }
-
-          t.ncc_results << ncc_token
-          ncc_token.owner = t
+          if partner.owner_for(ncc_token) == token
+            token.ncc_results << ncc_token
+            ncc_token.owner = token
+          end
         end
-        return unless t.ncc_results.empty?
+        return if token.ncc_results.any?
 
         children.each do |child|
-          child.beta_activate Token.new(child, t, nil, {})
+          child.beta_activate Token.new(child, token, nil, {})
         end
       end
 
       def beta_deactivate(token)
-        t = tokens.find { |tok| tok.parent == token }
-        return unless t
+        # p beta_deactivate: {class: self.class, object_id:, token:}
+        overlay.remove_token(token)
 
-        t.overlay.remove_token(t, self)
-        # t.deleted!
-        partner.tokens.select { |ncc| ncc.owner == t }.each do |ncc_token|
+        partner.tokens.select { |ncc| ncc.owner == token }.each do |ncc_token|
           ncc_token.owner = nil
-          t.ncc_results.delete(ncc_token)
+          token.ncc_results.delete(ncc_token)
         end
-        children.each do |beta|
-          beta.tokens.select { |child_token| child_token.parent == t }.each do |child_token|
-            beta.beta_deactivate(child_token)
-          end
-        end
+        beta_deactivate_children(token:)
       end
 
       def ncc_activate(token)
+        # p ncc_activate: {class: self.class, object_id:, token:}
         children.each do |child|
           child.beta_activate Token.new(child, token, nil, {})
         end
       end
 
       def ncc_deactivate(token)
+        # p ncc_deactivate: {class: self.class, object_id:, token:}
         children.each do |beta|
           beta.tokens.select { |t| t.parent == token }.each do |t|
             beta.beta_deactivate t

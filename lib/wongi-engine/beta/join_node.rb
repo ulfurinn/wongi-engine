@@ -45,6 +45,7 @@ module Wongi
       end
 
       def alpha_activate(wme)
+        # p alpha_activate: {class: self.class, object_id:, wme:}
         assignments = collect_assignments(wme)
 
         tokens.each do |token|
@@ -61,9 +62,13 @@ module Wongi
       end
 
       def beta_activate(token)
+        # p beta_activate: {class: self.class, object_id:, token:}
+        return if tokens.find { |t| t.duplicate? token }
+
         overlay.add_token(token)
 
         select_wmes(alpha.template).each do |wme|
+
           next unless matches?(token, wme)
 
           assignments = collect_assignments(wme)
@@ -74,6 +79,7 @@ module Wongi
       end
 
       def beta_deactivate(token)
+        # p beta_deactivate: {class: self.class, object_id:, token:}
         overlay.remove_token(token)
         beta_deactivate_children(token:)
       end

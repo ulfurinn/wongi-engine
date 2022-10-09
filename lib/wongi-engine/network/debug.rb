@@ -39,8 +39,8 @@ module Wongi::Engine
       def dump_wme(wme, io)
         io.puts "\tWME: #{wme.object_id} #{wme}"
         wme.tokens.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
-        io.puts "\tGENERATING:" unless wme.generating_tokens.empty?
-        wme.generating_tokens.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
+        io.puts "\tGENERATING:" unless wme.generators.empty?
+        wme.generators.each { |token| io.puts "\t\tTOKEN #{token.object_id}" }
       end
 
       def dump_beta(beta, io)

@@ -96,7 +96,7 @@ module Wongi::Engine
           rete.real_assert(wme)
         when :retract
           remove_wme(wme, **options)
-          rete.real_retract(wme, options)
+          rete.real_retract(wme)
         end
       end
     end
@@ -192,6 +192,7 @@ module Wongi::Engine
     end
 
     private def add_wme(wme)
+      # p add_wme: {wme:, generated: wme.generated?}
       if hidden_parent_wmes.key?(wme.object_id)
         hidden_parent_wmes.delete(wme.object_id)
         return
@@ -212,6 +213,7 @@ module Wongi::Engine
     end
 
     private def remove_wme(wme, automatic: false)
+      # p remove_wme: {wme:, automatic:}
       found_wme = find_own_wme(wme)
       if found_wme
         if !automatic && found_wme.generated?
@@ -235,15 +237,13 @@ module Wongi::Engine
         return
       end
 
-      hidden_parent_wmes[wme.object_id] = true
-
       if automatic
         parents_wme = find_parents_wme(wme, with_manual: false)
         if parents_wme
           hidden_parent_wmes[parents_wme.object_id] = true
         else
           # TODO: is it possible to have a manual one in the parents but no local ones?
-          raise StandardError, "retracting non-existing wme"
+          raise StandardError, "retracting non-existing wme #{wme}"
         end
       else
         # we can have a mix of manual and generated WMEs in the overlay lineage;

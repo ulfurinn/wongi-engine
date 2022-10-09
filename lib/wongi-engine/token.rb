@@ -44,8 +44,6 @@ module Wongi::Engine
 
     def [](var)
       a = assignments[var]
-      return unless a
-
       a.respond_to?(:call) ? a.call(self) : a
     end
 
@@ -59,8 +57,8 @@ module Wongi::Engine
     end
 
     def to_s
-      str = "TOKEN [ #{object_id} parent=#{parent ? parent.object_id : 'nil'} "
-      all_assignments.each_pair { |key, value| str << "#{key} => #{value} " }
+      str = "TOKEN [ #{object_id} ancestors=#{ancestors.map(&:object_id).map(&:to_s).join(".")} "
+      all_assignments.each_pair { |key, value| str << "#{key}=#{value.is_a?(TokenAssignment) ? "#{value.call} (#{value})" : value} " }
       str << "]"
       str
     end
@@ -74,10 +72,10 @@ module Wongi::Engine
     # end
 
     def dispose!
-      parent.children.delete(self) if parent
+      # parent.children.delete(self) if parent
+      # @parent = nil
       neg_join_results.dup.each(&:unlink)
       opt_join_results.dup.each(&:unlink)
-      @parent = nil
       @wme = nil
     end
 

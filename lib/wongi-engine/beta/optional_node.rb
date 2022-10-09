@@ -60,12 +60,12 @@ module Wongi
         end
       end
 
-      def beta_activate(t)
-        return if tokens.find { |token| token.parent == t }
+      def beta_activate(token)
+        return if tokens.find { |t| t.duplicate? token }
 
         overlay.add_token(token)
         match = false
-        alpha.wmes.each do |wme|
+        select_wmes(alpha.template).each do |wme|
           assignments = collect_assignments(wme)
           next unless matches? token, wme
 

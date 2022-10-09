@@ -24,9 +24,32 @@ module Wongi
         parents.map(&:depth).max + 1
       end
 
+      def beta_activate(token)
+        # p beta_activate: {class: self.class, object_id:, token:}
+        return if tokens.find { token.duplicate?(_1) }
+
+        overlay.add_token(token)
+
+        children.each do |child|
+          child.beta_activate(Token.new(child, token, nil))
+        end
+      end
+
+      def beta_deactivate(token)
+        # p beta_deactivate: {class: self.class, object_id:, token:}
+        overlay.remove_token(token)
+        beta_deactivate_children(token:)
+      end
+
       def refresh
         parents.each do |parent|
           parent.refresh_child self
+        end
+      end
+
+      def refresh_child(child)
+        tokens.each do |token|
+          child.beta_activate(Token.new(child, token, nil))
         end
       end
     end

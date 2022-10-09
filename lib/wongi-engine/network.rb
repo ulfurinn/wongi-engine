@@ -123,15 +123,8 @@ module Wongi::Engine
     end
 
     # @private
-    def real_retract(wme, options)
-      if wme.generated?
-        # this is still held by a gen action;
-        # clear the manual status
-        wme.manual = false
-      elsif options[:automatic] && wme.manual?
-        return
-      end
-
+    def real_retract(wme)
+      # p real_retract: {wme:}
       alphas_for(wme).each { |a| a.deactivate wme }
     end
 

@@ -54,6 +54,7 @@ module Wongi::Engine
       alpha = rete.compile_alpha(condition)
       self.node = OptionalNode.new(node, alpha, tests, assignment).tap do |node|
         alpha.betas << node unless alpha_deaf
+        node.refresh
       end
     end
 
@@ -62,7 +63,7 @@ module Wongi::Engine
       alpha = rete.compile_alpha(condition)
       self.node = AggregateNode.new(node, alpha, tests, assignment, map, function, assign).tap do |node|
         alpha.betas << node unless alpha_deaf
-      end
+      end.tap(&:refresh)
     end
 
     def or_node(variants)
@@ -90,8 +91,8 @@ module Wongi::Engine
         self.node = existing
         return
       end
-      ncc = NccNode.new node
-      partner = NccPartner.new subcompiler.tap(&:beta_memory).node
+      ncc = NccNode.new(node)
+      partner = NccPartner.new(subcompiler.node)
       ncc.partner = partner
       partner.ncc = ncc
       partner.divergent = node

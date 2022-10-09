@@ -37,6 +37,7 @@ module Wongi::Engine
     abstract :beta_activate
     abstract :beta_deactivate
     abstract :beta_reactivate
+    abstract :refresh_child
 
     def assignment_node(variable, body)
       node = AssignmentNode.new self, variable, body
@@ -54,10 +55,6 @@ module Wongi::Engine
           child.beta_deactivate(child_token)
         end
       end
-    end
-
-    def refresh_child(_node)
-      raise "#{self.class} must implement refresh_child"
     end
 
     private def select_wmes(template)

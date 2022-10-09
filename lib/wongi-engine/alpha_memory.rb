@@ -17,6 +17,7 @@ module Wongi::Engine
     end
 
     def deactivate(wme)
+      # p deactivate: {wme:}
       betas.each do |beta|
         beta.alpha_deactivate wme
       end

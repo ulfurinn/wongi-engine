@@ -10,6 +10,8 @@ module Wongi
       end
 
       def beta_activate(token)
+        return if tokens.find { |t| t.duplicate? token }
+
         return unless test.passes?(token)
 
         overlay.add_token(token)
@@ -29,12 +31,9 @@ module Wongi
       end
 
       def refresh_child(child)
-        tmp = children
-        self.children = [child]
-        tokens.each do |token|
-          beta_activate token
+        tokens.select { test.passes?(_1) }.each do |token|
+          child.beta_activate Token.new(child, token, nil, {})
         end
-        self.children = tmp
       end
     end
   end

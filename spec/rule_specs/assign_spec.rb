@@ -80,7 +80,7 @@ describe "ASSIGN rule" do
     expect(x).to be == 1
   end
 
-  xit 'should handle booleans' do
+  it 'should handle booleans' do
     engine << rule do
       forall {
         has :a, :b, :c

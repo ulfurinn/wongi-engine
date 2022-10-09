@@ -68,20 +68,20 @@ describe "negative rule" do
     expect(prod).to have(1).tokens
   end
 
-  # it "should not create infinite feedback loops by default" do
+  it "should not create infinite feedback loops by default" do
 
-  #   engine << rule('feedback') {
-  #     forall {
-  #       neg :a, :b, :_
-  #     }
-  #     make {
-  #       gen :a, :b, :c
-  #     }
-  #   }
+    engine << rule('feedback') {
+      forall {
+        neg :a, :b, :_
+      }
+      make {
+        gen :a, :b, :c
+      }
+    }
 
-  #   engine.should have(1).facts
+    engine.should have(1).facts
 
-  # end
+  end
 
   it "should create infinite feedback loops with unsafe option" do
     counter = 0

@@ -18,6 +18,7 @@ module Wongi
       end
 
       def alpha_activate(wme, children: self.children)
+        # p alpha_activate: {class: self.class, object_id:, wme:}
         tokens.each do |token|
           next unless matches?(token, wme) && (@unsafe || !token.generated?(wme)) # feedback loop protection
 
@@ -28,6 +29,7 @@ module Wongi
       end
 
       def alpha_deactivate(wme)
+        # p alpha_deactivate: {class: self.class, object_id:, wme:}
         wme.neg_join_results.dup.each do |njr|
           tokens.each do |token|
             next unless token == njr.token
@@ -43,7 +45,8 @@ module Wongi
       end
 
       def beta_activate(token)
-        return if tokens.find { |et| et.duplicate? token }
+        # p beta_activate: {class: self.class, object_id:, token:}
+        return if tokens.find { |t| t.duplicate? token }
 
         overlay.add_token(token)
         select_wmes(alpha.template).each do |wme|
@@ -57,6 +60,7 @@ module Wongi
       end
 
       def beta_deactivate(token)
+        # p beta_deactivate: {class: self.class, object_id:, token:}
         overlay.remove_token(token)
         beta_deactivate_children(token:)
       end

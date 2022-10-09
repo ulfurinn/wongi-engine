@@ -85,7 +85,7 @@ describe "issue 4" do
     expect(odds.size).to eq(5)
   end
 
-  xit "should not lose track when another rule affects a set" do
+  it "should not lose track when another rule affects a set" do
     engine = Wongi::Engine.create
 
     10.times { |i| engine << [i, :is_number, true] }

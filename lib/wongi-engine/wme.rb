@@ -3,7 +3,7 @@ module Wongi::Engine
     include CoreExt
 
     attr_accessor :rete
-    attr_reader :generating_tokens
+    attr_reader :generators
     attr_reader :neg_join_results, :opt_join_results
     # attr_accessor :overlay
 
@@ -21,7 +21,7 @@ module Wongi::Engine
 
       @deleted = false
       @alphas = []
-      @generating_tokens = []
+      @generators = []
       @neg_join_results = []
       @opt_join_results = []
 
@@ -51,7 +51,7 @@ module Wongi::Engine
     end
 
     def generated?
-      !generating_tokens.empty?
+      !generators.empty?
     end
 
     def inspect
