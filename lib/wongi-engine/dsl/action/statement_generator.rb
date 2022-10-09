@@ -15,7 +15,6 @@ module Wongi::Engine
 
         # link to rete here to ensure proper linking with token
         wme = WME.new subject, predicate, object, rete
-        wme.manual = false
 
         origin = GeneratorOrigin.new(token, self)
 
@@ -23,29 +22,22 @@ module Wongi::Engine
         if (existing = overlay.find(wme))
           # do not mark purely manual tokens as generated, because a circular rule such as the symmetric friend generator this would cause both sides to become self-sustaining
           # TODO: but this may have to be smarter, because there may be more indirect ways of creating such a situation
-          if existing.generators.any?
+          if overlay.generated?(wme)
             token.generated_wmes << existing
-            existing.generators << origin
+            overlay.assert(existing, generator: origin)
           end
         else
           token.generated_wmes << wme
-          wme.generators << origin
-          overlay << wme
+          overlay.assert(wme, generator: origin)
         end
       end
 
       def deexecute(token)
         origin = GeneratorOrigin.new(token, self)
 
-        generated = token.generated_wmes.reject(&:manual?).select { _1.generators.include?(origin) }
-
-        wmes_for_deletion = generated.each_with_object([]) do |wme, acc|
-          wme.generators.delete origin
-          acc << wme if wme.generators.empty?
-        end
-
-        wmes_for_deletion.each do |wme|
-          overlay.retract wme, automatic: true
+        generated = token.generated_wmes.select { overlay.generators(_1).include?(origin) }
+        generated.each do |wme|
+          overlay.retract wme, generator: origin
         end
       end
     end

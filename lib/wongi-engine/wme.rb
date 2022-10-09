@@ -3,12 +3,7 @@ module Wongi::Engine
     include CoreExt
 
     attr_accessor :rete
-    attr_reader :generators
-    attr_reader :neg_join_results, :opt_join_results
-    # attr_accessor :overlay
-
-    attr_predicate :deleted
-    attr_predicate :manual
+    # attr_reader :neg_join_results, :opt_join_results
 
     def self.from_concrete_template(template)
       raise "template #{template} is not concrete" unless template.concrete?
@@ -17,13 +12,8 @@ module Wongi::Engine
     end
 
     def initialize(s, p, o, r = nil)
-      manual!
-
-      @deleted = false
-      @alphas = []
-      @generators = []
-      @neg_join_results = []
-      @opt_join_results = []
+      # @neg_join_results = []
+      # @opt_join_results = []
 
       @rete = r
 
@@ -32,10 +22,7 @@ module Wongi::Engine
     end
 
     def dup
-      self.class.new(subject, predicate, object, rete).tap do |wme|
-        wme.overlay = overlay
-        wme.manual = manual?
-      end
+      self.class.new(subject, predicate, object, rete)
     end
 
     def ==(other)
@@ -48,10 +35,6 @@ module Wongi::Engine
 
       result = match_member(subject, template.subject) & match_member(predicate, template.predicate) & match_member(object, template.object)
       result if result.match?
-    end
-
-    def generated?
-      !generators.empty?
     end
 
     def inspect

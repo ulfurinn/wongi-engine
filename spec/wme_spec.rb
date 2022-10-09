@@ -19,39 +19,7 @@ describe Wongi::Engine::WME do
       expect(subject.predicate).to be == "b"
       expect(subject.object).to be == "c"
     end
-
-    # it 'should use the rete to import members' do
-
-    #   rete = capitalizing_rete
-
-    #   wme = Wongi::Engine::WME.new "a", "b", "c", rete
-
-    #   expect( wme.subject ).to be == "A"
-    #   expect( wme.predicate ).to be == "B"
-    #   expect( wme.object ).to be == "C"
-
-    # end
-
-    it {
-      should be_manual
-    }
-
-    it {
-      should_not be_generated
-    }
   end
-
-  # it 'should be able to import into rete' do
-
-  #   rete = capitalizing_rete
-
-  #   imported = subject.import_into rete
-
-  #   expect( imported.subject ).to be == "A"
-  #   expect( imported.predicate ).to be == "B"
-  #   expect( imported.object ).to be == "C"
-
-  # end
 
   it 'should compare instances' do
     wme1 = Wongi::Engine::WME.new "a", "b", "c"

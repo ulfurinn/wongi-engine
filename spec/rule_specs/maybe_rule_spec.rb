@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "MAYBE rule" do
+xdescribe "MAYBE rule" do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
   let(:maybe_rule) {

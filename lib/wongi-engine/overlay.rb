@@ -8,6 +8,14 @@ module Wongi::Engine
     private attr_reader :hidden_parent_wmes
     private attr_reader :hidden_parent_tokens
 
+    private attr_reader :wme_generators
+    private attr_reader :hidden_parent_wme_generators
+
+    private attr_reader :wme_manual
+    private attr_reader :hidden_parent_wme_manual
+
+
+
     def initialize(rete, parent = nil)
       @rete = rete
       @parent = parent
@@ -25,6 +33,12 @@ module Wongi::Engine
 
       @tokens = Hash.new { |h, k| h[k] = [] }
       @hidden_parent_tokens = {}
+
+      @wme_generators = Hash.new { |h, k| h[k] = [] }
+      @hidden_parent_wme_generators = {}
+
+      @wme_manual = {}
+      @hidden_parent_wme_manual = {}
 
       @queue = []
     end
@@ -52,10 +66,11 @@ module Wongi::Engine
     def <<(thing)
       case thing
       when Array
-        assert(WME.new(*thing).tap { |wme|
+        wme = WME.new(*thing).tap { |wme|
           wme.rete = rete
           # wme.overlay = self
-        })
+        }
+        assert(wme)
       when WME
         assert(thing)
       else
@@ -63,23 +78,17 @@ module Wongi::Engine
       end
     end
 
-    def assert(wme)
-      operation = [:assert, wme]
+    def assert(wme, generator: nil)
+      operation = [:assert, wme, { generator: }]
       queue.push(operation)
 
       run_queue if queue.length == 1
     end
 
     def retract(wme, options = {})
-      real = if wme.is_a? Array
+      if wme.is_a?(Array)
         wme = WME.new(*wme)
-        rete.find(wme.subject, wme.predicate, wme.object)
-      else
-        wme
       end
-      return unless real
-
-      wme = real
 
       operation = [:retract, wme, options]
       queue.push(operation)
@@ -92,9 +101,12 @@ module Wongi::Engine
         operation, wme, options = queue.shift
         case operation
         when :assert
-          add_wme(wme)
+          wme = find_ignoring_hidden(wme) || wme
+          add_wme(wme, **options)
           rete.real_assert(wme)
         when :retract
+          wme = find_ignoring_hidden(wme)
+          return if wme.nil? # it's perhaps better to return quietly, because complicated cascades may delete a WME while we're going through the queue
           remove_wme(wme, **options)
           rete.real_retract(wme)
         end
@@ -118,11 +130,11 @@ module Wongi::Engine
     #   DeleteSafeEnumerator.new(raw_tokens(beta))
     # end
 
-    def find(wme, with_manual: nil)
+    def find(wme)
       if wme.is_a?(Array)
         wme = WME.new(*wme)
       end
-      find_wme(wme, with_manual:)
+      find_wme(wme)
     end
 
     def select(*args)
@@ -141,12 +153,51 @@ module Wongi::Engine
       end
     end
 
-    private def find_wme(wme, with_manual: nil)
-      own_wme = find_own_wme(wme)
-      if own_wme && (with_manual.nil? || own_wme.manual? == with_manual)
-        return own_wme
-      end
-      find_parents_wme(wme, with_manual:)
+    def manual?(wme)
+      wme_manual.key?(wme.object_id) ||
+        if parent
+          parent.manual?(wme) && !hidden_parent_wme_manual.key?(wme.object_id)
+        end
+    end
+
+    def generated?(wme)
+      generators(wme).any?
+    end
+
+    def generated_by?(wme, gen)
+      own_generated_by?(wme, gen) ||
+        if parent
+          parent.generated_by?(wme, gen) && !hidden_parent_wme_generators.key?(gen)
+        else
+          false
+        end
+    end
+
+    private def own_generated_by?(wme, gen)
+      wme_generators.key?(wme.object_id) && wme_generators[wme.object_id].include?(gen)
+    end
+
+    def generators(wme)
+      own_generators = wme_generators.key?(wme.object_id) ? wme_generators[wme.object_id] : []
+      parent_generators =
+        if parent
+          parent.generators(wme).reject { |g| hidden_parent_wme_generators.key?(g) }
+        else
+          []
+        end
+      own_generators + parent_generators
+    end
+
+    private def own_manual?(wme)
+      wme_manual.key?(wme.object_id)
+    end
+
+    private def own_generated?(wme)
+      wme_generators.key?(wme.object_id) && wme_generators[wme.object_id].any?
+    end
+
+    private def find_wme(wme)
+      find_own_wme(wme) || find_parents_wme(wme)
     end
 
     private def find_own_wme(wme)
@@ -157,13 +208,20 @@ module Wongi::Engine
       smallest.find { _1 == wme }
     end
 
-    private def find_parents_wme(wme, with_manual: nil)
+    private def find_parents_wme(wme)
       if parent
-        parent_wme = parent.find(wme, with_manual:)
+        parent_wme = parent.find(wme)
         parent_wme unless hidden_parent_wmes.key?(parent_wme.object_id)
       else
         nil
       end
+    end
+
+    def find_ignoring_hidden(wme)
+      find_own_wme(wme) ||
+        if parent
+          parent.find_ignoring_hidden(wme)
+        end
     end
 
     private def select_by_template(template)
@@ -191,72 +249,85 @@ module Wongi::Engine
       end
     end
 
-    private def add_wme(wme)
-      # p add_wme: {wme:, generated: wme.generated?}
-      if hidden_parent_wmes.key?(wme.object_id)
-        hidden_parent_wmes.delete(wme.object_id)
-        return
+    private def add_wme(wme, generator:)
+      # p add_wme: { wme:, generator: !!generator }
+
+      # if we previously hid this locally, unhide it
+      hidden_parent_wmes.delete(wme.object_id)
+      if generator
+        hidden_parent_wme_generators.delete(generator)
+      else
+        hidden_parent_wme_manual.delete(wme.object_id)
       end
 
-      if (own_wme = find_own_wme(wme))
-        own_wme.manual! if wme.manual?
-        return
-      end
-
-      if (existing = find_parents_wme(wme))
-        # generated in parent but manual here - must track separately
-        return unless wme.manual? && !existing.manual?
-      end
-
-      wmes << wme
-      indexes.each { _1.add(wme) }
-    end
-
-    private def remove_wme(wme, automatic: false)
-      # p remove_wme: {wme:, automatic:}
-      found_wme = find_own_wme(wme)
-      if found_wme
-        if !automatic && found_wme.generated?
-          if found_wme.manual?
-            # a gen action is still holding on to this, so just clear the manual flag
-            found_wme.manual = false
-          else
-            raise StandardError, "cannot manually retract automatically generated facts"
-          end
-        end
-
-        delete =
-          (automatic && !found_wme.manual?) || # manual is an override
-          (!automatic && !found_wme.generated?)
-
-        if delete
-          wmes.delete(found_wme)
-          indexes.each { _1.remove(found_wme) }
-        end
-
-        return
-      end
-
-      if automatic
-        parents_wme = find_parents_wme(wme, with_manual: false)
-        if parents_wme
-          hidden_parent_wmes[parents_wme.object_id] = true
+      if find_own_wme(wme)
+        if generator
+          wme_generators[wme.object_id] << generator unless own_generated_by?(wme, generator)
         else
-          # TODO: is it possible to have a manual one in the parents but no local ones?
-          raise StandardError, "retracting non-existing wme #{wme}"
+          wme_manual[wme.object_id] = true
+        end
+      elsif find_parents_wme(wme)
+        if generator
+          wme_generators[wme.object_id] << generator unless generated_by?(wme, generator)
+        else
+          wme_manual[wme.object_id] = true unless manual?(wme)
         end
       else
-        # we can have a mix of manual and generated WMEs in the overlay lineage;
-        # only retract local if we can have a manual one – and retract that one specifically by its object_id,
-        # leaving any generated ones visible
-        parents_wme = find_parents_wme(wme, with_manual: true)
-        if parents_wme
-          hidden_parent_wmes[parents_wme.object_id] = true
-        elsif find_parents_wme(wme, with_manual: false)
-          raise StandardError, "cannot manually retract automatically generated facts"
+        wmes << wme
+        indexes.each { _1.add(wme) }
+        if generator
+          wme_generators[wme.object_id] << generator
         else
-          raise StandardError, "retracting non-existing wme"
+          wme_manual[wme.object_id] = true
         end
+      end
+    end
+
+    private def remove_wme(wme, generator: nil)
+      # p remove_wme: { wme:, generator: !!generator }
+
+      if find_own_wme(wme)
+        if generator
+          if own_generated_by?(wme, generator)
+            wme_generators[wme.object_id].delete(generator)
+            wme_generators.delete(wme.object_id) if wme_generators[wme.object_id].empty?
+          end
+        elsif own_manual?(wme)
+          wme_manual.delete(wme.object_id)
+        end
+
+        if !own_generated?(wme) && !own_manual?(wme)
+          wmes.delete(wme)
+          indexes.each { _1.remove(wme) }
+        end
+      end
+
+      # did we also have an unshadowed parent version?
+      return unless find_parents_wme(wme)
+
+      # must be parents' then
+
+      if generator
+        # first, delete local
+        if own_generated_by?(wme, generator)
+          wme_generators[wme.object_id].delete(generator)
+          wme_generators.delete(wme.object_id) if wme_generators[wme.object_id].empty?
+        end
+        # if we're still generated, hide parents'
+        if generated_by?(wme, generator)
+          hidden_parent_wme_generators[generator] = true
+        end
+      else
+        if own_manual?(wme)
+          wme_manual.delete(wme.object_id)
+        end
+        if manual?(wme)
+          hidden_parent_wme_manual[wme.object_id] = true
+        end
+      end
+
+      if !manual?(wme) && !generated?(wme)
+        hidden_parent_wmes[wme.object_id] = true
       end
     end
 
