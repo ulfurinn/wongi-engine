@@ -1,6 +1,6 @@
 require "spec_helper"
 
-xdescribe "MAYBE rule" do
+describe "MAYBE rule" do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
   let(:maybe_rule) {
@@ -85,6 +85,6 @@ xdescribe "MAYBE rule" do
     engine.retract [1, 2, 3]
 
     expect(prod).to have(0).tokens
-    expect(engine.find(3, 4, 5).opt_join_results).to be_empty
+    expect(engine.base_overlay.opt_join_results_for(wme: engine.find(3, 4, 5))).to be_empty
   end
 end

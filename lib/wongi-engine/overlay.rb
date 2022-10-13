@@ -1,6 +1,6 @@
 module Wongi::Engine
   class Overlay
-    class NegJoinResults
+    class JoinResults
       private attr_reader :by_wme, :by_token
       private attr_reader :hidden
       def initialize()
@@ -19,46 +19,62 @@ module Wongi::Engine
         end
       end
 
-      def has?(njr)
-        by_wme.key?(njr.wme.object_id) && by_wme[njr.wme.object_id].key?(njr)
+      def has?(jr)
+        by_wme.key?(jr.wme.object_id) && by_wme[jr.wme.object_id].key?(jr)
       end
 
-      def hidden?(njr)
-        hidden.key?(njr)
+      def hidden?(jr)
+        hidden.key?(jr)
       end
 
-      def add(njr)
-        if hidden.key?(njr)
-          hidden.delete(njr)
+      def add(jr)
+        if hidden.key?(jr)
+          hidden.delete(jr)
         else
-          by_wme[njr.wme.object_id][njr] = true
-          by_token[njr.token.object_id][njr] = true
+          by_wme[jr.wme.object_id][jr] = true
+          by_token[jr.token.object_id][jr] = true
         end
       end
 
-      def remove(njr)
-        unless has?(njr)
-          hide(njr)
+      def remove(jr)
+        unless has?(jr)
+          hide(jr)
           return
         end
 
-        if by_wme.key?(njr.wme.object_id)
-          by_wme[njr.wme.object_id].delete(njr)
-          if by_wme[njr.wme.object_id].empty?
-            by_wme.delete(njr.wme.object_id)
+        if by_wme.key?(jr.wme.object_id)
+          by_wme[jr.wme.object_id].delete(jr)
+          if by_wme[jr.wme.object_id].empty?
+            by_wme.delete(jr.wme.object_id)
           end
         end
 
-        if by_token.key?(njr.token.object_id)
-          by_token[njr.token.object_id].delete(njr)
-          if by_token[njr.token.object_id].empty?
-            by_token.delete(njr.token.object_id)
+        if by_token.key?(jr.token.object_id)
+          by_token[jr.token.object_id].delete(jr)
+          if by_token[jr.token.object_id].empty?
+            by_token.delete(jr.token.object_id)
           end
         end
       end
 
-      def hide(njr)
-        hidden[njr] = true
+      def hide(jr)
+        hidden[jr] = true
+      end
+
+      def remove_token(token)
+        return unless by_token.key?(token.object_id)
+
+        by_token[token.object_id].keys.each do |jr|
+          remove(jr)
+        end
+      end
+
+      def remove_wme(wme)
+        return unless by_wme.key?(wme.object_id)
+
+        by_wme[wme.object_id].keys do |jr|
+          remove(jr)
+        end
       end
     end
 
@@ -77,6 +93,7 @@ module Wongi::Engine
     private attr_reader :hidden_parent_wme_manual
 
     private attr_reader :neg_join_results
+    private attr_reader :opt_join_results
 
     def initialize(rete, parent = nil)
       @rete = rete
@@ -102,7 +119,8 @@ module Wongi::Engine
       @wme_manual = {}
       @hidden_parent_wme_manual = {}
 
-      @neg_join_results = NegJoinResults.new
+      @neg_join_results = JoinResults.new
+      @opt_join_results = JoinResults.new
 
       @queue = []
     end
@@ -360,6 +378,9 @@ module Wongi::Engine
           wmes.delete(wme)
           indexes.each { _1.remove(wme) }
         end
+
+        neg_join_results.remove_wme(wme)
+        opt_join_results.remove_wme(wme)
       end
 
       # did we also have an unshadowed parent version?
@@ -402,6 +423,7 @@ module Wongi::Engine
     end
 
     def remove_token(token)
+      # p remove_token: {token:}
       if own_node_tokens(token.node).find { _1.equal?(token) }.nil?
         if parents_node_tokens(token.node).find { _1.equal?(token) }
           hidden_parent_tokens[token.object_id] = true
@@ -413,7 +435,10 @@ module Wongi::Engine
     end
 
     def remove_own_token(token)
+      # p remove_own_token: {token:}
       tokens[token.node.object_id].delete(token)
+      neg_join_results.remove_token(token)
+      opt_join_results.remove_token(token)
 
       # we know we are the owner, and nobody wants it anymore, so this is the safe place to do it
       token.dispose!
@@ -457,6 +482,34 @@ module Wongi::Engine
         neg_join_results.for(token:) +
           if parent
             parent.neg_join_results_for(token:).reject { neg_join_results.hidden?(_1) }
+          else
+            []
+          end
+      else
+        []
+      end
+    end
+
+    def add_opt_join_result(ojr)
+      opt_join_results.add(ojr)
+    end
+
+    def remove_opt_join_result(ojr)
+      opt_join_results.remove(ojr)
+    end
+
+    def opt_join_results_for(wme: nil, token: nil)
+      if wme
+        opt_join_results.for(wme:) +
+          if parent
+            parent.opt_join_results_for(wme:).reject { opt_join_results.hidden?(_1) }
+          else
+            []
+          end
+      elsif token
+        opt_join_results.for(token:) +
+          if parent
+            parent.opt_join_results_for(token:).reject { opt_join_results.hidden?(_1) }
           else
             []
           end

@@ -12,7 +12,6 @@ module Wongi::Engine
       overlay.add_token(token)
       children.each do |child|
         value = @body.respond_to?(:call) ? @body.call(token) : @body
-        p value:;
         child.beta_activate Token.new(child, token, nil, { @variable => value })
       end
     end

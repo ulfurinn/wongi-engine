@@ -1,11 +1,6 @@
 module Wongi
   module Engine
-    OptionalJoinResult = Struct.new :token, :wme do
-      def unlink
-        wme.opt_join_results.delete self
-        token.opt_join_results.delete self
-      end
-    end
+    OptionalJoinResult = Struct.new :token, :wme
 
     class OptionalNode < BetaNode
       attr_reader :alpha, :tests, :assignment_pattern
@@ -15,12 +10,6 @@ module Wongi
         @alpha = alpha
         @tests = tests
         @assignment_pattern = assignments
-      end
-
-      def make_opt_result(token, wme)
-        jr = OptionalJoinResult.new token, wme
-        token.opt_join_results << jr
-        wme.opt_join_results << jr
       end
 
       def alpha_activate(wme, children: self.children)
@@ -37,17 +26,17 @@ module Wongi
             end
             child.beta_activate Token.new(child, token, wme, assignments)
           end
-          make_opt_result token, wme
+          overlay.add_opt_join_result(OptionalJoinResult.new(token, wme))
         end
       end
 
       def alpha_deactivate(wme)
-        wme.opt_join_results.dup.each do |ojr|
+        overlay.opt_join_results_for(wme:).each do |ojr|
           tokens.each do |token|
             next unless token == ojr.token
 
-            ojr.unlink
-            next unless token.opt_join_results.empty?
+            overlay.remove_opt_join_result(ojr)
+            next unless overlay.opt_join_results_for(token:).empty?
 
             children.each do |child|
               child.tokens.each do |ct|
