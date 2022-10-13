@@ -196,7 +196,7 @@ describe 'the engine' do
     }.not_to raise_error
   end
 
-  xit 'should process negative nodes' do
+  it 'should process negative nodes' do
     production = (engine << rule('negative') {
                     forall {
                       neg :_, :_, 42

@@ -1,11 +1,6 @@
 module Wongi
   module Engine
-    NegJoinResult = Struct.new :token, :wme, :neg_node do
-      def unlink
-        wme.neg_join_results.delete self
-        token.neg_join_results.delete self
-      end
-    end
+    NegJoinResult = Struct.new :token, :wme
 
     class NegNode < BetaNode
       attr_reader :alpha, :tests
@@ -23,19 +18,19 @@ module Wongi
           next unless matches?(token, wme) && (@unsafe || !token.generated?(wme)) # feedback loop protection
 
           # order matters for proper invalidation
-          make_join_result(token, wme)
+          overlay.add_neg_join_result(NegJoinResult.new(token, wme))
           beta_deactivate_children(token:, children:)
         end
       end
 
       def alpha_deactivate(wme)
         # p alpha_deactivate: {class: self.class, object_id:, wme:}
-        wme.neg_join_results.dup.each do |njr|
+        overlay.neg_join_results_for(wme:).each do |njr|
           tokens.each do |token|
             next unless token == njr.token
 
-            njr.unlink
-            next unless token.neg_join_results.empty?
+            overlay.remove_neg_join_result(njr)
+            next unless overlay.neg_join_results_for(token:).empty?
 
             children.each do |child|
               child.beta_activate(Token.new(child, token, nil))
@@ -50,9 +45,9 @@ module Wongi
 
         overlay.add_token(token)
         select_wmes(alpha.template).each do |wme|
-          make_join_result(token, wme) if matches?(token, wme)
+          overlay.add_neg_join_result(NegJoinResult.new(token, wme)) if matches?(token, wme)
         end
-        return if token.neg_join_results.any?
+        return if overlay.neg_join_results_for(token:).any?
 
         children.each do |child|
           child.beta_activate(Token.new(child, token, nil, {}))
@@ -67,7 +62,7 @@ module Wongi
 
       def refresh_child(child)
         tokens.each do |token|
-          child.beta_activate(Token.new(child, token, nil, {})) if token.neg_join_results.empty?
+          child.beta_activate(Token.new(child, token, nil, {})) if overlay.neg_join_results_for(token:).empty?
         end
         select_wmes(alpha.template).each do |wme|
           alpha_activate wme, children: [child]
@@ -84,11 +79,6 @@ module Wongi
         true
       end
 
-      def make_join_result(token, wme)
-        njr = NegJoinResult.new token, wme, self
-        token.neg_join_results << njr
-        wme.neg_join_results << njr
-      end
     end
   end
 end

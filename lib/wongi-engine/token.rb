@@ -2,7 +2,7 @@ module Wongi::Engine
   class Token
     include CoreExt
 
-    attr_reader :children, :wme, :node, :neg_join_results, :opt_join_results, :ncc_results, :generated_wmes
+    attr_reader :children, :wme, :node, :ncc_results, :generated_wmes
     attr_accessor :owner, :parent
 
     attr_predicate :optional
@@ -15,8 +15,6 @@ module Wongi::Engine
       @assignments = assignments
       @children = []
       @deleted = false
-      @neg_join_results = []
-      @opt_join_results = []
       @ncc_results = []
       @generated_wmes = []
       token.children << self if token
@@ -74,8 +72,6 @@ module Wongi::Engine
     def dispose!
       # parent.children.delete(self) if parent
       # @parent = nil
-      neg_join_results.dup.each(&:unlink)
-      opt_join_results.dup.each(&:unlink)
       @wme = nil
     end
 

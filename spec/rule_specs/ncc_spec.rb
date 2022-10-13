@@ -191,7 +191,7 @@ describe Wongi::Engine::NccNode do
     expect(engine.select(:light_bathroom, :last_user, :_).to_a).to be == [Wongi::Engine::WME.new(:light_bathroom, :last_user, :god)]
   end
 
-  xit 'should ncc-deactivate without destroying tokens' do
+  it 'should ncc-deactivate without destroying tokens' do
     engine << rule {
       forall {
         has :Student, :is_a, :student

@@ -1,5 +1,67 @@
 module Wongi::Engine
   class Overlay
+    class NegJoinResults
+      private attr_reader :by_wme, :by_token
+      private attr_reader :hidden
+      def initialize()
+        @by_wme = Hash.new { |h, k| h[k] = {} }
+        @by_token = Hash.new { |h, k| h[k] = {} }
+        @hidden = {}
+      end
+
+      def for(wme: nil, token: nil)
+        if wme
+          by_wme.key?(wme.object_id) ? by_wme[wme.object_id].keys : []
+        elsif token
+          by_token.key?(token.object_id) ? by_token[token.object_id].keys : []
+        else
+          []
+        end
+      end
+
+      def has?(njr)
+        by_wme.key?(njr.wme.object_id) && by_wme[njr.wme.object_id].key?(njr)
+      end
+
+      def hidden?(njr)
+        hidden.key?(njr)
+      end
+
+      def add(njr)
+        if hidden.key?(njr)
+          hidden.delete(njr)
+        else
+          by_wme[njr.wme.object_id][njr] = true
+          by_token[njr.token.object_id][njr] = true
+        end
+      end
+
+      def remove(njr)
+        unless has?(njr)
+          hide(njr)
+          return
+        end
+
+        if by_wme.key?(njr.wme.object_id)
+          by_wme[njr.wme.object_id].delete(njr)
+          if by_wme[njr.wme.object_id].empty?
+            by_wme.delete(njr.wme.object_id)
+          end
+        end
+
+        if by_token.key?(njr.token.object_id)
+          by_token[njr.token.object_id].delete(njr)
+          if by_token[njr.token.object_id].empty?
+            by_token.delete(njr.token.object_id)
+          end
+        end
+      end
+
+      def hide(njr)
+        hidden[njr] = true
+      end
+    end
+
     attr_reader :rete, :parent
 
     private attr_reader :wmes, :tokens
@@ -14,7 +76,7 @@ module Wongi::Engine
     private attr_reader :wme_manual
     private attr_reader :hidden_parent_wme_manual
 
-
+    private attr_reader :neg_join_results
 
     def initialize(rete, parent = nil)
       @rete = rete
@@ -39,6 +101,8 @@ module Wongi::Engine
 
       @wme_manual = {}
       @hidden_parent_wme_manual = {}
+
+      @neg_join_results = NegJoinResults.new
 
       @queue = []
     end
@@ -368,6 +432,34 @@ module Wongi::Engine
     private def parents_node_tokens(beta)
       if parent
         parent.node_tokens(beta).reject { hidden_parent_tokens.key?(_1.object_id) }
+      else
+        []
+      end
+    end
+
+    def add_neg_join_result(njr)
+      neg_join_results.add(njr)
+    end
+
+    def remove_neg_join_result(njr)
+      neg_join_results.remove(njr)
+    end
+
+    def neg_join_results_for(wme: nil, token: nil)
+      if wme
+        neg_join_results.for(wme:) +
+          if parent
+            parent.neg_join_results_for(wme:).reject { neg_join_results.hidden?(_1) }
+          else
+            []
+          end
+      elsif token
+        neg_join_results.for(token:) +
+          if parent
+            parent.neg_join_results_for(token:).reject { neg_join_results.hidden?(_1) }
+          else
+            []
+          end
       else
         []
       end

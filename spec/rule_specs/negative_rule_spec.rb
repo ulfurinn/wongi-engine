@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-xdescribe "negative rule" do
+describe "negative rule" do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 

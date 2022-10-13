@@ -195,7 +195,7 @@ describe Wongi::Engine::Overlay do
     expect(engine.find(3, 4, 5)).to be_nil
   end
 
-  xit 'works with neg rules' do
+  it 'works with neg rules' do
     prod = engine << rule {
       forall {
         neg :x, :y, :z
