@@ -2,7 +2,7 @@ module Wongi::Engine
   class Token
     include CoreExt
 
-    attr_reader :children, :wme, :node, :ncc_results, :generated_wmes
+    attr_reader :children, :wme, :node, :generated_wmes
     attr_accessor :owner, :parent
 
     attr_predicate :optional
