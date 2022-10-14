@@ -110,30 +110,6 @@ module Wongi::Engine::DSL
     clause :assign, :introduce, :let
     accept Clause::Assign
 
-    clause :asserted, :added
-    body { |s, p, o|
-      has s, p, o, time: 0
-      missing s, p, o, time: -1
-    }
-
-    clause :retracted, :removed
-    body { |s, p, o|
-      has s, p, o, time: -1
-      missing s, p, o, time: 0
-    }
-
-    clause :kept, :still_has
-    body { |s, p, o|
-      has s, p, o, time: -1
-      has s, p, o, time: 0
-    }
-
-    clause :kept_missing, :still_missing
-    body { |s, p, o|
-      missing s, p, o, time: -1
-      missing s, p, o, time: 0
-    }
-
     clause :assuming
     accept Wongi::Engine::AssumingClause
 

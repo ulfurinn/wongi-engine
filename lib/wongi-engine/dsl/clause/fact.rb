@@ -1,17 +1,13 @@
 module Wongi::Engine
   module DSL::Clause
-    Has = Struct.new(:subject, :predicate, :object, :time) do
+    Has = Struct.new(:subject, :predicate, :object) do
       include CoreExt
       attr_predicate :debug
 
       def initialize(s, p, o, options = {})
-        time = options[:time] || 0
         @unsafe = options[:unsafe] || false
         debug! if options[:debug]
-        raise "Cannot work with continuous time" unless time.integer?
-        raise "Cannot look into the future" if time.positive?
-
-        super(s, p, o, time)
+        super(s, p, o)
       end
 
       def compile(context)

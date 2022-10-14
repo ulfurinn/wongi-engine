@@ -39,8 +39,6 @@ module Wongi::Engine
     end
 
     def initialize
-      @timeline = []
-
       @overlays = [base_overlay]
 
       self.alpha_top = AlphaMemory.new(Template.new(:_, :_, :_), self)
@@ -135,29 +133,6 @@ module Wongi::Engine
     alias statements wmes
     alias facts wmes
 
-    def in_snapshot?
-      @in_snapshot
-    end
-
-    def snapshot!
-      @timeline.each_with_index do |slice, index|
-        source = if index == @timeline.size - 1
-                   alpha_hash
-                 else
-                   @timeline[index + 1]
-                 end
-        # puts "source = #{source}"
-        wmes = {}
-        slice.each do |key, alpha|
-          wmes[key] = alpha.wmes
-          in_snapshot {
-            wmes[key].dup.each(&:destroy)
-          }
-          alpha.snapshot! source[key]
-        end
-      end
-    end
-
     def rule(name = nil, &block)
       r = DSL::Rule.new(name || generate_rule_name)
       r.instance_eval(&block)
@@ -207,7 +182,6 @@ module Wongi::Engine
 
     def compile_alpha(condition)
       template = Template.new :_, :_, :_
-      time = condition.time
 
       template.subject = condition.subject unless Template.variable?(condition.subject)
       template.predicate = condition.predicate unless Template.variable?(condition.predicate)
@@ -215,25 +189,13 @@ module Wongi::Engine
 
       hash = template.hash
       # puts "COMPILED CONDITION #{condition} WITH KEY #{key}"
-      if time.zero?
-        return alpha_hash[hash] if alpha_hash.key?(hash)
-      elsif @timeline[time + 1] && @timeline[time + 1].key?(hash)
-        return @timeline[time + 1][hash]
-      end
+      return alpha_hash[hash] if alpha_hash.key?(hash)
 
       alpha = AlphaMemory.new(template, self)
 
-      if time.zero?
-        alpha_hash[hash] = alpha
-        initial_fill alpha
-      else
-        if @timeline[time + 1].nil?
-          # => ensure lineage from 0 to time
-          compile_alpha condition.class.new(condition.subject, condition.predicate, condition.object, time: time + 1)
-          @timeline.unshift({})
-        end
-        @timeline[time + 1][hash] = alpha
-      end
+      alpha_hash[hash] = alpha
+      initial_fill alpha
+
       alpha
     end
 
@@ -305,13 +267,6 @@ module Wongi::Engine
     end
 
     protected
-
-    def in_snapshot
-      @in_snapshot = true
-      yield
-    ensure
-      @in_snapshot = false
-    end
 
     def generate_rule_name
       "rule_#{productions.length}"

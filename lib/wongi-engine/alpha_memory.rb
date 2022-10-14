@@ -23,12 +23,6 @@ module Wongi::Engine
       end
     end
 
-    def snapshot!(alpha)
-      alpha.wmes.map(&:dup).each do |wme|
-        activate wme
-      end
-    end
-
     def inspect
       "<Alpha #{__id__} template=#{template}>"
     end
