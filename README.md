@@ -11,7 +11,7 @@ Ruby >= 2.7 and JRuby are supported. Rubinius should work but isn't actively sup
 
 There is no API documentation, as most of the library's interfaces are for internal use only and would not be safe to use directly.
 
-Instead, follow the [tutorial](http://ulfurinn.github.io/wongi-engine/) and stick to the constructs described in it.
+Instead, follow the [tutorial](https://ulfurinn.github.io/wongi-engine/) and stick to the constructs described in it.
 
 ## Upgrading
 
