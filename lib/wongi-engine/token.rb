@@ -5,7 +5,6 @@ module Wongi::Engine
     attr_reader :children, :wme, :node, :generated_wmes
     attr_accessor :parent
 
-    attr_predicate :optional
     attr_predicate :deleted
 
     def initialize(node, token, wme, assignments = {})

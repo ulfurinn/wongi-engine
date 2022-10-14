@@ -16,10 +16,11 @@ module Wongi
         assignments = collect_assignments(wme)
         tokens.each do |token|
           next unless matches? token, wme
+          optional = overlay.opt_join_results_for(token:).empty?
 
           children.each do |child|
-            if token.optional?
-              token.no_optional!
+            if optional
+              # we're going to change the optional state so the old ones need to be removed
               child.tokens.each do |ct|
                 child.beta_deactivate(ct) if ct.parent == token
               end
@@ -43,7 +44,6 @@ module Wongi
               child.tokens.each do |ct|
                 child.beta_deactivate(ct) if ct.parent == token
               end
-              token.optional!
               child.beta_activate Token.new(child, token, nil, {})
             end
           end
@@ -67,7 +67,6 @@ module Wongi
         end
         return if match
 
-        token.optional!
         children.each do |child|
           child.beta_activate Token.new(child, token, nil, {})
         end
