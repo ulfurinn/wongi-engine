@@ -253,4 +253,64 @@ describe Wongi::Engine::NccNode do
 
     expect(prod).to have(1).tokens
   end
+
+  context "with overlays" do
+    context 'should pass with a mismatching subchain' do
+      specify "variation 1" do
+        engine << ncc_rule
+        production = engine.productions['ncc']
+
+        engine.with_overlay do |overlay|
+          overlay << ["base", "is", 1]
+          expect(production).to have(1).token
+
+          overlay << [1, 2, 3]
+          expect(production).to have(1).token
+
+          overlay << [3, 4, 5]
+          expect(production).to have(0).token
+        end
+
+        expect(production).to have(0).tokens
+      end
+
+      specify "variation 2" do
+        engine << ncc_rule
+        overlay = engine.base_overlay
+        production = engine.productions['ncc']
+
+        overlay << ["base", "is", 1]
+        expect(production).to have(1).token
+
+        engine.with_overlay do |overlay|
+          overlay << [1, 2, 3]
+          expect(production).to have(1).token
+
+          overlay << [3, 4, 5]
+          expect(production).to have(0).token
+        end
+
+        expect(production).to have(1).tokens
+      end
+
+      specify "variation 3" do
+        engine << ncc_rule
+        overlay = engine.base_overlay
+        production = engine.productions['ncc']
+
+        overlay << ["base", "is", 1]
+        expect(production).to have(1).token
+
+        overlay << [1, 2, 3]
+        expect(production).to have(1).token
+
+        engine.with_overlay do |overlay|
+          overlay << [3, 4, 5]
+          expect(production).to have(0).token
+        end
+
+        expect(production).to have(1).tokens
+      end
+    end
+  end
 end
