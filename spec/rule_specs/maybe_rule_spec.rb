@@ -77,6 +77,26 @@ describe "MAYBE rule" do
     }
   end
 
+  it 'should work with with overlays' do
+    prod = engine << maybe_rule
+
+    engine << [1, 2, 3]
+
+    engine << [3, 4, 5]
+    expect(prod.size).to eq(1)
+    expect(prod.tokens.first[:Y]).to be == 5
+
+    engine.with_overlay do |overlay|
+      overlay.retract [3, 4, 5]
+      expect(prod.size).to eq(1)
+      expect(prod.tokens.first[:Y]).to be_nil
+    end
+
+    expect(prod.size).to eq(1)
+    expect(prod.tokens.first[:Y]).to be == 5
+
+  end
+
   it 'should handle retracted parent tokens' do
     prod = engine << maybe_rule
 
@@ -86,5 +106,43 @@ describe "MAYBE rule" do
 
     expect(prod).to have(0).tokens
     expect(engine.base_overlay.opt_join_results_for(wme: engine.find(3, 4, 5))).to be_empty
+  end
+
+  context 'should handle retracted parent tokens with overlays' do
+    specify 'variation 1' do
+      prod = engine << maybe_rule
+
+      engine << [1, 2, 3]
+      engine << [3, 4, 5]
+
+      engine.with_overlay do |overlay|
+        engine.retract [1, 2, 3]
+
+        expect(prod).to have(0).tokens
+        expect(overlay.opt_join_results_for(wme: engine.find(3, 4, 5))).to be_empty
+      end
+
+      expect(prod).to have(1).tokens
+      expect(engine.base_overlay.opt_join_results_for(wme: engine.find(3, 4, 5))).not_to be_empty
+    end
+
+    specify 'variation 2' do
+      prod = engine << maybe_rule
+
+      engine << [1, 2, 3]
+      engine << [3, 4, 5]
+
+      engine.with_overlay do |overlay|
+        engine.retract [1, 2, 3]
+        engine << [3, 4, 5]
+        engine.retract [1, 2, 3]
+
+        expect(prod).to have(0).tokens
+        expect(overlay.opt_join_results_for(wme: engine.find(3, 4, 5))).to be_empty
+      end
+
+      expect(prod).to have(1).tokens
+      expect(engine.base_overlay.opt_join_results_for(wme: engine.find(3, 4, 5))).not_to be_empty
+    end
   end
 end

@@ -31,6 +31,7 @@ module Wongi
       end
 
       def alpha_deactivate(wme)
+        # p alpha_deactivate: {wme:}
         overlay.opt_join_results_for(wme:).each do |ojr|
           tokens.each do |token|
             next unless token == ojr.token
@@ -73,6 +74,7 @@ module Wongi
       end
 
       def beta_deactivate(token)
+        # p beta_deactivate: {class: self.class, object_id:, token:}
         overlay.remove_token(token)
         beta_deactivate_children(token:)
       end

@@ -297,7 +297,7 @@ module Wongi::Engine
     private def find_parents_wme(wme)
       if parent
         parent_wme = parent.find(wme)
-        parent_wme unless hidden_parent_wmes.key?(parent_wme.object_id)
+        parent_wme unless hidden_wme?(parent_wme)
       else
         nil
       end
@@ -329,7 +329,7 @@ module Wongi::Engine
 
     private def select_parents_template(template)
       if parent
-        parent.select(template).reject { hidden_parent_wmes.key?(_1.object_id) }
+        parent.select(template).reject { hidden_wme?(_1) }
       else
         []
       end
@@ -421,8 +421,9 @@ module Wongi::Engine
     end
 
     def add_token(token)
+      # p add_token: {token:}
       # TODO: is this really likely to happen? we don't normally restore deleted tokens but rather create new ones in the activation
-      if hidden_parent_tokens.key?(token.object_id)
+      if hidden_token?(token)
         hidden_parent_tokens.delete(token.object_id)
         return
       end
@@ -435,6 +436,8 @@ module Wongi::Engine
       if own_node_tokens(token.node).find { _1.equal?(token) }.nil?
         if parents_node_tokens(token.node).find { _1.equal?(token) }
           hidden_parent_tokens[token.object_id] = true
+          parent_neg_join_results_for(token:).each { neg_join_results.hide(_1) }
+          parent_opt_join_results_for(token:).each { opt_join_results.hide(_1) }
           parent_ncc_tokens_for(token).each do |ncc|
             hidden_ncc_tokens[token][ncc] = true
           end
@@ -500,19 +503,9 @@ module Wongi::Engine
 
     def neg_join_results_for(wme: nil, token: nil)
       if wme
-        neg_join_results.for(wme:) +
-          if parent
-            parent.neg_join_results_for(wme:).reject { neg_join_results.hidden?(_1) }
-          else
-            []
-          end
+        neg_join_results.for(wme:) + parent_neg_join_results_for(wme:)
       elsif token
-        neg_join_results.for(token:) +
-          if parent
-            parent.neg_join_results_for(token:).reject { neg_join_results.hidden?(_1) }
-          else
-            []
-          end
+        neg_join_results.for(token:) + parent_neg_join_results_for(token:)
       else
         []
       end
@@ -523,24 +516,31 @@ module Wongi::Engine
     end
 
     def remove_opt_join_result(ojr)
+      # p remove_opt_join_result: {ojr:}
       opt_join_results.remove(ojr)
     end
 
     def opt_join_results_for(wme: nil, token: nil)
       if wme
-        opt_join_results.for(wme:) +
-          if parent
-            parent.opt_join_results_for(wme:).reject { opt_join_results.hidden?(_1) }
-          else
-            []
-          end
+        opt_join_results.for(wme:) + parent_opt_join_results_for(wme:)
       elsif token
-        opt_join_results.for(token:) +
-          if parent
-            parent.opt_join_results_for(token:).reject { opt_join_results.hidden?(_1) }
-          else
-            []
-          end
+        opt_join_results.for(token:) + parent_opt_join_results_for(token:)
+      else
+        []
+      end
+    end
+
+    private def parent_opt_join_results_for(wme: nil, token: nil)
+      if parent
+        parent.opt_join_results_for(wme:, token:).reject { opt_join_results.hidden?(_1) }
+      else
+        []
+      end
+    end
+
+    private def parent_neg_join_results_for(wme: nil, token: nil)
+      if parent
+        parent.neg_join_results_for(wme:, token:).reject { neg_join_results.hidden?(_1) }
       else
         []
       end
@@ -579,6 +579,14 @@ module Wongi::Engine
       else
         []
       end
+    end
+
+    private def hidden_wme?(wme)
+      hidden_parent_wmes.key?(wme.object_id)
+    end
+
+    private def hidden_token?(token)
+      hidden_parent_tokens.key?(token.object_id)
     end
   end
 end

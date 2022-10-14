@@ -38,6 +38,10 @@ module Wongi::Engine
       @hash ||= [subject.hash, predicate.hash, object.hash].hash
     end
 
+    def eql?(other)
+      subject.eql?(other.subject) && predicate.eql?(other.predicate) && object.eql?(other.object)
+    end
+
     protected
 
     def match_member(mine, theirs)
