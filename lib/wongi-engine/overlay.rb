@@ -95,6 +95,10 @@ module Wongi::Engine
     private attr_reader :neg_join_results
     private attr_reader :opt_join_results
 
+    private attr_reader :ncc_tokens
+    private attr_reader :ncc_tokens_owner
+    private attr_reader :hidden_ncc_tokens
+
     def initialize(rete, parent = nil)
       @rete = rete
       @parent = parent
@@ -121,6 +125,10 @@ module Wongi::Engine
 
       @neg_join_results = JoinResults.new
       @opt_join_results = JoinResults.new
+
+      @ncc_tokens = Hash.new { |h, k| h[k] = [] }
+      @ncc_tokens_owner = {}
+      @hidden_ncc_tokens = Hash.new { |h, k| h[k] = {} }
 
       @queue = []
     end
@@ -427,6 +435,9 @@ module Wongi::Engine
       if own_node_tokens(token.node).find { _1.equal?(token) }.nil?
         if parents_node_tokens(token.node).find { _1.equal?(token) }
           hidden_parent_tokens[token.object_id] = true
+          parent_ncc_tokens_for(token).each do |ncc|
+            hidden_ncc_tokens[token][ncc] = true
+          end
         end
         return
       end
@@ -439,6 +450,23 @@ module Wongi::Engine
       tokens[token.node.object_id].delete(token)
       neg_join_results.remove_token(token)
       opt_join_results.remove_token(token)
+
+      # if this is an NCC partner token
+      if (owner = ncc_tokens_owner[token])
+        if ncc_tokens.key?(owner)
+          ncc_tokens[owner].delete(token)
+        end
+        if hidden_ncc_tokens.key?(owner)
+          hidden_ncc_tokens[owner].delete(token)
+        end
+      end
+
+      # if this is an NCC owner token
+      own_ncc_tokens_for(token).each do |ncc|
+        ncc_tokens_owner.delete(ncc)
+      end
+      ncc_tokens.delete(token)
+      hidden_ncc_tokens.delete(token)
 
       # we know we are the owner, and nobody wants it anymore, so this is the safe place to do it
       token.dispose!
@@ -513,6 +541,41 @@ module Wongi::Engine
           else
             []
           end
+      else
+        []
+      end
+    end
+
+    def add_ncc_token(owner, ncc)
+      if hidden_ncc_tokens.key?(owner) && hidden_ncc_tokens[token].include?(ncc)
+        hidden_ncc_tokens[owner].delete(ncc)
+        if hidden_ncc_tokens[owner].empty?
+          hidden_ncc_tokens.delete(owner)
+        end
+        return
+      end
+
+      ncc_tokens[owner] << ncc
+      ncc_tokens_owner[ncc] = owner
+    end
+
+    def ncc_owner(ncc)
+      ncc_tokens_owner[ncc]
+    end
+
+    def ncc_tokens_for(token)
+      own_ncc_tokens_for(token) + parent_ncc_tokens_for(token)
+    end
+
+    private def own_ncc_tokens_for(token)
+      ncc_tokens.key?(token) ? ncc_tokens[token] : []
+    end
+
+    private def parent_ncc_tokens_for(token)
+      if parent
+        parent.ncc_tokens_for(token).reject {
+          hidden_ncc_tokens.key?(token) && hidden_ncc_tokens[token].key?(_1)
+        }
       else
         []
       end

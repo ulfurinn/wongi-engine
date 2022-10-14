@@ -12,20 +12,20 @@ module Wongi
         owner = owner_for(token)
         return unless owner
 
-        owner.ncc_results << token
-        token.owner = owner
+        overlay.add_ncc_token(owner, token)
         owner.node.ncc_deactivate owner
       end
 
       def beta_deactivate(token)
         # p beta_deactivate: {class: self.class, object_id:, token:}
-        overlay.remove_token(token)
 
-        owner = token.owner
+        # fetch the owner before deleting the token
+        owner = overlay.ncc_owner(token)
+
+        overlay.remove_token(token)
         return unless owner
 
-        owner.ncc_results.delete token
-        ncc.ncc_activate owner if owner.ncc_results.empty?
+        ncc.ncc_activate owner if overlay.ncc_tokens_for(owner).empty?
       end
 
       def owner_for(token)

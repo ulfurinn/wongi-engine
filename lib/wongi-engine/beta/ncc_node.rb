@@ -10,11 +10,10 @@ module Wongi
         overlay.add_token(token)
         partner.tokens.each do |ncc_token|
           if partner.owner_for(ncc_token) == token
-            token.ncc_results << ncc_token
-            ncc_token.owner = token
+            overlay.add_ncc_token(token, ncc_token)
           end
         end
-        return if token.ncc_results.any?
+        return if overlay.ncc_tokens_for(token).any?
 
         children.each do |child|
           child.beta_activate Token.new(child, token, nil, {})
@@ -24,11 +23,6 @@ module Wongi
       def beta_deactivate(token)
         # p beta_deactivate: {class: self.class, object_id:, token:}
         overlay.remove_token(token)
-
-        partner.tokens.select { |ncc| ncc.owner == token }.each do |ncc_token|
-          ncc_token.owner = nil
-          token.ncc_results.delete(ncc_token)
-        end
         beta_deactivate_children(token:)
       end
 
@@ -50,7 +44,7 @@ module Wongi
 
       def refresh_child(child)
         tokens.each do |token|
-          child.beta_activate Token.new(child, token, nil, {}) if token.ncc_results.empty?
+          child.beta_activate Token.new(child, token, nil, {}) if overlay.ncc_tokens_for(token).empty?
         end
       end
     end

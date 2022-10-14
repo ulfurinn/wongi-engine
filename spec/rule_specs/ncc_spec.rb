@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-xdescribe Wongi::Engine::NccNode do
+describe Wongi::Engine::NccNode do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 

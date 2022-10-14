@@ -3,7 +3,7 @@ module Wongi::Engine
     include CoreExt
 
     attr_reader :children, :wme, :node, :generated_wmes
-    attr_accessor :owner, :parent
+    attr_accessor :parent
 
     attr_predicate :optional
     attr_predicate :deleted
