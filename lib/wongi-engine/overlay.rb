@@ -436,8 +436,11 @@ module Wongi::Engine
       if own_node_tokens(token.node).find { _1.equal?(token) }.nil?
         if parents_node_tokens(token.node).find { _1.equal?(token) }
           hidden_parent_tokens[token.object_id] = true
+
+          # do not hide JRs from the WME side: it will be done in the alpha deactivation and the JRs have to stay visible until then
           parent_neg_join_results_for(token:).each { neg_join_results.hide(_1) }
           parent_opt_join_results_for(token:).each { opt_join_results.hide(_1) }
+
           parent_ncc_tokens_for(token).each do |ncc|
             hidden_ncc_tokens[token][ncc] = true
           end
