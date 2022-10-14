@@ -5,8 +5,11 @@ weight: 2
 
 # Facts
 
-All knowledge is represented with triples of `{subject, predicate, object}`, where `subject` and `object` are two entities and `predicate` is the kind of relationship between them.
-Any kind of complex structures and relationships between entities can be decomposed into a set of such triples.
+The rule engine requires _facts_ in order to reason about the world, and facts have to be positively _asserted_ for the engine to operate on.
+
+All knowledge must be decomposed into triples, which are typically interpreted as `{subject, predicate, object}`. The terms called `subject` and `object` are two entities or values about which we know something, and `predicate` is some kind of relationship between them. Though you are free to structure the triples in another way, your rules will likely be easier to read if you follow the convention.
+
+The roles of the terms are not fixed: a term that acts as a predicate in one fact can be a subject in another, allowing you to build meta-models, as you'll see in [a later example](../more-facts).
 
 Try this:
 
@@ -21,10 +24,8 @@ To remove facts, do:
 engine.retract ["Alice", :age, 35]
 ```
 
-There are no restrictions on what constitutes a subject vs a predicate. A term that is used as a predicate in one triple [can be a subject in another](../more-facts), allowing you to build meta-models of your data.
+Any Ruby object that implements `#==` in a sensible way can be used in any position in a triple. The only exceptions are symbols that start with a capital latin letter or an underscore; they have special meanings in the engine.
 
-Any Ruby object that implements `#==` in a sensible way can be used in any position in a triple, except symbols that start with an uppercase latin letter and `:_`, which have special meaning; more on those later. Uppercase symbols were chosen because you never see them in idiomatic Ruby code, so they're fair game for overloading.
+In addition, it is recommended that predicates be expressed with symbols.
 
-For performance reasons, it is recommended to use symbols over strings whenever possible since the engine performs a lot of comparisons. Predicates in particular should always be expressed with symbols.
-
-Now, what can we do with this information?
+Now that we've taught the engine a little about the world, what can we do with it?

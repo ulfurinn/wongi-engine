@@ -8,8 +8,7 @@ weight: 1
 To begin, say:
 
 ```ruby
-include Wongi::Engine::DSL
+require 'wongi-engine'
 engine = Wongi::Engine.create
 ```
 
-Now let's add some facts to our knowledge base.
