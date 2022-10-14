@@ -1,6 +1,6 @@
 ---
 title: DSL extensions
-weight: 2
+weight: 1
 ---
 
 # DSL extensions

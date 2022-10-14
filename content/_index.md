@@ -14,6 +14,8 @@ There is no API documentation, as most of the library's interfaces are for inter
 
 Instead, follow this tutorial and stick to the constructs described in it.
 
+**The content is being updated for the [v0.4.0 release](posts/20221014-0.4.0-announcement/).**
+
 ## Upgrading
 
 Until there is a 1.0 release, all minor versions should be treated as potentially breaking.
