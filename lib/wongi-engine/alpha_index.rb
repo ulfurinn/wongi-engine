@@ -1,7 +1,8 @@
 module Wongi::Engine
   class AlphaIndex
-    private attr_reader :pattern
-    private attr_reader :index
+    attr_reader :pattern, :index
+    private :pattern
+    private :index
 
     def initialize(pattern)
       @pattern = pattern

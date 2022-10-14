@@ -16,7 +16,8 @@ module Wongi
         assignments = collect_assignments(wme)
         tokens.each do |token|
           next unless matches? token, wme
-          optional = overlay.opt_join_results_for(token:).empty?
+
+          optional = overlay.opt_join_results_for(token: token).empty?
 
           children.each do |child|
             if optional
@@ -33,12 +34,12 @@ module Wongi
 
       def alpha_deactivate(wme)
         # p alpha_deactivate: {wme:}
-        overlay.opt_join_results_for(wme:).each do |ojr|
+        overlay.opt_join_results_for(wme: wme).each do |ojr|
           tokens.each do |token|
             next unless token == ojr.token
 
             overlay.remove_opt_join_result(ojr)
-            next unless overlay.opt_join_results_for(token:).empty?
+            next unless overlay.opt_join_results_for(token: token).empty?
 
             children.each do |child|
               child.tokens.each do |ct|
@@ -75,7 +76,7 @@ module Wongi
       def beta_deactivate(token)
         # p beta_deactivate: {class: self.class, object_id:, token:}
         overlay.remove_token(token)
-        beta_deactivate_children(token:)
+        beta_deactivate_children(token: token)
       end
 
       def refresh_child(child)

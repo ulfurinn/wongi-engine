@@ -94,7 +94,6 @@ describe "MAYBE rule" do
 
     expect(prod.size).to eq(1)
     expect(prod.tokens.first[:Y]).to be == 5
-
   end
 
   it 'should handle retracted parent tokens' do

@@ -28,14 +28,14 @@ module Wongi::Engine
     def alpha_activate(wme)
       # we need to re-run all WMEs through the aggregator, so the new incoming one doesn't matter
       tokens.each do |token|
-        evaluate(wme:, token:)
+        evaluate(wme: wme, token: token)
       end
     end
 
     def alpha_deactivate(wme)
       # we need to re-run all WMEs through the aggregator, so the new incoming one doesn't matter
       tokens.each do |token|
-        evaluate(wme:, token:)
+        evaluate(wme: wme, token: token)
       end
     end
 
@@ -43,24 +43,24 @@ module Wongi::Engine
       return if tokens.find { |t| t.duplicate? token }
 
       overlay.add_token(token)
-      evaluate(wme: nil, token:)
+      evaluate(wme: nil, token: token)
     end
 
     def beta_deactivate(token)
       overlay.remove_token(token)
-      beta_deactivate_children(token:)
+      beta_deactivate_children(token: token)
     end
 
     def refresh_child(child)
       tokens.each do |token|
-        evaluate(wme: nil, token:, child:)
+        evaluate(wme: nil, token: token, child: child)
       end
     end
 
     def evaluate(wme:, token:, child: nil)
       # clean up previous decisions
       # # TODO: optimise: only clean up if the value changed
-      beta_deactivate_children(token:)
+      beta_deactivate_children(token: token)
 
       candidates = select_wmes(alpha.template) { |asserted_wme| matches?(token, asserted_wme) }
 

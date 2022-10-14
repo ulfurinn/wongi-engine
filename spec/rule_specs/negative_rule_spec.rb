@@ -16,7 +16,7 @@ describe "negative rule" do
     engine << [:x, :y, 42]
     expect(prod).to have(1).tokens
 
-    engine << [:x, :y, :z]
+    engine << %i[x y z]
     expect(prod).to have(0).tokens
   end
 
@@ -69,7 +69,6 @@ describe "negative rule" do
   end
 
   it "should not create infinite feedback loops by default" do
-
     engine << rule('feedback') {
       forall {
         neg :a, :b, :_
@@ -80,7 +79,6 @@ describe "negative rule" do
     }
 
     engine.should have(1).facts
-
   end
 
   it "should create infinite feedback loops with unsafe option" do

@@ -3,7 +3,9 @@ module Wongi::Engine
     class StatementGenerator < BaseAction
       GeneratorOrigin = Struct.new(:token, :action)
 
-      private attr_reader :template
+      attr_reader :template
+      private :template
+
       def initialize(template)
         super()
         @template = template

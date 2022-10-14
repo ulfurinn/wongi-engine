@@ -1,9 +1,10 @@
 module Wongi::Engine
   class Overlay
     class JoinResults
-      private attr_reader :by_wme, :by_token
-      private attr_reader :hidden
-      def initialize()
+      attr_reader :by_wme, :by_token, :hidden
+      private :by_wme, :by_token
+      private :hidden
+      def initialize
         @by_wme = Hash.new { |h, k| h[k] = {} }
         @by_token = Hash.new { |h, k| h[k] = {} }
         @hidden = {}
@@ -78,26 +79,21 @@ module Wongi::Engine
       end
     end
 
-    attr_reader :rete, :parent
-
-    private attr_reader :wmes, :tokens
-    private attr_reader :indexes
-    private attr_reader :queue
-    private attr_reader :hidden_parent_wmes
-    private attr_reader :hidden_parent_tokens
-
-    private attr_reader :wme_generators
-    private attr_reader :hidden_parent_wme_generators
-
-    private attr_reader :wme_manual
-    private attr_reader :hidden_parent_wme_manual
-
-    private attr_reader :neg_join_results
-    private attr_reader :opt_join_results
-
-    private attr_reader :ncc_tokens
-    private attr_reader :ncc_tokens_owner
-    private attr_reader :hidden_ncc_tokens
+    attr_reader :rete, :parent, :wmes, :tokens, :indexes, :queue, :hidden_parent_wmes, :hidden_parent_tokens, :wme_generators, :hidden_parent_wme_generators, :wme_manual, :hidden_parent_wme_manual, :neg_join_results, :opt_join_results, :ncc_tokens, :ncc_tokens_owner, :hidden_ncc_tokens
+    private :wmes, :tokens
+    private :indexes
+    private :queue
+    private :hidden_parent_wmes
+    private :hidden_parent_tokens
+    private :wme_generators
+    private :hidden_parent_wme_generators
+    private :wme_manual
+    private :hidden_parent_wme_manual
+    private :neg_join_results
+    private :opt_join_results
+    private :ncc_tokens
+    private :ncc_tokens_owner
+    private :hidden_ncc_tokens
 
     def initialize(rete, parent = nil)
       @rete = rete
@@ -147,10 +143,9 @@ module Wongi::Engine
     def dispose!
       return if default?
 
-      tokens.each do |node, tokens|
+      tokens.each do |_node, tokens|
         tokens.each(&:dispose!)
       end
-
     end
 
     def <<(thing)
@@ -165,7 +160,7 @@ module Wongi::Engine
     end
 
     def assert(wme, generator: nil)
-      operation = [:assert, wme, { generator: }]
+      operation = [:assert, wme, { generator: generator }]
       queue.push(operation)
 
       run_queue if queue.length == 1
@@ -193,6 +188,7 @@ module Wongi::Engine
         when :retract
           wme = find_ignoring_hidden(wme)
           return if wme.nil? # it's perhaps better to return quietly, because complicated cascades may delete a WME while we're going through the queue
+
           remove_wme(wme, **options)
           rete.real_retract(wme)
         end
@@ -287,7 +283,7 @@ module Wongi::Engine
     end
 
     private def find_own_wme(wme)
-      collections = indexes.map {|index|
+      collections = indexes.map { |index|
         index.collection_for_wme(wme)
       }
       smallest = collections.min_by(&:size)
@@ -295,12 +291,10 @@ module Wongi::Engine
     end
 
     private def find_parents_wme(wme)
-      if parent
-        parent_wme = parent.find(wme)
-        parent_wme unless hidden_wme?(parent_wme)
-      else
-        nil
-      end
+      return unless parent
+
+      parent_wme = parent.find(wme)
+      parent_wme unless hidden_wme?(parent_wme)
     end
 
     def find_ignoring_hidden(wme)
@@ -438,8 +432,8 @@ module Wongi::Engine
           hidden_parent_tokens[token.object_id] = true
 
           # do not hide JRs from the WME side: it will be done in the alpha deactivation and the JRs have to stay visible until then
-          parent_neg_join_results_for(token:).each { neg_join_results.hide(_1) }
-          parent_opt_join_results_for(token:).each { opt_join_results.hide(_1) }
+          parent_neg_join_results_for(token: token).each { neg_join_results.hide(_1) }
+          parent_opt_join_results_for(token: token).each { opt_join_results.hide(_1) }
 
           parent_ncc_tokens_for(token).each do |ncc|
             hidden_ncc_tokens[token][ncc] = true
@@ -506,9 +500,9 @@ module Wongi::Engine
 
     def neg_join_results_for(wme: nil, token: nil)
       if wme
-        neg_join_results.for(wme:) + parent_neg_join_results_for(wme:)
+        neg_join_results.for(wme: wme) + parent_neg_join_results_for(wme: wme)
       elsif token
-        neg_join_results.for(token:) + parent_neg_join_results_for(token:)
+        neg_join_results.for(token: token) + parent_neg_join_results_for(token: token)
       else
         []
       end
@@ -525,9 +519,9 @@ module Wongi::Engine
 
     def opt_join_results_for(wme: nil, token: nil)
       if wme
-        opt_join_results.for(wme:) + parent_opt_join_results_for(wme:)
+        opt_join_results.for(wme: wme) + parent_opt_join_results_for(wme: wme)
       elsif token
-        opt_join_results.for(token:) + parent_opt_join_results_for(token:)
+        opt_join_results.for(token: token) + parent_opt_join_results_for(token: token)
       else
         []
       end
@@ -535,7 +529,7 @@ module Wongi::Engine
 
     private def parent_opt_join_results_for(wme: nil, token: nil)
       if parent
-        parent.opt_join_results_for(wme:, token:).reject { opt_join_results.hidden?(_1) }
+        parent.opt_join_results_for(wme: wme, token: token).reject { opt_join_results.hidden?(_1) }
       else
         []
       end
@@ -543,7 +537,7 @@ module Wongi::Engine
 
     private def parent_neg_join_results_for(wme: nil, token: nil)
       if parent
-        parent.neg_join_results_for(wme:, token:).reject { neg_join_results.hidden?(_1) }
+        parent.neg_join_results_for(wme: wme, token: token).reject { neg_join_results.hidden?(_1) }
       else
         []
       end
@@ -576,8 +570,8 @@ module Wongi::Engine
 
     private def parent_ncc_tokens_for(token)
       if parent
-        parent.ncc_tokens_for(token).reject {
-          hidden_ncc_tokens.key?(token) && hidden_ncc_tokens[token].key?(_1)
+        parent.ncc_tokens_for(token).reject { |parent_token|
+          hidden_ncc_tokens.key?(token) && hidden_ncc_tokens[token].key?(parent_token)
         }
       else
         []

@@ -1,6 +1,5 @@
 module Wongi::Engine
   class RootNode < BetaNode
-
     def seed(assignments = {})
       @seed = assignments
       t = Token.new(self, nil, nil, assignments)

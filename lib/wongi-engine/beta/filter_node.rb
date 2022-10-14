@@ -23,7 +23,7 @@ module Wongi
 
       def beta_deactivate(token)
         overlay.remove_token(token)
-        beta_deactivate_children(token:)
+        beta_deactivate_children(token: token)
       end
 
       def equivalent?(test)

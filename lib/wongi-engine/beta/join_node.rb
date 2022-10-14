@@ -1,7 +1,5 @@
 module Wongi
   module Engine
-
-
     class BetaTest
       attr_reader :field, :variable
 
@@ -58,7 +56,7 @@ module Wongi
       end
 
       def alpha_deactivate(wme)
-        beta_deactivate_children(wme:)
+        beta_deactivate_children(wme: wme)
       end
 
       def beta_activate(token)
@@ -68,7 +66,6 @@ module Wongi
         overlay.add_token(token)
 
         select_wmes(alpha.template).each do |wme|
-
           next unless matches?(token, wme)
 
           assignments = collect_assignments(wme)
@@ -81,7 +78,7 @@ module Wongi
       def beta_deactivate(token)
         # p beta_deactivate: {class: self.class, object_id:, token:}
         overlay.remove_token(token)
-        beta_deactivate_children(token:)
+        beta_deactivate_children(token: token)
       end
 
       def refresh_child(child)

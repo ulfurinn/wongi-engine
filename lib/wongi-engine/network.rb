@@ -3,13 +3,14 @@ require 'wongi-engine/network/debug'
 
 module Wongi::Engine
   class Network
-    attr_reader :alpha_top, :beta_top, :queries, :results, :productions
+    attr_accessor :alpha_top, :beta_top, :queries, :results, :alpha_hash
+    attr_reader :productions, :overlays
 
     include NetworkParts::Collectable
+    private :overlays
+    private :alpha_hash, :alpha_hash=
 
-    private attr_reader :overlays
-    private attr_accessor :alpha_hash
-    private attr_writer :alpha_top, :beta_top, :queries, :results
+    private :alpha_top=, :beta_top=, :queries=, :results=
 
     def debug!
       extend NetworkParts::Debug
@@ -89,7 +90,7 @@ module Wongi::Engine
     end
 
     # TODO: deprecate this
-    alias_method :default_overlay, :base_overlay
+    alias default_overlay base_overlay
 
     # @private
     private def add_overlay(o)

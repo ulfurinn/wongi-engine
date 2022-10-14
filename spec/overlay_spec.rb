@@ -205,12 +205,11 @@ describe Wongi::Engine::Overlay do
     expect(prod).to have(1).tokens
 
     engine.with_overlay do |overlay|
-      overlay << [:x, :y, :z]
+      overlay << %i[x y z]
       expect(prod).to have(0).tokens
     end
 
     expect(prod).to have(1).tokens
-
   end
 
   it 'works with assignments' do
