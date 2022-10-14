@@ -24,7 +24,7 @@ To remove facts, do:
 engine.retract ["Alice", :age, 35]
 ```
 
-Any Ruby object that implements `#==` in a sensible way can be used in any position in a triple. The only exceptions are symbols that start with a capital latin letter or an underscore; they have special meanings in the engine.
+Any Ruby object that implements `#==` in a sensible way can be used in any position in a triple. The only exceptions are symbols that start with a capital latin letter or an underscore; they have special meaning in the engine.
 
 In addition, it is recommended that predicates be expressed with symbols.
 
