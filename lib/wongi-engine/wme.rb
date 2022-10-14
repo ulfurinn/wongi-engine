@@ -1,9 +1,5 @@
 module Wongi::Engine
   WME = Struct.new(:subject, :predicate, :object) do
-    include CoreExt
-
-    # attr_reader :neg_join_results, :opt_join_results
-
     def self.from_concrete_template(template)
       raise "template #{template} is not concrete" unless template.concrete?
 
