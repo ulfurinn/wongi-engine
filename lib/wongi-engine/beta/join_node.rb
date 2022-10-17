@@ -65,7 +65,8 @@ module Wongi
 
         overlay.add_token(token)
 
-        select_wmes(alpha.template).each do |wme|
+        template = specialize(alpha.template, tests, token)
+        select_wmes(template).each do |wme|
           next unless matches?(token, wme)
 
           assignments = collect_assignments(wme)
@@ -93,7 +94,7 @@ module Wongi
       protected
 
       def matches?(token, wme)
-        @tests.each do |test|
+        tests.each do |test|
           return false unless test.matches?(token, wme)
         end
         true

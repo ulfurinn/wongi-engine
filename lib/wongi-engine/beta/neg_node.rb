@@ -44,7 +44,9 @@ module Wongi
         return if tokens.find { |t| t.duplicate? token }
 
         overlay.add_token(token)
-        select_wmes(alpha.template).each do |wme|
+
+        template = specialize(alpha.template, tests, token)
+        select_wmes(template).each do |wme|
           overlay.add_neg_join_result(NegJoinResult.new(token, wme)) if matches?(token, wme)
         end
         return if overlay.neg_join_results_for(token: token).any?

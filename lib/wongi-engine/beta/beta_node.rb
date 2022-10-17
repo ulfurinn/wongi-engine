@@ -61,6 +61,15 @@ module Wongi::Engine
       rete.current_overlay.select(template)
     end
 
+    private def specialize(template, tests, token)
+      tests.each_with_object(template.dup) do |test, template|
+        var = test.variable
+        if token.has_var?(var)
+          template.public_send("#{test.field}=", token[var])
+        end
+      end
+    end
+
     def tokens
       overlay.node_tokens(self)
     end

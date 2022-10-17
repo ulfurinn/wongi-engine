@@ -62,7 +62,8 @@ module Wongi::Engine
       # # TODO: optimise: only clean up if the value changed
       beta_deactivate_children(token: token)
 
-      candidates = select_wmes(alpha.template) { |asserted_wme| matches?(token, asserted_wme) }
+      template = specialize(alpha.template, tests, token)
+      candidates = select_wmes(template) { |asserted_wme| matches?(token, asserted_wme) }
 
       return if candidates.empty?
 

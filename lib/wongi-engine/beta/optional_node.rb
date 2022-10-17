@@ -55,8 +55,10 @@ module Wongi
         return if tokens.find { |t| t.duplicate? token }
 
         overlay.add_token(token)
+
         match = false
-        select_wmes(alpha.template).each do |wme|
+        template = specialize(alpha.template, tests, token)
+        select_wmes(template).each do |wme|
           assignments = collect_assignments(wme)
           next unless matches? token, wme
 
