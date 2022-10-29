@@ -25,7 +25,7 @@ module Wongi
         overlay.remove_token(token)
         return unless owner
 
-        ncc.ncc_activate owner if overlay.ncc_tokens_for(owner).empty?
+        ncc.ncc_activate(owner) if overlay.ncc_tokens_for(owner).empty?
       end
 
       def owner_for(token)
