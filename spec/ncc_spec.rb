@@ -254,6 +254,29 @@ describe Wongi::Engine::NccNode do
     expect(prod).to have(1).tokens
   end
 
+  # TODO: this is probably pretty hard to fix, but it's good to fixate the behaviour
+  it "causes infinite loops" do
+    counter = 0
+    exception = StandardError.new
+
+    looping_rule = rule {
+      forall {
+        none {
+          has :a, :b, :c
+        }
+      }
+      make {
+        action {
+          counter += 1
+          raise exception if counter > 1
+        }
+        gen :a, :b, :c
+      }
+    }
+
+    expect { engine << looping_rule }.to raise_exception(exception)
+  end
+
   context "with overlays" do
     context 'should pass with a mismatching subchain' do
       specify "variation 1" do
