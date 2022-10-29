@@ -78,6 +78,6 @@ describe "negative rule" do
       }
     }
 
-    engine.should have(0).facts
+    expect(engine).to have(0).facts
   end
 end
