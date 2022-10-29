@@ -6,7 +6,7 @@ describe "ANY rule" do
   let(:engine) { Wongi::Engine.create }
 
   context "with just one option" do
-    it "should act like a positive matcher" do
+    it "acts like a positive matcher" do
       engine << rule('one-option') {
         forall {
           any {
@@ -43,17 +43,17 @@ describe "ANY rule" do
       end
     end
 
-    it 'should fire on the first path' do
+    it 'fires on the first path' do
       engine << [:x, :path1, true]
       expect(production.tokens).to have(1).item
     end
 
-    it 'should fire on the second path' do
+    it 'fires on the second path' do
       engine << [:x, :path2, true]
       expect(production.tokens).to have(1).item
     end
 
-    it 'should fire twice on both paths at once and be retractable' do
+    it 'fires twice on both paths at once and be retractable' do
       engine << [:x, :path1, true]
       engine << [:x, :path2, true]
       expect(production.tokens).to have(2).items

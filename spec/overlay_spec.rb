@@ -102,6 +102,7 @@ describe Wongi::Engine::Overlay do
       allow(engine).to receive(:real_assert)
       allow(engine).to receive(:real_retract)
     end
+
     it "maintains visibility on each layer" do
       child1 = overlay.new_child
       child2 = child1.new_child
@@ -145,7 +146,7 @@ describe Wongi::Engine::Overlay do
     end
   end
 
-  it 'should be disposable' do
+  it 'is disposable' do
     production = engine << rule {
       forall {
         has 1, 2, :X
@@ -177,7 +178,7 @@ describe Wongi::Engine::Overlay do
     expect(production).to have(1).token
   end
 
-  it 'should generate into correct overlays' do
+  it 'generates into correct overlays' do
     production = engine << rule {
       forall {
         has 1, 2, :X

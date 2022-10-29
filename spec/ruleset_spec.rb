@@ -6,37 +6,37 @@ describe Wongi::Engine::Ruleset do
   end
 
   context 'initially' do
-    it 'should have no rules' do
+    it 'has no rules' do
       expect(Wongi::Engine::Ruleset.rulesets).to be_empty
     end
   end
 
   context 'when creating' do
-    it 'should not register itself when not given a name' do
+    it 'does not register itself when not given a name' do
       ruleset = Wongi::Engine::Ruleset.new
       expect(ruleset.name).to be_nil
       expect(Wongi::Engine::Ruleset.rulesets).to be_empty
     end
 
-    it 'should have a name' do
+    it 'has a name' do
       ruleset = Wongi::Engine::Ruleset.new 'testing-ruleset'
       expect(ruleset.name).to be == 'testing-ruleset'
     end
 
-    it 'should register itself when given a name' do
+    it 'registers itself when given a name' do
       ruleset = Wongi::Engine::Ruleset.new 'testing-ruleset'
       expect(Wongi::Engine::Ruleset.rulesets).not_to be_empty
       expect(Wongi::Engine::Ruleset[ruleset.name]).to be == ruleset
     end
   end
 
-  it 'should be able to clear registered rulesets' do
+  it 'is able to clear registered rulesets' do
     _ = Wongi::Engine::Ruleset.new 'testing-ruleset'
     Wongi::Engine::Ruleset.reset
     expect(Wongi::Engine::Ruleset.rulesets).to be_empty
   end
 
-  it 'should install creating rules into a rete' do
+  it 'installs creating rules into a rete' do
     rete = double 'rete'
 
     ruleset = Wongi::Engine::Ruleset.new

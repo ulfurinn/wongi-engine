@@ -12,7 +12,7 @@ describe 'Less Than Or Equal test' do
     @production = (engine << rule('test-rule', &block))
   end
 
-  it 'should interact with optional node correctly' do
+  it 'interacts with optional node correctly' do
     # before the fix, filters would try to piggy-back on optional templates
 
     test_rule do

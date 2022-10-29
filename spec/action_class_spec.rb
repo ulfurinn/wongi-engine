@@ -23,7 +23,7 @@ describe 'action classes' do
     end
   end
 
-  it 'should have appropriate callbacks executed' do
+  it 'has appropriate callbacks executed' do
     executed = 0
     deexecuted = 0
 

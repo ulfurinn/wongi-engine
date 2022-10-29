@@ -20,7 +20,7 @@ describe "negative rule" do
     expect(prod).to have(0).tokens
   end
 
-  it "should not introduce variables" do
+  it "does not introduce variables" do
     proc = lambda {
       engine << rule('one-option') {
         forall {
@@ -68,7 +68,7 @@ describe "negative rule" do
     expect(prod).to have(1).tokens
   end
 
-  it "should not create self-negating facts" do
+  it "does not create self-negating facts" do
     engine << rule('feedback') {
       forall {
         neg :a, :b, :_

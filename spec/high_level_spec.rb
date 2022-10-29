@@ -15,7 +15,7 @@ describe 'the engine' do
   let(:engine) { Wongi::Engine.create }
 
   context 'with a simple generative positive rule' do
-    it 'should generate wmes with an existing rule' do
+    it 'generates wmes with an existing rule' do
       engine << rule('symmetric') {
         forall {
           has :P, "symmetric", true
@@ -35,7 +35,7 @@ describe 'the engine' do
       expect(generated).to eq([Wongi::Engine::WME.new("Bob", "friend", "Alice")])
     end
 
-    it 'should generate wmes with an added rule' do
+    it 'generates wmes with an added rule' do
       engine << Wongi::Engine::WME.new("friend", "symmetric", true)
       engine << Wongi::Engine::WME.new("Alice", "friend", "Bob")
 
@@ -55,7 +55,7 @@ describe 'the engine' do
       expect(engine.facts.select { engine.current_overlay.manual?(_1) }.size).to eq(2)
     end
 
-    it 'should not get confused by recursive activations' do
+    it 'does not get confused by recursive activations' do
       engine << rule('reflexive') {
         forall {
           has :Predicate, "reflexive", true
@@ -76,7 +76,7 @@ describe 'the engine' do
     end
   end
 
-  it 'should check equality' do
+  it 'checks equality' do
     node = engine << rule('equality') {
       forall {
         fact :A, "same", :B
@@ -88,7 +88,7 @@ describe 'the engine' do
     expect(node.size).to eq(1)
   end
 
-  it 'should compare things' do
+  it 'compares things' do
     engine << rule('less') {
       forall {
         has :A, :age, :N1
@@ -121,7 +121,7 @@ describe 'the engine' do
     expect(items.size).to eq(1)
   end
 
-  it 'should use collectors' do
+  it 'uses collectors' do
     engine << rule('collector') {
       forall {
         has :X, :_, 42
@@ -139,7 +139,7 @@ describe 'the engine' do
     expect(collection.first).to eq("answer")
   end
 
-  it "should properly show error messages" do
+  it "properlies show error messages" do
     engine << rule("Error rule") {
       forall {
         has :_, :_, :TestNumber
@@ -156,7 +156,7 @@ describe 'the engine' do
     expect(error_messages).to eq(["An error has occurred"])
   end
 
-  it 'should use generic collectors' do
+  it 'uses generic collectors' do
     engine << rule('generic-collector') {
       forall {
         has :X, :_, 42
@@ -174,7 +174,7 @@ describe 'the engine' do
     expect(collection.first).to eq("answer")
   end
 
-  it 'should accept several rules' do
+  it 'accepts several rules' do
     expect {
       engine << rule('generic-collector') {
         forall {
@@ -196,7 +196,7 @@ describe 'the engine' do
     }.not_to raise_error
   end
 
-  it 'should process negative nodes' do
+  it 'processes negative nodes' do
     production = (engine << rule('negative') {
                     forall {
                       neg :_, :_, 42
@@ -220,14 +220,14 @@ describe 'the engine' do
       }
     end
 
-    it 'should run' do
+    it 'runs' do
       engine << ["answer", "is", 42]
       engine.execute "test-query", { X: "answer" }
       expect(engine.results["test-query"].size).to eq(1)
       expect(engine.results["test-query"].tokens.first[:Y]).to eq(42)
     end
 
-    it 'should run several times' do
+    it 'runs several times' do
       engine << ["answer", "is", 42]
       engine << %w[question is 6x9]
       engine.execute "test-query", { X: "answer" }

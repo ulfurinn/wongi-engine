@@ -6,7 +6,7 @@ describe Wongi::Engine::BetaNode do
   let(:engine) { Wongi::Engine.create }
 
   describe '#tokens' do
-    it 'should be enumerable' do
+    it 'is enumerable' do
       production = engine << rule {
         forall {
           has :x, :y, :Z

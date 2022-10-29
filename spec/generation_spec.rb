@@ -20,7 +20,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
   let(:production) { engine << transitive_rule }
 
   shared_examples 'generation' do
-    it 'should generate facts' do
+    it 'generates facts' do
       engine << %w[Alice relative Bob]
       engine << %w[Bob relative Dwight]
 
@@ -28,7 +28,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       expect(engine.find(*%w[Alice relative Dwight])).not_to be_nil
     end
 
-    it 'should retrct generated facts' do
+    it 'retracts generated facts' do
       engine << %w[Alice relative Bob]
       engine << %w[Bob relative Dwight]
       engine.retract %w[Bob relative Dwight]
@@ -45,19 +45,19 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
         engine << %w[Claire relative Dwight]
       end
 
-      it 'should be created' do
+      it 'is created' do
         expect(production).to have(2).tokens
         expect(engine.find(*%w[Alice relative Dwight])).not_to be_nil
       end
 
-      it 'should remain after a single retraction' do
+      it 'remains after a single retraction' do
         engine.retract %w[Claire relative Dwight]
 
         expect(production).to have(1).token
         expect(engine.find(*%w[Alice relative Dwight])).not_to be_nil
       end
 
-      it 'should be destroyed after both retractions' do
+      it 'is destroyed after both retractions' do
         engine.retract %w[Claire relative Dwight]
         engine.retract %w[Alice relative Bob]
 
@@ -83,7 +83,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
 
     it_behaves_like 'generation'
 
-    it 'should not retract generated facts marked as manual', :wip do
+    it 'does not retract generated facts marked as manual', :wip do
       engine << %w[Alice relative Bob]
       engine << %w[Bob relative Dwight]
       engine << %w[Alice relative Dwight]
@@ -93,7 +93,7 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       expect(engine.find(*%w[Alice relative Dwight])).not_to be_nil
     end
 
-    it 'should retract generated facts unmarked as manual', :wip do
+    it 'retracts generated facts unmarked as manual', :wip do
       engine << %w[Alice relative Bob]
       engine << %w[Bob relative Dwight]
       engine << %w[Alice relative Dwight]

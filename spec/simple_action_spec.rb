@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Wongi::Engine::DSL::Action::SimpleAction do
   let(:engine) { Wongi::Engine.create }
 
-  it 'should work with blocks' do
+  it 'works with blocks' do
     count = 0
 
     engine.rule do

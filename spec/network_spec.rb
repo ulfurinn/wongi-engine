@@ -3,15 +3,16 @@ require 'spec_helper'
 describe Wongi::Engine::Network do
   include Wongi::Engine::DSL
 
-  let(:engine) { Wongi::Engine.create }
   subject { engine }
 
-  it 'should assert facts' do
+  let(:engine) { Wongi::Engine.create }
+
+  it 'asserts facts' do
     subject << [1, 2, 3]
     expect(subject.select(:_, 2, :_)).to have(1).item
   end
 
-  it 'should retract facts' do
+  it 'retracts facts' do
     subject << [1, 2, 3]
     subject.retract [1, 2, 3]
     expect(subject.select(:_, 2, :_).count).to eq(0)

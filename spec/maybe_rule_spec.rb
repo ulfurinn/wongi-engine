@@ -12,7 +12,7 @@ describe "MAYBE rule" do
     }
   }
 
-  it "should pass with existing facts" do
+  it "passes with existing facts" do
     production = engine << maybe_rule
 
     engine << [1, 2, 3]
@@ -24,7 +24,7 @@ describe "MAYBE rule" do
     expect(production.tokens.first[:Y]).to eq(5)
   end
 
-  it "should pass with missing facts" do
+  it "passes with missing facts" do
     production = engine << maybe_rule
 
     engine << [1, 2, 3]
@@ -35,7 +35,7 @@ describe "MAYBE rule" do
     expect(production.tokens.first[:Y]).to be_nil
   end
 
-  it "should pass with pre-added missing facts" do
+  it "passes with pre-added missing facts" do
     engine << [1, 2, 3]
 
     production = engine << maybe_rule
@@ -46,7 +46,7 @@ describe "MAYBE rule" do
     expect(production.tokens.first[:Y]).to be_nil
   end
 
-  it 'should pass with retracted facts' do
+  it 'passes with retracted facts' do
     prod = engine << maybe_rule
 
     engine << [1, 2, 3]
@@ -59,7 +59,7 @@ describe "MAYBE rule" do
     expect(prod.tokens.first[:Y]).to be_nil
   end
 
-  it 'should work with repeated activations' do
+  it 'works with repeated activations' do
     prod = engine << maybe_rule
 
     engine << [1, 2, 3]
@@ -77,7 +77,7 @@ describe "MAYBE rule" do
     }
   end
 
-  it 'should work with with overlays' do
+  it 'works with with overlays' do
     prod = engine << maybe_rule
 
     engine << [1, 2, 3]
@@ -96,7 +96,7 @@ describe "MAYBE rule" do
     expect(prod.tokens.first[:Y]).to be == 5
   end
 
-  it 'should handle retracted parent tokens' do
+  it 'handles retracted parent tokens' do
     prod = engine << maybe_rule
 
     engine << [1, 2, 3]

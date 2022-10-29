@@ -9,7 +9,7 @@ describe 'aggregate' do
   let(:production) { engine.productions[rule_name] }
 
   context 'generic clause' do
-    it 'should return a single token' do
+    it 'returns a single token' do
       engine << rule(rule_name) do
         forall {
           aggregate :_, :weight, :_, on: :object, function: :min, assign: :X

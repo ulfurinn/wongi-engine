@@ -29,7 +29,7 @@ describe Wongi::Engine::NccNode do
     }
   end
 
-  it 'should pass with a mismatching subchain' do
+  it 'passes with a mismatching subchain' do
     engine << ncc_rule
     production = engine.productions['ncc']
 
@@ -46,7 +46,7 @@ describe Wongi::Engine::NccNode do
     expect(production).to have(0).token
   end
 
-  it 'should remain consistent after retraction' do
+  it 'remains consistent after retraction' do
     engine << ncc_rule
     production = engine.productions['ncc']
 
@@ -81,7 +81,7 @@ describe Wongi::Engine::NccNode do
     expect(production).to have(0).tokens
   end
 
-  it 'should clean up correctly' do
+  it 'cleans up correctly' do
     engine.rule :rule1 do
       forall {
         has :light_kitchen, :value, :on
@@ -135,7 +135,7 @@ describe Wongi::Engine::NccNode do
     expect(engine.select(:light_bathroom, :last_user, :_).to_a).to be == [Wongi::Engine::WME.new(:light_bathroom, :last_user, :god)]
   end
 
-  it 'should clean up correctly with a different activation order' do
+  it 'cleans up correctly with a different activation order' do
     engine.rule :rule1 do
       forall {
         has :light_kitchen, :value, :on
@@ -191,7 +191,7 @@ describe Wongi::Engine::NccNode do
     expect(engine.select(:light_bathroom, :last_user, :_).to_a).to be == [Wongi::Engine::WME.new(:light_bathroom, :last_user, :god)]
   end
 
-  it 'should ncc-deactivate without destroying tokens' do
+  it 'ncc-deactivates without destroying tokens' do
     engine << rule {
       forall {
         has :Student, :is_a, :student

@@ -42,9 +42,6 @@ Naming/MethodParameterName:
 Layout/LineLength:
   Enabled: false
 
-RSpec:
-  Enabled: false
-
 Style/SafeNavigation:
   Enabled: false
 

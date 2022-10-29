@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "issue 4" do
-  it "should correctly retract pre-added items from within a rule" do
+  it "correctlies retract pre-added items from within a rule" do
     engine = Wongi::Engine.create
 
     10.times { |i| engine << [i, :is_number, true] }
@@ -26,7 +26,7 @@ describe "issue 4" do
     expect(evens.size).to eq(10)
   end
 
-  it "should correctly retract post-added items from within a rule" do
+  it "correctlies retract post-added items from within a rule" do
     engine = Wongi::Engine.create
 
     engine.rule 'segregate' do
@@ -52,7 +52,7 @@ describe "issue 4" do
   end
 
   # cascaded processing affects this
-  it "should not retract later items from within a rule" do
+  it "does not retract later items from within a rule" do
     engine = Wongi::Engine.create
 
     10.times { |i| engine << [i, :is_number, true] }
@@ -85,7 +85,7 @@ describe "issue 4" do
     expect(odds.size).to eq(5)
   end
 
-  it "should not lose track when another rule affects a set" do
+  it "does not lose track when another rule affects a set" do
     engine = Wongi::Engine.create
 
     10.times { |i| engine << [i, :is_number, true] }

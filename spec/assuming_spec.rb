@@ -4,7 +4,7 @@ describe Wongi::Engine::AssumingClause do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
-  it 'should include base rules' do
+  it 'includes base rules' do
     engine << rule(:base) {
       forall {
         has :x, :y, :Z
@@ -26,7 +26,7 @@ describe Wongi::Engine::AssumingClause do
     expect(result).to eq(1 => :a, 2 => :b)
   end
 
-  it 'should check for base rule\'s existence' do
+  it 'checks for base rule's existence' do
     f = lambda {
       engine << rule {
         forall {
@@ -38,7 +38,7 @@ describe Wongi::Engine::AssumingClause do
     expect(&f).to raise_error Wongi::Engine::UndefinedBaseRule
   end
 
-  it 'should come first in a rule' do
+  it 'comes first in a rule' do
     f = lambda {
       engine << rule(:base) {
         forall {

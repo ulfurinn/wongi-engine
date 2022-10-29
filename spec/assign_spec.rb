@@ -4,7 +4,7 @@ describe "ASSIGN rule" do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 
-  it "should assign simple expressions" do
+  it "assigns simple expressions" do
     production = engine << rule {
       forall {
         assign :X do
@@ -16,7 +16,7 @@ describe "ASSIGN rule" do
     expect(production.tokens.first[:X]).to eq(42)
   end
 
-  it 'should be available in the make section' do
+  it 'is available in the make section' do
     production = engine << rule {
       forall {
         has 1, 2, :X
@@ -32,7 +32,7 @@ describe "ASSIGN rule" do
     expect(production.tokens.first[:Y]).to be == 42
   end
 
-  it "should be able to access previous assignments" do
+  it "is able to access previous assignments" do
     production = engine << rule {
       forall {
         has 1, 2, :X
@@ -46,7 +46,7 @@ describe "ASSIGN rule" do
     expect(production.tokens.first[:Y]).to eq(10)
   end
 
-  it 'should be deactivatable' do
+  it 'is deactivatable' do
     prod = engine << rule {
       forall {
         has 1, 2, :X
@@ -62,7 +62,7 @@ describe "ASSIGN rule" do
     expect(prod).to have(0).tokens
   end
 
-  it 'should be evaluated once' do
+  it 'is evaluated once' do
     x = 0
     engine << rule {
       forall {
@@ -80,7 +80,7 @@ describe "ASSIGN rule" do
     expect(x).to be == 1
   end
 
-  it 'should handle booleans' do
+  it 'handles booleans' do
     engine << rule do
       forall {
         has :a, :b, :c

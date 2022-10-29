@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Wongi::Engine::Network do
   include Wongi::Engine::DSL
-  it 'should expose compiled productions' do
+  it 'exposes compiled productions' do
     ds = Wongi::Engine::Network.new
 
     ds << rule('test-rule') {
