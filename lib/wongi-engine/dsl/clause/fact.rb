@@ -5,7 +5,6 @@ module Wongi::Engine
       attr_predicate :debug
 
       def initialize(s, p, o, options = {})
-        @unsafe = options[:unsafe] || false
         debug! if options[:debug]
         super(s, p, o)
       end
@@ -43,13 +42,11 @@ module Wongi::Engine
     end
 
     class Neg < Has
-      attr_reader :unsafe
-
       def compile(context)
         tests, assignment = parse_variables(context)
         raise DefinitionError, "Negative matches may not introduce new variables: #{assignment.variables}" unless assignment.root?
 
-        context.tap { |c| c.neg_node(self, tests, unsafe) }
+        context.tap { |c| c.neg_node(self, tests) }
       end
 
       def inspect

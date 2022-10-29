@@ -5,17 +5,16 @@ module Wongi
     class NegNode < BetaNode
       attr_reader :alpha, :tests
 
-      def initialize(parent, tests, alpha, unsafe)
+      def initialize(parent, tests, alpha)
         super(parent)
         @tests = tests
         @alpha = alpha
-        @unsafe = unsafe
       end
 
       def alpha_activate(wme, children: self.children)
         # p alpha_activate: {class: self.class, object_id:, wme:}
         tokens.each do |token|
-          next unless matches?(token, wme) && (@unsafe || !token.generated?(wme)) # feedback loop protection
+          next unless matches?(token, wme)
 
           # order matters for proper invalidation
           overlay.add_neg_join_result(NegJoinResult.new(token, wme))
@@ -70,8 +69,6 @@ module Wongi
           alpha_activate wme, children: [child]
         end
       end
-
-      protected
 
       def matches?(token, wme)
         puts "matching #{wme} against #{token}" if debug?

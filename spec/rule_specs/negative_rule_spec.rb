@@ -68,7 +68,7 @@ describe "negative rule" do
     expect(prod).to have(1).tokens
   end
 
-  it "should not create infinite feedback loops by default" do
+  it "should not create self-negating facts" do
     engine << rule('feedback') {
       forall {
         neg :a, :b, :_
@@ -78,28 +78,6 @@ describe "negative rule" do
       }
     }
 
-    engine.should have(1).facts
-  end
-
-  it "should create infinite feedback loops with unsafe option" do
-    counter = 0
-    exception = Class.new(StandardError)
-
-    proc = lambda {
-      engine << rule('feedback') {
-        forall {
-          neg :a, :b, :_, unsafe: true
-        }
-        make {
-          action {
-            counter += 1
-            raise exception if counter > 5
-          }
-          gen :a, :b, :c
-        }
-      }
-    }
-
-    expect(&proc).to raise_error(exception)
+    engine.should have(0).facts
   end
 end

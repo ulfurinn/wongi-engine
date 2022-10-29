@@ -1,3 +1,5 @@
+require "set"
+
 module Wongi::Engine
   module DSL::Action
     class StatementGenerator < BaseAction
@@ -16,21 +18,43 @@ module Wongi::Engine
         subject, predicate, object = template.resolve!(token)
 
         wme = WME.new(subject, predicate, object)
-
-        origin = GeneratorOrigin.new(token, self)
+        wme = overlay.find(wme) || wme
 
         production.tracer.trace(action: self, wme: wme) if production.tracer
-        if (existing = overlay.find(wme))
-          # do not mark purely manual tokens as generated, because a circular rule such as the symmetric friend generator this would cause both sides to become self-sustaining
-          # TODO: but this may have to be smarter, because there may be more indirect ways of creating such a situation
-          if overlay.generated?(wme)
-            token.generated_wmes << existing
-            overlay.assert(existing, generator: origin)
-          end
-        else
+
+        if should_assert?(wme, token)
+          origin = GeneratorOrigin.new(token, self)
           token.generated_wmes << wme
           overlay.assert(wme, generator: origin)
         end
+      end
+
+      private def should_assert?(wme, token)
+        considered_tokens = Set.new
+        tokens_to_consider = [token]
+        until tokens_to_consider.empty?
+          token = tokens_to_consider.shift
+          considered_tokens.add(token)
+
+          # self-affirming reasoning
+          return false if token.wme == wme
+
+          # asserting this WME would invalidate the match
+          return false if token.node.is_a?(NegNode) && token.node.matches?(token, wme)
+
+          if token.parent && !considered_tokens.include?(token.parent)
+            tokens_to_consider.push(token.parent)
+          end
+
+          if token.wme
+            overlay.generators(token.wme).each do |generator|
+              tokens_to_consider.push(generator.token) unless considered_tokens.include?(generator.token)
+            end
+          end
+        end
+
+        # we could not prove that the new WME should not be asserted
+        true
       end
 
       def deexecute(token)

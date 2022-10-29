@@ -42,9 +42,9 @@ module Wongi::Engine
       node.tap(&:refresh)
     end
 
-    def neg_node(condition, tests, unsafe)
+    def neg_node(condition, tests)
       alpha = rete.compile_alpha(condition)
-      self.node = NegNode.new(node, tests, alpha, unsafe).tap do |node|
+      self.node = NegNode.new(node, tests, alpha).tap do |node|
         alpha.betas << node unless alpha_deaf
         node.refresh
       end
