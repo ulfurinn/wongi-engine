@@ -26,7 +26,7 @@ describe Wongi::Engine::AssumingClause do
     expect(result).to eq(1 => :a, 2 => :b)
   end
 
-  it 'checks for base rule's existence' do
+  it 'checks for base rule''s existence' do
     f = lambda {
       engine << rule {
         forall {
