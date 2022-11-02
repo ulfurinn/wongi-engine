@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.homepage = 'https://github.com/ulfurinn/wongi-engine'
   gem.metadata = {
     "documentation_uri"     => 'https://ulfurinn.github.io/wongi-engine/',
-    "rubygems_mfa_required" => true,
+    "rubygems_mfa_required" => 'true',
   }
 
 
