@@ -254,7 +254,7 @@ module Wongi::Engine
       end
     end
 
-    def select(s, p, o)
+    def select(s, p, o, &block)
       matching = current_overlay.select(s, p, o)
       if block_given?
         matching.each(&block)
