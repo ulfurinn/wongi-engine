@@ -44,7 +44,7 @@ module Wongi::Engine
 
     def beta_deactivate(token)
       overlay.remove_token(token)
-      beta_deactivate_children(token:)
+      beta_deactivate_children(token: token)
       evaluate
     end
 
@@ -66,7 +66,7 @@ module Wongi::Engine
         children = child ? [child] : self.children
         tokens.each do |token|
           # TODO: optimize this to work with a diff of actual changes
-          beta_deactivate_children(token:, children:)
+          beta_deactivate_children(token: token, children: children)
           children.each do |beta|
             beta.beta_activate(Token.new(beta, token, nil, assignment))
           end
