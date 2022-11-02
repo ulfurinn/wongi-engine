@@ -16,10 +16,9 @@ module Wongi::Engine
     def remove(wme)
       collection = collection_for_wme(wme)
       collection.delete(wme)
-      if collection.empty?
-        # release some memory
-        index.delete(hashed_key(wme))
-      end
+
+      # release some memory
+      index.delete(hashed_key(wme)) if collection.empty?
     end
 
     def collection_for_wme(wme)

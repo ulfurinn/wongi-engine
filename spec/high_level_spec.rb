@@ -10,7 +10,7 @@ class << self
   }
 end
 
-describe 'the engine' do
+describe Wongi::Engine::Network do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 

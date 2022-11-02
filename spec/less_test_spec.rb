@@ -1,19 +1,13 @@
 require 'spec_helper'
 
-describe "LESS test" do
+describe Wongi::Engine::LessThanTest do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
-
-  attr_reader :production
-
-  def test_rule(&block)
-    @production = (engine << rule('test-rule', &block))
-  end
 
   it "interacts with optional node correctly" do
     # before the fix, filters would try to piggy-back on optional templates
 
-    test_rule {
+    production = engine << rule {
       forall {
         maybe "Z", "Z", "Z"
         less 6, 4 # this should fail
@@ -26,6 +20,6 @@ describe "LESS test" do
 
     engine << %w[A B C]
 
-    expect(@production.size).to eq(0)
+    expect(production.size).to eq(0)
   end
 end

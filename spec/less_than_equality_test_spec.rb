@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Less Than Or Equal test' do
+describe Wongi::Engine::LessThanOrEqualTest do
   include Wongi::Engine::DSL
   let(:engine) { Wongi::Engine.create }
 

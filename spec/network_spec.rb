@@ -3,62 +3,60 @@ require 'spec_helper'
 describe Wongi::Engine::Network do
   include Wongi::Engine::DSL
 
-  subject { engine }
-
   let(:engine) { Wongi::Engine.create }
 
   it 'asserts facts' do
-    subject << [1, 2, 3]
-    expect(subject.select(:_, 2, :_)).to have(1).item
+    engine << [1, 2, 3]
+    expect(engine.select(:_, 2, :_)).to have(1).item
   end
 
   it 'retracts facts' do
-    subject << [1, 2, 3]
-    subject.retract [1, 2, 3]
-    expect(subject.select(:_, 2, :_).count).to eq(0)
+    engine << [1, 2, 3]
+    engine.retract [1, 2, 3]
+    expect(engine.select(:_, 2, :_).count).to eq(0)
   end
 
   it 'asserted facts end up in productions' do
-    prod = subject << rule { forall { has :X, 2, :Z } }
-    subject << [1, 2, 3]
+    prod = engine << rule { forall { has :X, 2, :Z } }
+    engine << [1, 2, 3]
     expect(prod).to have(1).tokens
   end
 
   it 'rules can be removed from engine' do
-    subject << [1, 2, 3]
-    subject << [4, 5, 6]
+    engine << [1, 2, 3]
+    engine << [4, 5, 6]
 
-    prod1 = subject << rule { forall { has :X, 2, :Z } }
-    prod2 = subject << rule { forall { has :X, 5, :Z } }
+    prod1 = engine << rule { forall { has :X, 2, :Z } }
+    prod2 = engine << rule { forall { has :X, 5, :Z } }
 
     expect(prod1).to have(1).tokens
     expect(prod2).to have(1).tokens
 
-    subject.remove_production(prod1)
+    engine.remove_production(prod1)
 
     expect(prod1).to have(0).tokens
     expect(prod2).to have(1).tokens
   end
 
   it 'new rules can be added to engine after a rule has been been removed' do
-    subject << [1, 2, 3]
-    subject << [4, 5, 6]
+    engine << [1, 2, 3]
+    engine << [4, 5, 6]
 
-    prod1 = subject << rule { forall { has :X, 2, :Z } }
+    prod1 = engine << rule { forall { has :X, 2, :Z } }
 
     expect(prod1).to have(1).tokens
 
-    subject.remove_production(prod1)
+    engine.remove_production(prod1)
     expect(prod1).to have(0).tokens
 
-    prod2 = subject << rule { forall { has :X, 5, :Z } }
+    prod2 = engine << rule { forall { has :X, 5, :Z } }
     expect(prod2).to have(1).tokens
   end
 
   it 'retracted facts are removed from productions' do
-    prod = subject << rule { forall { has :X, 2, :Z } }
-    subject << [1, 2, 3]
-    subject.retract [1, 2, 3]
+    prod = engine << rule { forall { has :X, 2, :Z } }
+    engine << [1, 2, 3]
+    engine.retract [1, 2, 3]
     expect(prod).to have(0).tokens
   end
 
@@ -66,17 +64,17 @@ describe Wongi::Engine::Network do
     activated_z = nil
     deactivated_z = nil
 
-    subject << rule {
+    engine << rule {
       forall { has :X, 2, :Z }
       make {
         action activate: ->(token) { activated_z = token[:Z] },
                deactivate: ->(token) { deactivated_z = token[:Z] }
       }
     }
-    subject << [1, 2, 3]
+    engine << [1, 2, 3]
     expect(activated_z).to be == 3
 
-    subject.retract [1, 2, 3]
+    engine.retract [1, 2, 3]
     expect(deactivated_z).to be == 3
   end
 
