@@ -1,20 +1,18 @@
 module Wongi::Engine
   module DSL::Clause
-    class Aggregate < Has
-      attr_reader :map, :function, :assign
+    class Aggregate
+      attr_reader :var, :over, :partition, :aggregate, :map
 
-      def initialize(s, p, o, options = {})
-        member = options[:on]
+      def initialize(var, options = {})
+        @var = var
+        @over = options[:over]
+        @partition = options[:partition]
+        @aggregate = options[:using]
         @map = options[:map]
-        @function = options[:function]
-        @assign = options[:assign]
-        @map ||= ->(wme) { wme.send(member) }
-        super
       end
 
       def compile(context)
-        tests, assignment = parse_variables(context)
-        context.tap { |c| c.aggregate_node(self, tests, assignment, map, function, assign) }
+        context.tap { |c| c.aggregate_node(var, over, partition, aggregate, map) }
       end
     end
   end

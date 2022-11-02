@@ -89,19 +89,29 @@ module Wongi::Engine::DSL
     clause :aggregate
     accept Clause::Aggregate
 
-    clause :least, :min
-    body { |s, p, o, opts|
-      aggregate s, p, o, on: opts[:on], function: :min, assign: opts[:assign]
+    clause :min
+    body { |var, opts|
+      aggregate var, opts.merge(using: ->(collection) { collection.min })
     }
 
-    clause :greatest, :max
-    body { |s, p, o, opts|
-      aggregate s, p, o, on: opts[:on], function: :max, assign: opts[:assign]
+    clause :max
+    body { |var, opts|
+      aggregate var, opts.merge(using: ->(collection) { collection.max })
     }
 
     clause :count
-    body { |s, p, o, opts|
-      aggregate s, p, o, map: ->(_) { 1 }, function: ->(collection) { collection.inject(&:+) }, assign: opts[:assign]
+    body { |var, opts = {}|
+      aggregate var, opts.merge(using: ->(collection) { collection.count })
+    }
+
+    clause :sum
+    body { |var, opts|
+      aggregate var, opts.merge(using: ->(collection) { collection.inject(:+) })
+    }
+
+    clause :product
+    body { |var, opts|
+      aggregate var, opts.merge(using: ->(collection) { collection.inject(:*) })
     }
 
     clause :assert, :dynamic

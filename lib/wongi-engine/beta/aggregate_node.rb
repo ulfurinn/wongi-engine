@@ -1,41 +1,37 @@
 module Wongi::Engine
   class AggregateNode < BetaNode
-    attr_reader :alpha, :tests, :assignment_pattern, :map, :function, :assign
+    attr_reader :var, :over, :partition, :aggregate, :map
 
-    def initialize(parent, alpha, tests, assignment, map, function, assign)
+    def initialize(parent, var, over, partition, aggregate, map)
       super(parent)
-      @alpha = alpha
-      @tests = tests
-      @assignment_pattern = assignment
-      @map = map
-      @function = function
-      @assign = assign
+      @var = var
+      @over = over
+      @partition = make_partition_fn(partition)
+      @aggregate = make_aggregate_fn(aggregate)
+      @map = make_map_fn(map)
     end
 
-    def equivalent?(alpha, tests, assignment_pattern)
-      return false if self.alpha != alpha
-      return false if self.assignment_pattern != assignment_pattern
-      return true if self.tests.empty? && tests.empty?
-      return false if self.tests.length != tests.length
+    def make_partition_fn(partition)
+      return nil if partition.nil?
 
-      self.tests.all? { |my_test|
-        tests.any? { |new_test|
-          my_test.equivalent? new_test
-        }
-      }
-    end
-
-    def alpha_activate(wme)
-      # we need to re-run all WMEs through the aggregator, so the new incoming one doesn't matter
-      tokens.each do |token|
-        evaluate(wme: wme, token: token)
+      if Template.variable?(partition)
+        ->(token) { token[partition] }
+      elsif partition.is_a?(Array) && partition.all? { Template.variable?(_1) }
+        ->(token) { token.values_at(*partition) }
+      else
+        partition
       end
     end
 
-    def alpha_deactivate(wme)
-      # we need to re-run all WMEs through the aggregator, so the new incoming one doesn't matter
-      tokens.each do |token|
-        evaluate(wme: wme, token: token)
+    def make_aggregate_fn(agg)
+      agg
+    end
+
+    def make_map_fn(map)
+      if map.nil?
+        ->(token) { token[over] }
+      else
+        map
       end
     end
 
@@ -43,42 +39,37 @@ module Wongi::Engine
       return if tokens.find { |t| t.duplicate? token }
 
       overlay.add_token(token)
-      evaluate(wme: nil, token: token)
+      evaluate
     end
 
     def beta_deactivate(token)
       overlay.remove_token(token)
-      beta_deactivate_children(token: token)
+      beta_deactivate_children(token:)
+      evaluate
     end
 
     def refresh_child(child)
-      tokens.each do |token|
-        evaluate(wme: nil, token: token, child: child)
-      end
+      evaluate(child: child)
     end
 
-    def evaluate(wme:, token:, child: nil)
-      # clean up previous decisions
-      # # TODO: optimise: only clean up if the value changed
-      beta_deactivate_children(token: token)
-
-      template = specialize(alpha.template, tests, token)
-      candidates = select_wmes(template) { |asserted_wme| matches?(token, asserted_wme) }
-
-      return if candidates.empty?
-
-      mapped = candidates.map(&map)
-      value = if function.is_a?(Symbol) && mapped.respond_to?(function)
-                mapped.send(function)
-              else
-                function.call(mapped)
-              end
-      assignments = { assign => value }
-      if child
-        child.beta_activate(Token.new(child, token, wme, assignments))
+    def evaluate(child: nil)
+      groups = if partition
+        tokens.group_by(&partition).values
       else
-        children.each do |beta|
-          beta.beta_activate(Token.new(beta, token, wme, assignments))
+        # just a single group of everything
+        [tokens]
+      end
+
+      groups.each do |tokens|
+        aggregated = self.aggregate.call(tokens.map(&self.map))
+        assignment = { var => aggregated }
+        children = child ? [child] : self.children
+        tokens.each do |token|
+          # TODO: optimize this to work with a diff of actual changes
+          beta_deactivate_children(token:, children:)
+          children.each do |beta|
+            beta.beta_activate(Token.new(beta, token, nil, assignment))
+          end
         end
       end
     end

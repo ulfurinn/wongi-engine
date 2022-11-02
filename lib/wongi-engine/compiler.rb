@@ -58,12 +58,9 @@ module Wongi::Engine
       end
     end
 
-    def aggregate_node(condition, tests, assignment, map, function, assign)
-      declare(assign)
-      alpha = rete.compile_alpha(condition)
-      self.node = AggregateNode.new(node, alpha, tests, assignment, map, function, assign).tap do |node|
-        alpha.betas << node unless alpha_deaf
-      end.tap(&:refresh)
+    def aggregate_node(var, over, partition, aggregate, map)
+      declare(var)
+      self.node = AggregateNode.new(node, var, over, partition, aggregate, map).tap(&:refresh)
     end
 
     def or_node(variants)

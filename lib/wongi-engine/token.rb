@@ -40,6 +40,10 @@ module Wongi::Engine
       a.respond_to?(:call) ? a.call(self) : a
     end
 
+    def values_at(*vars)
+      vars.map { self[_1] }
+    end
+
     def has_var?(x)
       assignments.key? x
     end
