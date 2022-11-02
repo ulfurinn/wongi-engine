@@ -10,10 +10,6 @@ module Wongi::Engine
       self.class.new(subject, predicate, object)
     end
 
-    def ==(other)
-      other && subject == other.subject && predicate == other.predicate && object == other.object
-    end
-
     # @param template Wongi::Engine::Template
     def =~(template)
       raise Wongi::Engine::Error, "Cannot match a WME against a #{template.class}" unless template.is_a?(Template)
@@ -28,14 +24,6 @@ module Wongi::Engine
 
     def to_s
       inspect
-    end
-
-    def hash
-      @hash ||= [subject.hash, predicate.hash, object.hash].hash
-    end
-
-    def eql?(other)
-      subject.eql?(other.subject) && predicate.eql?(other.predicate) && object.eql?(other.object)
     end
 
     protected
