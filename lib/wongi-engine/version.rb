@@ -1,5 +1,5 @@
 module Wongi
   module Engine
-    VERSION = "0.4.0-alpha5".freeze
+    VERSION = "0.4.0-alpha6".freeze
   end
 end
