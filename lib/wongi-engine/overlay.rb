@@ -183,14 +183,16 @@ module Wongi::Engine
         case operation
         when :assert
           wme = find_ignoring_hidden(wme) || wme
+          visible = !find(wme).nil?
           add_wme(wme, **options)
-          rete.real_assert(wme)
+          rete.real_assert(wme) unless visible
         when :retract
           wme = find_ignoring_hidden(wme)
           return if wme.nil? # it's perhaps better to return quietly, because complicated cascades may delete a WME while we're going through the queue
 
+          visible = !find(wme).nil?
           remove_wme(wme, **options)
-          rete.real_retract(wme)
+          rete.real_retract(wme) if visible
         end
       end
     end
