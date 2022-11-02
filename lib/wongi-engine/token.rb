@@ -2,18 +2,16 @@ require 'set'
 
 module Wongi::Engine
   class Token
-    attr_reader :children, :wme, :node, :generated_wmes, :parents
+    attr_reader :wme, :node, :generated_wmes, :parents
 
     def initialize(node, parents, wme, assignments = {})
       @node = node
       @parents = Set.new(Array(parents))
       @wme = wme
       @assignments = assignments
-      @children = []
       @deleted = false
       @ncc_results = []
       @generated_wmes = []
-      self.parents.each { _1.children << self }
     end
 
     def ancestors
@@ -79,11 +77,11 @@ module Wongi::Engine
     end
 
     # for neg feedback loop protection
-    def generated?(wme)
-      return true if generated_wmes.any? { |w| w == wme }
-
-      children.any? { |t| t.generated? wme }
-    end
+    # def generated?(wme)
+    #   return true if generated_wmes.any? { |w| w == wme }
+    #
+    #   children.any? { |t| t.generated? wme }
+    # end
 
     protected
 
@@ -99,7 +97,7 @@ module Wongi::Engine
       @parent = token
       @wme = wme
       @assignments = assignments
-      @children = []
+      # @children = []
       @neg_join_results = []
       @opt_join_results = []
       @ncc_results = []
