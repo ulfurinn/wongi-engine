@@ -20,7 +20,7 @@ module Wongi::Engine
       overlay.remove_token(token)
       children.each do |child|
         child.tokens.each do |t|
-          if t.parent == token
+          if t.child_of?(token)
             child.beta_deactivate t
             # token.destroy
           end

@@ -6,9 +6,10 @@ module Wongi::Engine
       def initialize(var, options = {})
         @var = var
         @over = options[:over]
-        @partition = options[:partition]
+        @partition = Array(options[:partition])
         @aggregate = options[:using]
         @map = options[:map]
+        raise "can only partition by variables" unless partition.all? { |p| Template.variable?(p) }
       end
 
       def compile(context)

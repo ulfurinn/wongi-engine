@@ -42,14 +42,12 @@ module Wongi::Engine
           # asserting this WME would invalidate the match
           return false if token.node.is_a?(NegNode) && token.node.matches?(token, wme)
 
-          if token.parent && !considered_tokens.include?(token.parent)
-            tokens_to_consider.push(token.parent)
-          end
+          (token.parents - considered_tokens).each { |parent| tokens_to_consider.push(parent) }
 
-          if token.wme
-            overlay.generators(token.wme).each do |generator|
-              tokens_to_consider.push(generator.token) unless considered_tokens.include?(generator.token)
-            end
+          next unless token.wme
+
+          overlay.generators(token.wme).each do |generator|
+            tokens_to_consider.push(generator.token) unless considered_tokens.include?(generator.token)
           end
         end
 

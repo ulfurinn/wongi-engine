@@ -32,7 +32,7 @@ module Wongi::Engine
       overlay.remove_token(token)
 
       children.each do |child|
-        child.tokens.select { _1.parent == token }.each { child.beta_deactivate(_1) }
+        child.tokens.select { _1.child_of?(token) }.each { child.beta_deactivate(_1) }
       end
 
       nil

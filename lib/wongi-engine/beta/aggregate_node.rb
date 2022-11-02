@@ -12,15 +12,9 @@ module Wongi::Engine
     end
 
     def make_partition_fn(partition)
-      return nil if partition.nil?
+      return nil if partition.empty?
 
-      if Template.variable?(partition)
-        ->(token) { token[partition] }
-      elsif partition.is_a?(Array) && partition.all? { Template.variable?(_1) }
-        ->(token) { token.values_at(*partition) }
-      else
-        partition
-      end
+      ->(token) { token.values_at(*partition) }
     end
 
     def make_aggregate_fn(agg)
@@ -53,12 +47,16 @@ module Wongi::Engine
     end
 
     def evaluate(child: nil)
-      groups = if partition
-        tokens.group_by(&partition).values
-      else
-        # just a single group of everything
-        [tokens]
-      end
+      return if tokens.empty?
+
+      groups =
+        if partition
+          tokens.group_by(&partition).values
+        else
+          # just a single group of everything
+          [tokens]
+        end
+
 
       groups.each do |tokens|
         aggregated = self.aggregate.call(tokens.map(&self.map))
@@ -67,9 +65,9 @@ module Wongi::Engine
         tokens.each do |token|
           # TODO: optimize this to work with a diff of actual changes
           beta_deactivate_children(token: token, children: children)
-          children.each do |beta|
-            beta.beta_activate(Token.new(beta, token, nil, assignment))
-          end
+        end
+        children.each do |beta|
+          beta.beta_activate(Token.new(beta, tokens, nil, assignment))
         end
       end
     end

@@ -1,26 +1,27 @@
+require 'set'
+
 module Wongi::Engine
   class Token
-    attr_reader :children, :wme, :node, :generated_wmes
-    attr_accessor :parent
+    attr_reader :children, :wme, :node, :generated_wmes, :parents
 
-    def initialize(node, token, wme, assignments = {})
+    def initialize(node, parents, wme, assignments = {})
       @node = node
-      @parent = token
+      @parents = Set.new(Array(parents))
       @wme = wme
       @assignments = assignments
       @children = []
       @deleted = false
       @ncc_results = []
       @generated_wmes = []
-      token.children << self if token
+      self.parents.each { _1.children << self }
     end
 
     def ancestors
-      if parent
-        parent.ancestors.unshift parent
-      else
-        []
-      end
+      parents.flat_map(&:ancestors).uniq + parents.to_a
+    end
+
+    def child_of?(token)
+      parents.include?(token)
     end
 
     def subst(variable, value)
@@ -50,8 +51,8 @@ module Wongi::Engine
 
     # TODO: ignore assignments?
     def duplicate?(other)
-      self.class == other.class &&
-        parent.equal?(other.parent) &&
+      instance_of?(other.class) &&
+        parents == other.parents &&
         wme == other.wme &&
         assignments == other.assignments
     end
@@ -87,13 +88,9 @@ module Wongi::Engine
     protected
 
     def all_assignments
-      raise "Assignments is not a hash" unless @assignments.is_a?(Hash)
-
-      if @parent
-        @parent.assignments.merge @assignments
-      else
-        @assignments
-      end
+      parents.each_with_object({}) do |parent, acc|
+        acc.merge!(parent.assignments)
+      end.merge(@assignments)
     end
   end
 

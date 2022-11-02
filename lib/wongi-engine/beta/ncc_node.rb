@@ -36,7 +36,7 @@ module Wongi
       def ncc_deactivate(token)
         # p ncc_deactivate: {class: self.class, object_id:, token:}
         children.each do |beta|
-          beta.tokens.select { |t| t.parent == token }.each do |t|
+          beta.tokens.select { |t| t.child_of?(token) }.each do |t|
             beta.beta_deactivate t
           end
         end

@@ -51,7 +51,7 @@ module Wongi::Engine
 
     def beta_deactivate_children(token: nil, wme: nil, children: self.children)
       children.each do |child|
-        child.tokens.select { (token.nil? || _1.parent == token) && (wme.nil? || _1.wme == wme) }.each do |child_token|
+        child.tokens.select { (token.nil? || _1.child_of?(token)) && (wme.nil? || _1.wme == wme) }.each do |child_token|
           child.beta_deactivate(child_token)
         end
       end

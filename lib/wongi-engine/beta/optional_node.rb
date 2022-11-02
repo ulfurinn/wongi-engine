@@ -23,7 +23,7 @@ module Wongi
             if optional
               # we're going to change the optional state so the old ones need to be removed
               child.tokens.each do |ct|
-                child.beta_deactivate(ct) if ct.parent == token
+                child.beta_deactivate(ct) if ct.child_of?(token)
               end
             end
             child.beta_activate Token.new(child, token, wme, assignments)
@@ -43,7 +43,7 @@ module Wongi
 
             children.each do |child|
               child.tokens.each do |ct|
-                child.beta_deactivate(ct) if ct.parent == token
+                child.beta_deactivate(ct) if ct.child_of?(token)
               end
               child.beta_activate Token.new(child, token, nil, {})
             end
