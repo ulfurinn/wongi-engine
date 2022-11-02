@@ -20,10 +20,9 @@ Gem::Specification.new do |gem|
 
   gem.homepage = 'https://github.com/ulfurinn/wongi-engine'
   gem.metadata = {
-    "documentation_uri"     => 'https://ulfurinn.github.io/wongi-engine/',
+    "documentation_uri" => 'https://ulfurinn.github.io/wongi-engine/',
     "rubygems_mfa_required" => 'true',
   }
-
 
   gem.files = if GemHelper.git?
                 `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
