@@ -40,7 +40,8 @@ module Wongi::Engine
           return false if token.wme == wme
 
           # asserting this WME would invalidate the match
-          return false if token.node.is_a?(NegNode) && token.node.matches?(token, wme)
+          # TODO: clean up
+          return false if token.node.is_a?(NegNode) && wme =~ token.node.alpha.template && token.node.matches?(token, wme) # how much is actually necessary?
 
           (token.parents - considered_tokens).each { |parent| tokens_to_consider.push(parent) }
 
