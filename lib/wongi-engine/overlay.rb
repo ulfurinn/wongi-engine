@@ -12,7 +12,7 @@ module Wongi::Engine
 
       def for(wme: nil, token: nil)
         if wme
-          by_wme.key?(wme.object_id) ? by_wme[wme.object_id].keys : []
+          by_wme.key?(wme) ? by_wme[wme].keys : []
         elsif token
           by_token.key?(token.object_id) ? by_token[token.object_id].keys : []
         else
@@ -21,7 +21,7 @@ module Wongi::Engine
       end
 
       def has?(jr)
-        by_wme.key?(jr.wme.object_id) && by_wme[jr.wme.object_id].key?(jr)
+        by_wme.key?(jr.wme) && by_wme[jr.wme].key?(jr)
       end
 
       def hidden?(jr)
@@ -32,7 +32,7 @@ module Wongi::Engine
         if hidden.key?(jr)
           hidden.delete(jr)
         else
-          by_wme[jr.wme.object_id][jr] = true
+          by_wme[jr.wme][jr] = true
           by_token[jr.token.object_id][jr] = true
         end
       end
@@ -43,10 +43,10 @@ module Wongi::Engine
           return
         end
 
-        if by_wme.key?(jr.wme.object_id)
-          by_wme[jr.wme.object_id].delete(jr)
-          if by_wme[jr.wme.object_id].empty?
-            by_wme.delete(jr.wme.object_id)
+        if by_wme.key?(jr.wme)
+          by_wme[jr.wme].delete(jr)
+          if by_wme[jr.wme].empty?
+            by_wme.delete(jr.wme)
           end
         end
 
@@ -71,9 +71,9 @@ module Wongi::Engine
       end
 
       def remove_wme(wme)
-        return unless by_wme.key?(wme.object_id)
+        return unless by_wme.key?(wme)
 
-        by_wme[wme.object_id].keys do |jr|
+        by_wme[wme].keys do |jr|
           remove(jr)
         end
       end
@@ -99,7 +99,7 @@ module Wongi::Engine
       @rete = rete
       @parent = parent
 
-      @wmes = []
+      @wmes = Set.new
       @indexes = [
         AlphaIndex.new(%i[subject]),
         AlphaIndex.new(%i[predicate]),
@@ -238,9 +238,9 @@ module Wongi::Engine
     end
 
     def manual?(wme)
-      wme_manual.key?(wme.object_id) ||
+      wme_manual.key?(wme) ||
         if parent
-          parent.manual?(wme) && !hidden_parent_wme_manual.key?(wme.object_id)
+          parent.manual?(wme) && !hidden_parent_wme_manual.key?(wme)
         end
     end
 
@@ -258,11 +258,11 @@ module Wongi::Engine
     end
 
     private def own_generated_by?(wme, gen)
-      wme_generators.key?(wme.object_id) && wme_generators[wme.object_id].include?(gen)
+      wme_generators.key?(wme) && wme_generators[wme].include?(gen)
     end
 
     def generators(wme)
-      own_generators = wme_generators.key?(wme.object_id) ? wme_generators[wme.object_id] : []
+      own_generators = wme_generators.key?(wme) ? wme_generators[wme] : []
       parent_generators =
         if parent
           parent.generators(wme).reject { |g| hidden_parent_wme_generators.key?(g) }
@@ -273,11 +273,11 @@ module Wongi::Engine
     end
 
     private def own_manual?(wme)
-      wme_manual.key?(wme.object_id)
+      wme_manual.key?(wme)
     end
 
     private def own_generated?(wme)
-      wme_generators.key?(wme.object_id) && wme_generators[wme.object_id].any?
+      wme_generators.key?(wme) && wme_generators[wme].any?
     end
 
     private def find_wme(wme)
@@ -285,11 +285,7 @@ module Wongi::Engine
     end
 
     private def find_own_wme(wme)
-      collections = indexes.map { |index|
-        index.collection_for_wme(wme)
-      }
-      smallest = collections.min_by(&:size)
-      smallest.find { _1 == wme }
+      wmes.include?(wme) ? wme : nil
     end
 
     private def find_parents_wme(wme)
@@ -325,9 +321,9 @@ module Wongi::Engine
 
     private def select_parents_template(template)
       if parent
-        parent.select(template).reject { hidden_wme?(_1) }
+        parent.select(template).reject { hidden_wme?(_1) }.to_set
       else
-        []
+        Set.new
       end
     end
 
@@ -335,32 +331,32 @@ module Wongi::Engine
       # p add_wme: { wme:, generator: !!generator }
 
       # if we previously hid this locally, unhide it
-      hidden_parent_wmes.delete(wme.object_id)
+      hidden_parent_wmes.delete(wme)
       if generator
         hidden_parent_wme_generators.delete(generator)
       else
-        hidden_parent_wme_manual.delete(wme.object_id)
+        hidden_parent_wme_manual.delete(wme)
       end
 
       if find_own_wme(wme)
         if generator
-          wme_generators[wme.object_id] << generator unless own_generated_by?(wme, generator)
+          wme_generators[wme] << generator unless own_generated_by?(wme, generator)
         else
-          wme_manual[wme.object_id] = true
+          wme_manual[wme] = true
         end
       elsif find_parents_wme(wme)
         if generator
-          wme_generators[wme.object_id] << generator unless generated_by?(wme, generator)
+          wme_generators[wme] << generator unless generated_by?(wme, generator)
         else
-          wme_manual[wme.object_id] = true unless manual?(wme)
+          wme_manual[wme] = true unless manual?(wme)
         end
       else
-        wmes << wme
+        wmes.add(wme)
         indexes.each { _1.add(wme) }
         if generator
-          wme_generators[wme.object_id] << generator
+          wme_generators[wme] << generator
         else
-          wme_manual[wme.object_id] = true
+          wme_manual[wme] = true
         end
       end
     end
@@ -371,11 +367,11 @@ module Wongi::Engine
       if find_own_wme(wme)
         if generator
           if own_generated_by?(wme, generator)
-            wme_generators[wme.object_id].delete(generator)
-            wme_generators.delete(wme.object_id) if wme_generators[wme.object_id].empty?
+            wme_generators[wme].delete(generator)
+            wme_generators.delete(wme) if wme_generators[wme].empty?
           end
         elsif own_manual?(wme)
-          wme_manual.delete(wme.object_id)
+          wme_manual.delete(wme)
         end
 
         if !own_generated?(wme) && !own_manual?(wme)
@@ -395,8 +391,8 @@ module Wongi::Engine
       if generator
         # first, delete local
         if own_generated_by?(wme, generator)
-          wme_generators[wme.object_id].delete(generator)
-          wme_generators.delete(wme.object_id) if wme_generators[wme.object_id].empty?
+          wme_generators[wme].delete(generator)
+          wme_generators.delete(wme) if wme_generators[wme].empty?
         end
         # if we're still generated, hide parents'
         if generated_by?(wme, generator)
@@ -404,15 +400,15 @@ module Wongi::Engine
         end
       else
         if own_manual?(wme)
-          wme_manual.delete(wme.object_id)
+          wme_manual.delete(wme)
         end
         if manual?(wme)
-          hidden_parent_wme_manual[wme.object_id] = true
+          hidden_parent_wme_manual[wme] = true
         end
       end
 
       if !manual?(wme) && !generated?(wme)
-        hidden_parent_wmes[wme.object_id] = true
+        hidden_parent_wmes[wme] = true
       end
     end
 
@@ -581,7 +577,7 @@ module Wongi::Engine
     end
 
     private def hidden_wme?(wme)
-      hidden_parent_wmes.key?(wme.object_id)
+      hidden_parent_wmes.key?(wme)
     end
 
     private def hidden_token?(token)

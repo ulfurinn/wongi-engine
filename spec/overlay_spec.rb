@@ -66,7 +66,7 @@ describe Wongi::Engine::Overlay do
       expect(overlay.select(:_, :_, :_)).to have(wmes.length).items
 
       expect(overlay.select(1, 11, 111)).to have(1).items
-      expect(overlay.select(1, 11, 111).first).to equal(wmes.first)
+      expect(overlay.select(1, 11, 111).first).to eq(wmes.first)
     end
   end
 

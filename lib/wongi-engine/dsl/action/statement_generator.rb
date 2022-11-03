@@ -43,7 +43,7 @@ module Wongi::Engine
           # TODO: clean up
           return false if token.node.is_a?(NegNode) && wme =~ token.node.alpha.template && token.node.matches?(token, wme) # how much is actually necessary?
 
-          (token.parents - considered_tokens).each { |parent| tokens_to_consider.push(parent) }
+          token.parents.each { |parent| tokens_to_consider.push(parent) unless considered_tokens.include?(parent) }
 
           next unless token.wme
 
@@ -57,9 +57,10 @@ module Wongi::Engine
       end
 
       def deexecute(token)
+        # p deexecute: {token:}
         origin = GeneratorOrigin.new(token, self)
 
-        generated = token.generated_wmes.select { overlay.generators(_1).include?(origin) }
+        generated = token.generated_wmes.dup # select { overlay.generators(_1).include?(origin) }
         generated.each do |wme|
           overlay.retract wme, generator: origin
         end

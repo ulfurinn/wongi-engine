@@ -6,11 +6,11 @@ module Wongi::Engine
 
     def initialize(pattern)
       @pattern = pattern
-      @index = Hash.new { |h, k| h[k] = [] }
+      @index = Hash.new { |h, k| h[k] = Set.new }
     end
 
     def add(wme)
-      collection_for_wme(wme).push(wme)
+      collection_for_wme(wme).add(wme)
     end
 
     def remove(wme)

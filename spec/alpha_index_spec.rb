@@ -18,7 +18,7 @@ describe Wongi::Engine::AlphaIndex do
 
     it 'indexes by pattern' do
       expect(collection.keys).to eq([key])
-      expect(collection[key]).to eq([wme])
+      expect(collection[key]).to eq(Set.new([wme]))
     end
   end
 
@@ -28,7 +28,7 @@ describe Wongi::Engine::AlphaIndex do
 
     it 'indexes by pattern' do
       expect(collection.keys).to eq([key])
-      expect(collection[key]).to eq([wme])
+      expect(collection[key]).to eq(Set.new([wme]))
     end
   end
 
@@ -38,7 +38,7 @@ describe Wongi::Engine::AlphaIndex do
 
     it 'indexes by pattern' do
       expect(collection.keys).to eq([key])
-      expect(collection[key]).to eq([wme])
+      expect(collection[key]).to eq(Set.new([wme]))
     end
   end
 
@@ -48,7 +48,7 @@ describe Wongi::Engine::AlphaIndex do
 
     it 'indexes by pattern' do
       expect(collection.keys).to eq([key])
-      expect(collection[key]).to eq([wme])
+      expect(collection[key]).to eq(Set.new([wme]))
     end
   end
 
@@ -58,7 +58,7 @@ describe Wongi::Engine::AlphaIndex do
 
     it 'indexes by pattern' do
       expect(collection.keys).to eq([key])
-      expect(collection[key]).to eq([wme])
+      expect(collection[key]).to eq(Set.new([wme]))
     end
   end
 
@@ -68,7 +68,7 @@ describe Wongi::Engine::AlphaIndex do
 
     it 'indexes by pattern' do
       expect(collection.keys).to eq([key])
-      expect(collection[key]).to eq([wme])
+      expect(collection[key]).to eq(Set.new([wme]))
     end
   end
 

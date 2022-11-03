@@ -43,7 +43,7 @@ module Wongi::Engine
       @overlays = [base_overlay]
 
       self.alpha_top = AlphaMemory.new(Template.new(:_, :_, :_), self)
-      self.alpha_hash = { alpha_top.template.hash => alpha_top }
+      self.alpha_hash = { alpha_top.template => alpha_top }
       self.beta_top = RootNode.new(nil)
       beta_top.rete = self
       beta_top.seed
@@ -188,13 +188,12 @@ module Wongi::Engine
       template.predicate = condition.predicate unless Template.variable?(condition.predicate)
       template.object = condition.object unless Template.variable?(condition.object)
 
-      hash = template.hash
       # puts "COMPILED CONDITION #{condition} WITH KEY #{key}"
-      return alpha_hash[hash] if alpha_hash.key?(hash)
+      return alpha_hash[template] if alpha_hash.key?(template)
 
       alpha = AlphaMemory.new(template, self)
 
-      alpha_hash[hash] = alpha
+      alpha_hash[template] = alpha
       initial_fill alpha
 
       alpha
@@ -290,7 +289,7 @@ module Wongi::Engine
     end
 
     def lookup(s, p, o)
-      key = Template.hash_for(s, p, o)
+      key = Template.new(s, p, o)
       # puts "Lookup for #{key}"
       alpha_hash[key]
     end
