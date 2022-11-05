@@ -26,6 +26,8 @@ module Wongi::Engine
       end
 
       private def should_assert?(wme, token)
+        return true if rete.bypass_consistency_checks?
+
         considered_tokens = Set.new
         tokens_to_consider = [token]
         until tokens_to_consider.empty?
@@ -33,11 +35,17 @@ module Wongi::Engine
           considered_tokens.add(token)
 
           # self-affirming reasoning
-          return false if token.wme == wme
+          if token.wme == wme
+            # puts "detected self-affirming"
+            return false
+          end
 
           # asserting this WME would invalidate the match
           # TODO: clean up
-          return false if token.node.is_a?(NegNode) && wme =~ token.node.alpha.template && token.node.matches?(token, wme) # how much is actually necessary?
+          if token.node.is_a?(NegNode) && wme =~ token.node.alpha.template && token.node.matches?(token, wme) # how much is actually necessary?
+            # puts "detected self-negating"
+            return false
+          end
 
           token.parents.each { |parent| tokens_to_consider.push(parent) unless considered_tokens.include?(parent) }
 

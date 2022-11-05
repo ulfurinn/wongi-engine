@@ -3,8 +3,11 @@ require 'wongi-engine/network/debug'
 
 module Wongi::Engine
   class Network
+    include CoreExt
     attr_accessor :alpha_top, :beta_top, :queries, :results, :alpha_hash
     attr_reader :productions, :overlays
+
+    attr_predicate :bypass_consistency_checks
 
     include NetworkParts::Collectable
     private :overlays
