@@ -58,7 +58,8 @@ module Wongi::Engine
     end
 
     private def select_wmes(template)
-      rete.current_overlay.select(template)
+      # capture the enumerator
+      rete.current_overlay.select(template).to_a
     end
 
     private def specialize(template, tests, token)

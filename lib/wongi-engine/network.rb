@@ -205,9 +205,8 @@ module Wongi::Engine
       compile_alpha Template.new(s, p, o)
     end
 
-    # TODO: pick an alpha with fewer candidates to go through
     def initial_fill(alpha)
-      default_overlay.select(:_, :_, :_).each do |wme|
+      default_overlay.select(:_, :_, :_).to_a.each do |wme|
         alpha.activate wme if wme =~ alpha.template
       end
     end
@@ -256,16 +255,11 @@ module Wongi::Engine
     end
 
     def select(s, p, o, &block)
-      matching = current_overlay.select(s, p, o)
-      if block_given?
-        matching.each(&block)
-      else
-        matching.each
-      end
+      current_overlay.select(s, p, o, &block)
     end
 
     def find(s, p, o)
-      current_overlay.select(s, p, o).first
+      select(s, p, o).first
     end
 
     protected

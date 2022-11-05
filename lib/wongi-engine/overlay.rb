@@ -142,12 +142,12 @@ module Wongi::Engine
       when 1
         case args.first
         when Template
-          select_by_template(args.first)
+          each_by_template(args.first)
         else
           raise ArgumentError
         end
       when 3
-        select_by_template(Template.new(*args))
+        each_by_template(Template.new(*args))
       else
         raise ArgumentError
       end
@@ -216,28 +216,29 @@ module Wongi::Engine
         end
     end
 
-    private def select_by_template(template)
-      select_parents_template(template) + select_own_template(template)
-    end
-
-    private def select_own_template(template)
-      if template.concrete?
-        wme = find_own_wme(WME.from_concrete_template(template))
-        wme ? [wme] : []
-      elsif template.root?
-        wmes
-      else
-        indexes.map { |index|
-          index.collections_for_template(template)
-        }.compact.first
+    def each_by_template(template)
+      Enumerator.new do |y|
+        each_own_wme_by_template(template, y)
+        each_parent_wme_by_template(template, y)
       end
     end
 
-    private def select_parents_template(template)
-      if parent
-        parent.select(template).reject { hidden_wme?(_1) }.to_set
+    private def each_own_wme_by_template(template, y)
+      if template.concrete?
+        wme = find_own_wme(WME.from_concrete_template(template))
+        y << wme if wme
+      elsif template.root?
+        wmes.each { y << _1 }
       else
-        Set.new
+        indexes.map { |index|
+          index.collections_for_template(template)
+        }.compact.first.each { y << _1 }
+      end
+    end
+
+    private def each_parent_wme_by_template(template, y)
+      if parent
+        parent.each_by_template(template).reject { hidden_wme?(_1) }.each { y << _1 }
       end
     end
 

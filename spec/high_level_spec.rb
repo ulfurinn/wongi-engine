@@ -115,10 +115,10 @@ describe Wongi::Engine::Network do
     engine << ["Bob", :age, 43]
 
     items = engine.select "Alice", :younger, "Bob"
-    expect(items.size).to eq(1)
+    expect(items.count).to eq(1)
 
     items = engine.select "Bob", :older, "Alice"
-    expect(items.size).to eq(1)
+    expect(items.count).to eq(1)
   end
 
   it 'uses collectors' do
