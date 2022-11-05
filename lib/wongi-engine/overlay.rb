@@ -198,7 +198,9 @@ module Wongi::Engine
       has_own_wme?(wme) ? wme : nil
     end
 
-    private def has_own_wme?(wme) = wmes.include?(wme)
+    private def has_own_wme?(wme)
+      wmes.include?(wme)
+    end
 
     private def find_parents_wme(wme)
       return unless parent
