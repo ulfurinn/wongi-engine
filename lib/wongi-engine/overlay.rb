@@ -165,25 +165,21 @@ module Wongi::Engine
     end
 
     def generators(wme)
-      own_generators = generator_tracker.for_wme(wme)
-      parent_generators =
+      Enumerator.new do |y|
+        generator_tracker.for_wme(wme).each {  y << _1 }
         if parent
-          parent.generators(wme).reject { |t| hidden_token?(t) }.to_set
-        else
-          Set.new
+          parent.generators(wme).reject { hidden_token?(_1) }.each { y << _1 }
         end
-      own_generators.union(parent_generators)
+      end
     end
 
     def generated_wmes(token)
-      own_wmes = generator_tracker.for_token(token)
-      parent_wmes =
+      Enumerator.new do |y|
+        generator_tracker.for_token(token).each { y << _1 }
         if parent && !hidden_token?(token)
-          parent.generated_wmes(token).reject { hidden_wme?(_1) }.to_set
-        else
-          Set.new
+          parent.generated_wmes(token).reject { hidden_wme?(_1) }.each { y << _1 }
         end
-      own_wmes.union(parent_wmes)
+      end
     end
 
     private def own_manual?(wme)
@@ -309,7 +305,8 @@ module Wongi::Engine
     def remove_token(token)
       # p remove_token: {token:}
 
-      wmes = generated_wmes(token)
+      # capture the entire enumerated state
+      wmes = generated_wmes(token).to_a
 
       if own_node_tokens(token.node).find { _1.equal?(token) }.nil?
         if parents_node_tokens(token.node).find { _1.equal?(token) }
