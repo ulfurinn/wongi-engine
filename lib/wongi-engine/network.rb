@@ -67,7 +67,6 @@ module Wongi::Engine
       block.call(child)
     ensure
       remove_overlay(child)
-      child.dispose!
     end
 
     def alphas

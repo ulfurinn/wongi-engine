@@ -2,16 +2,13 @@ require 'set'
 
 module Wongi::Engine
   class Token
-    attr_reader :wme, :node, :generated_wmes, :parents
+    attr_reader :wme, :node, :parents
 
     def initialize(node, parents, wme, assignments = {})
       @node = node
       @parents = Set.new(Array(parents))
       @wme = wme
       @assignments = assignments
-      @deleted = false
-      @ncc_results = []
-      @generated_wmes = []
     end
 
     def ancestors
@@ -66,42 +63,12 @@ module Wongi::Engine
       to_s
     end
 
-    # def destroy
-    #   deleted!
-    # end
-
-    def dispose!
-      # parent.children.delete(self) if parent
-      # @parent = nil
-      @wme = nil
-    end
-
-    # for neg feedback loop protection
-    # def generated?(wme)
-    #   return true if generated_wmes.any? { |w| w == wme }
-    #
-    #   children.any? { |t| t.generated? wme }
-    # end
-
     protected
 
     def all_assignments
       parents.each_with_object({}) do |parent, acc|
         acc.merge!(parent.assignments)
       end.merge(@assignments)
-    end
-  end
-
-  class FakeToken < Token
-    def initialize(token, wme, assignments) # rubocop:disable Lint/MissingSuper
-      @parent = token
-      @wme = wme
-      @assignments = assignments
-      # @children = []
-      @neg_join_results = []
-      @opt_join_results = []
-      @ncc_results = []
-      @generated_wmes = []
     end
   end
 end

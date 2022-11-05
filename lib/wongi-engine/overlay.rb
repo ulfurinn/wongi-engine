@@ -1,92 +1,13 @@
 module Wongi::Engine
   class Overlay
-    class JoinResults
-      attr_reader :by_wme, :by_token, :hidden
-      private :by_wme, :by_token
-      private :hidden
-      def initialize
-        @by_wme = Hash.new { |h, k| h[k] = {} }
-        @by_token = Hash.new { |h, k| h[k] = {} }
-        @hidden = {}
-      end
 
-      def for(wme: nil, token: nil)
-        if wme
-          by_wme.key?(wme) ? by_wme[wme].keys : []
-        elsif token
-          by_token.key?(token.object_id) ? by_token[token.object_id].keys : []
-        else
-          []
-        end
-      end
-
-      def has?(jr)
-        by_wme.key?(jr.wme) && by_wme[jr.wme].key?(jr)
-      end
-
-      def hidden?(jr)
-        hidden.key?(jr)
-      end
-
-      def add(jr)
-        if hidden.key?(jr)
-          hidden.delete(jr)
-        else
-          by_wme[jr.wme][jr] = true
-          by_token[jr.token.object_id][jr] = true
-        end
-      end
-
-      def remove(jr)
-        unless has?(jr)
-          hide(jr)
-          return
-        end
-
-        if by_wme.key?(jr.wme)
-          by_wme[jr.wme].delete(jr)
-          if by_wme[jr.wme].empty?
-            by_wme.delete(jr.wme)
-          end
-        end
-
-        if by_token.key?(jr.token.object_id)
-          by_token[jr.token.object_id].delete(jr)
-          if by_token[jr.token.object_id].empty?
-            by_token.delete(jr.token.object_id)
-          end
-        end
-      end
-
-      def hide(jr)
-        hidden[jr] = true
-      end
-
-      def remove_token(token)
-        return unless by_token.key?(token.object_id)
-
-        by_token[token.object_id].keys.each do |jr|
-          remove(jr)
-        end
-      end
-
-      def remove_wme(wme)
-        return unless by_wme.key?(wme)
-
-        by_wme[wme].keys do |jr|
-          remove(jr)
-        end
-      end
-    end
-
-    attr_reader :rete, :parent, :wmes, :tokens, :indexes, :queue, :hidden_parent_wmes, :hidden_parent_tokens, :wme_generators, :hidden_parent_wme_generators, :wme_manual, :hidden_parent_wme_manual, :neg_join_results, :opt_join_results, :ncc_tokens, :ncc_tokens_owner, :hidden_ncc_tokens
+    attr_reader :rete, :parent, :wmes, :tokens, :indexes, :queue, :hidden_parent_wmes, :hidden_parent_tokens, :generator_tracker, :wme_manual, :hidden_parent_wme_manual, :neg_join_results, :opt_join_results, :ncc_tokens, :ncc_tokens_owner, :hidden_ncc_tokens
     private :wmes, :tokens
     private :indexes
     private :queue
     private :hidden_parent_wmes
     private :hidden_parent_tokens
-    private :wme_generators
-    private :hidden_parent_wme_generators
+    private :generator_tracker
     private :wme_manual
     private :hidden_parent_wme_manual
     private :neg_join_results
@@ -111,10 +32,9 @@ module Wongi::Engine
       @hidden_parent_wmes = {}
 
       @tokens = Hash.new { |h, k| h[k] = [] }
-      @hidden_parent_tokens = {}
+      @hidden_parent_tokens = Set.new
 
-      @wme_generators = Hash.new { |h, k| h[k] = [] }
-      @hidden_parent_wme_generators = {}
+      @generator_tracker = GeneratorTracker.new
 
       @wme_manual = {}
       @hidden_parent_wme_manual = {}
@@ -138,14 +58,6 @@ module Wongi::Engine
       return true if parent == other
 
       parent.ancestor?(other)
-    end
-
-    def dispose!
-      return if default?
-
-      tokens.each do |_node, tokens|
-        tokens.each(&:dispose!)
-      end
     end
 
     def <<(thing)
@@ -182,13 +94,14 @@ module Wongi::Engine
         operation, wme, options = queue.shift
         case operation
         when :assert
-          wme = find_ignoring_hidden(wme) || wme
+          existing_wme = find_ignoring_hidden(wme)
+          wme = existing_wme || wme
           visible = !find(wme).nil?
           add_wme(wme, **options)
           rete.real_assert(wme) unless visible
         when :retract
           wme = find_ignoring_hidden(wme)
-          return if wme.nil? # it's perhaps better to return quietly, because complicated cascades may delete a WME while we're going through the queue
+          next if wme.nil? # it's perhaps better to return quietly, because complicated cascades may delete a WME while we're going through the queue
 
           visible = !find(wme).nil?
           remove_wme(wme, **options)
@@ -248,28 +161,26 @@ module Wongi::Engine
       generators(wme).any?
     end
 
-    def generated_by?(wme, gen)
-      own_generated_by?(wme, gen) ||
-        if parent
-          parent.generated_by?(wme, gen) && !hidden_parent_wme_generators.key?(gen)
-        else
-          false
-        end
-    end
-
-    private def own_generated_by?(wme, gen)
-      wme_generators.key?(wme) && wme_generators[wme].include?(gen)
-    end
-
     def generators(wme)
-      own_generators = wme_generators.key?(wme) ? wme_generators[wme] : []
+      own_generators = generator_tracker.for_wme(wme)
       parent_generators =
         if parent
-          parent.generators(wme).reject { |g| hidden_parent_wme_generators.key?(g) }
+          parent.generators(wme).reject { |t| hidden_token?(t) }.to_set
         else
-          []
+          Set.new
         end
-      own_generators + parent_generators
+      own_generators.union(parent_generators)
+    end
+
+    def generated_wmes(token)
+      own_wmes = generator_tracker.for_token(token)
+      parent_wmes =
+        if parent && !hidden_token?(token)
+          parent.generated_wmes(token).reject { hidden_wme?(_1) }.to_set
+        else
+          Set.new
+        end
+      own_wmes.union(parent_wmes)
     end
 
     private def own_manual?(wme)
@@ -277,7 +188,7 @@ module Wongi::Engine
     end
 
     private def own_generated?(wme)
-      wme_generators.key?(wme) && wme_generators[wme].any?
+      generator_tracker.for_wme(wme).any?
     end
 
     private def find_wme(wme)
@@ -285,8 +196,10 @@ module Wongi::Engine
     end
 
     private def find_own_wme(wme)
-      wmes.include?(wme) ? wme : nil
+      has_own_wme?(wme) ? wme : nil
     end
+
+    private def has_own_wme?(wme) = wmes.include?(wme)
 
     private def find_parents_wme(wme)
       return unless parent
@@ -332,32 +245,17 @@ module Wongi::Engine
 
       # if we previously hid this locally, unhide it
       hidden_parent_wmes.delete(wme)
-      if generator
-        hidden_parent_wme_generators.delete(generator)
-      else
-        hidden_parent_wme_manual.delete(wme)
-      end
 
-      if find_own_wme(wme)
-        if generator
-          wme_generators[wme] << generator unless own_generated_by?(wme, generator)
-        else
-          wme_manual[wme] = true
-        end
-      elsif find_parents_wme(wme)
-        if generator
-          wme_generators[wme] << generator unless generated_by?(wme, generator)
-        else
-          wme_manual[wme] = true unless manual?(wme)
-        end
-      else
+      unless has_own_wme?(wme)
         wmes.add(wme)
         indexes.each { _1.add(wme) }
-        if generator
-          wme_generators[wme] << generator
-        else
-          wme_manual[wme] = true
-        end
+      end
+
+      if generator
+        generator_tracker.add(wme, generator)
+      else
+        hidden_parent_wme_manual.delete(wme)
+        wme_manual[wme] = true
       end
     end
 
@@ -365,15 +263,9 @@ module Wongi::Engine
       # p remove_wme: { wme:, generator: !!generator }
 
       if find_own_wme(wme)
-        if generator
-          if own_generated_by?(wme, generator)
-            wme_generators[wme].delete(generator)
-            wme_generators.delete(wme) if wme_generators[wme].empty?
-          end
-        elsif own_manual?(wme)
-          wme_manual.delete(wme)
-        end
+        wme_manual.delete(wme) if generator.nil?
 
+        # no remaining reasons to keep this WME around
         if !own_generated?(wme) && !own_manual?(wme)
           wmes.delete(wme)
           indexes.each { _1.remove(wme) }
@@ -388,23 +280,10 @@ module Wongi::Engine
 
       # must be parents' then
 
-      if generator
-        # first, delete local
-        if own_generated_by?(wme, generator)
-          wme_generators[wme].delete(generator)
-          wme_generators.delete(wme) if wme_generators[wme].empty?
-        end
-        # if we're still generated, hide parents'
-        if generated_by?(wme, generator)
-          hidden_parent_wme_generators[generator] = true
-        end
-      else
-        if own_manual?(wme)
-          wme_manual.delete(wme)
-        end
-        if manual?(wme)
-          hidden_parent_wme_manual[wme] = true
-        end
+      if generator.nil?
+        wme_manual.delete(wme)
+        # if still manual, it must be from the parent
+        hidden_parent_wme_manual[wme] = true if manual?(wme)
       end
 
       if !manual?(wme) && !generated?(wme)
@@ -416,7 +295,8 @@ module Wongi::Engine
       # p add_token: {token:}
       # TODO: is this really likely to happen? we don't normally restore deleted tokens but rather create new ones in the activation
       if hidden_token?(token)
-        hidden_parent_tokens.delete(token.object_id)
+        puts "odd case"
+        unhide_token(token)
         return
       end
 
@@ -425,9 +305,12 @@ module Wongi::Engine
 
     def remove_token(token)
       # p remove_token: {token:}
+
+      wmes = generated_wmes(token)
+
       if own_node_tokens(token.node).find { _1.equal?(token) }.nil?
         if parents_node_tokens(token.node).find { _1.equal?(token) }
-          hidden_parent_tokens[token.object_id] = true
+          hide_token(token)
 
           # do not hide JRs from the WME side: it will be done in the alpha deactivation and the JRs have to stay visible until then
           parent_neg_join_results_for(token: token).each { neg_join_results.hide(_1) }
@@ -437,10 +320,12 @@ module Wongi::Engine
             hidden_ncc_tokens[token][ncc] = true
           end
         end
-        return
+      else
+        remove_own_token(token)
       end
 
-      remove_own_token(token)
+      wmes.each { retract(_1, generator: token) }
+
     end
 
     def remove_own_token(token)
@@ -448,6 +333,7 @@ module Wongi::Engine
       tokens[token.node.object_id].delete(token)
       neg_join_results.remove_token(token)
       opt_join_results.remove_token(token)
+      generator_tracker.remove_token(token)
 
       # if this is an NCC partner token
       if (owner = ncc_tokens_owner[token])
@@ -465,9 +351,6 @@ module Wongi::Engine
       end
       ncc_tokens.delete(token)
       hidden_ncc_tokens.delete(token)
-
-      # we know we are the owner, and nobody wants it anymore, so this is the safe place to do it
-      token.dispose!
     end
 
     def node_tokens(beta)
@@ -482,7 +365,7 @@ module Wongi::Engine
 
     private def parents_node_tokens(beta)
       if parent
-        parent.node_tokens(beta).reject { hidden_parent_tokens.key?(_1.object_id) }
+        parent.node_tokens(beta).reject { hidden_token?(_1) }
       else
         []
       end
@@ -581,7 +464,15 @@ module Wongi::Engine
     end
 
     private def hidden_token?(token)
-      hidden_parent_tokens.key?(token.object_id)
+      hidden_parent_tokens.include?(token.object_id)
+    end
+
+    private def hide_token(token)
+      hidden_parent_tokens.add(token.object_id)
+    end
+
+    private def unhide_token(token)
+      hidden_parent_tokens.delete(token.object_id)
     end
   end
 end

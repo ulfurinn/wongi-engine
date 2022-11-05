@@ -136,11 +136,6 @@ describe Wongi::Engine::Overlay do
 
       overlay.retract(wme)
       expect(overlay.find(wme)).to be_nil
-      expect(child1.find(wme)).to be_nil
-      expect(child2.find(wme)).to be_nil
-
-      child1.assert(wme)
-      expect(overlay.find(wme)).to be_nil
       expect(child1.find(wme)).to eq(wme)
       expect(child2.find(wme)).to eq(wme)
     end

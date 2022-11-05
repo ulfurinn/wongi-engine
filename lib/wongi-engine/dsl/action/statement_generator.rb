@@ -3,8 +3,6 @@ require "set"
 module Wongi::Engine
   module DSL::Action
     class StatementGenerator < BaseAction
-      GeneratorOrigin = Struct.new(:token, :action)
-
       attr_reader :template
       private :template
 
@@ -23,9 +21,7 @@ module Wongi::Engine
         production.tracer.trace(action: self, wme: wme) if production.tracer
 
         if should_assert?(wme, token)
-          origin = GeneratorOrigin.new(token, self)
-          token.generated_wmes << wme
-          overlay.assert(wme, generator: origin)
+          overlay.assert(wme, generator: token)
         end
       end
 
@@ -47,23 +43,13 @@ module Wongi::Engine
 
           next unless token.wme
 
-          overlay.generators(token.wme).each do |generator|
-            tokens_to_consider.push(generator.token) unless considered_tokens.include?(generator.token)
+          overlay.generators(token.wme).each do |generating_token|
+            tokens_to_consider.push(generating_token) unless considered_tokens.include?(generating_token)
           end
         end
 
         # we could not prove that the new WME should not be asserted
         true
-      end
-
-      def deexecute(token)
-        # p deexecute: {token:}
-        origin = GeneratorOrigin.new(token, self)
-
-        generated = token.generated_wmes.dup # select { overlay.generators(_1).include?(origin) }
-        generated.each do |wme|
-          overlay.retract wme, generator: origin
-        end
       end
     end
   end
