@@ -27,12 +27,18 @@ module Wongi::Engine
       @assignments[variable] = value
     end
 
+    def own_assignments
+      @assignments
+    end
+
     def assignments
-      all_assignments
+      parents.each_with_object({}) do |parent, acc|
+        acc.merge!(parent.assignments)
+      end.merge(own_assignments)
     end
 
     def [](var)
-      a = assignments[var]
+      a = assignment(var)
       a.respond_to?(:call) ? a.call(self) : a
     end
 
@@ -40,8 +46,23 @@ module Wongi::Engine
       vars.map { self[_1] }
     end
 
+    def assignment(x)
+      return @assignments[x] if has_own_var?(x)
+
+      parents.each do |parent|
+        a = parent.assignment(x)
+        return a if a
+      end
+
+      nil
+    end
+
     def has_var?(x)
-      assignments.key? x
+      has_own_var?(x) || parents.any? { _1.has_var?(x) }
+    end
+
+    def has_own_var?(x)
+      @assignments.key?(x)
     end
 
     # TODO: ignore assignments?
@@ -49,26 +70,18 @@ module Wongi::Engine
       instance_of?(other.class) &&
         parents == other.parents &&
         wme == other.wme &&
-        assignments == other.assignments
+        own_assignments == other.own_assignments
     end
 
     def to_s
       str = "TOKEN [ #{object_id} ancestors=#{ancestors.map(&:object_id).map(&:to_s).join('.')} "
-      all_assignments.each_pair { |key, value| str << "#{key}=#{value.is_a?(TokenAssignment) ? "#{value.call} (#{value})" : value} " }
+      assignments.each_pair { |key, value| str << "#{key}=#{value.is_a?(TokenAssignment) ? "#{value.call} (#{value})" : value} " }
       str << "]"
       str
     end
 
     def inspect
       to_s
-    end
-
-    protected
-
-    def all_assignments
-      parents.each_with_object({}) do |parent, acc|
-        acc.merge!(parent.assignments)
-      end.merge(@assignments)
     end
   end
 end
