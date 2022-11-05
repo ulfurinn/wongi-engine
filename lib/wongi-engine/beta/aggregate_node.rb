@@ -61,12 +61,13 @@ module Wongi::Engine
         aggregated = aggregate.call(tokens.map(&map))
         assignment = { var => aggregated }
         children = child ? [child] : self.children
-        tokens.each do |token|
-          # TODO: optimize this to work with a diff of actual changes
-          beta_deactivate_children(token: token, children: children)
-        end
         children.each do |beta|
-          beta.beta_activate(Token.new(beta, tokens, nil, assignment))
+          new_token = Token.new(beta, tokens, nil, assignment)
+          # nothing changed, skip useless traversal
+          next if beta.tokens.find { _1.duplicate?(new_token) }
+
+          beta.tokens.select { |child| tokens.any? { child.child_of?(_1) } }.each { beta.beta_deactivate(_1) }
+          beta.beta_activate(new_token)
         end
       end
     end
