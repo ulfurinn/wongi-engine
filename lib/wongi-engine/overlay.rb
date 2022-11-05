@@ -92,6 +92,7 @@ module Wongi::Engine
     def run_queue
       until queue.empty?
         operation, wme, options = queue.shift
+
         case operation
         when :assert
           existing_wme = find_ignoring_hidden(wme)
@@ -99,13 +100,15 @@ module Wongi::Engine
           visible = !find(wme).nil?
           add_wme(wme, **options)
           rete.real_assert(wme) unless visible
+
         when :retract
           wme = find_ignoring_hidden(wme)
-          next if wme.nil? # it's perhaps better to return quietly, because complicated cascades may delete a WME while we're going through the queue
+          if wme # it's perhaps better to return quietly, because complicated cascades may delete a WME while we're going through the queue
+            visible = !find(wme).nil?
+            remove_wme(wme, **options)
+            rete.real_retract(wme) if visible
+          end
 
-          visible = !find(wme).nil?
-          remove_wme(wme, **options)
-          rete.real_retract(wme) if visible
         end
       end
     end

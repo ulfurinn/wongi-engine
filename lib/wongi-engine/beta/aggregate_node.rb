@@ -57,9 +57,8 @@ module Wongi::Engine
           [tokens]
         end
 
-
       groups.each do |tokens|
-        aggregated = self.aggregate.call(tokens.map(&self.map))
+        aggregated = aggregate.call(tokens.map(&map))
         assignment = { var => aggregated }
         children = child ? [child] : self.children
         tokens.each do |token|
