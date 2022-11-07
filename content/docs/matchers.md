@@ -90,7 +90,7 @@ The base rule must be installed prior to installing the specialized ones.
 
 The rule compiler can collapse some simpler matchers like `has` into a single execution node if it detects that the declarations are identical, but for matchers taking code blocks, like `assert`, it is not possible, and `assuming` must be used.
 
-## Filter matchers
+## Filters
 
 Filters are a category of matchers that block rule execution based on some predicate; they operate entirely on the token assembed so far.
 
@@ -155,9 +155,9 @@ end
 
 `assert` passes if the block returns a truthy value.
 
-## Aggregator matchers
+## Aggregates
 
-Aggregator calculate a value across all matching tokens and pass it forward. They all have the same base form:
+Aggregates calculate a value across all matching tokens and pass it forward. They all have the same base form:
 
 ```ruby
 aggregate :NewVar, over: :Var, map: ->(token) { ... }, using: ->(values) { ... }, partition: [:Var1, :Var2, ...]
