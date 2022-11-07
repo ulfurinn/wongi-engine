@@ -52,21 +52,21 @@ describe Wongi::Engine::Overlay do
       ]
       wmes.each { overlay.assert(_1) }
 
-      expect(overlay.select(1, :_, :_)).to have(5).items
-      expect(overlay.select(2, :_, :_)).to have(4).items
-      expect(overlay.select(3, :_, :_)).to have(3).items
-      expect(overlay.select(1, 11, :_)).to have(3).items
-      expect(overlay.select(:_, 11, :_)).to have(5).items
-      expect(overlay.select(:_, :_, 113)).to have(2).items
-      expect(overlay.select(:_, 22, :_)).to have(2).items
-      expect(overlay.select(:_, 22, 222)).to have(1).items
-      expect(overlay.select(:_, :_, 222)).to have(2).items
-      expect(overlay.select(:_, :_, 223)).to have(1).items
+      expect(overlay.each(1, :_, :_)).to have(5).items
+      expect(overlay.each(2, :_, :_)).to have(4).items
+      expect(overlay.each(3, :_, :_)).to have(3).items
+      expect(overlay.each(1, 11, :_)).to have(3).items
+      expect(overlay.each(:_, 11, :_)).to have(5).items
+      expect(overlay.each(:_, :_, 113)).to have(2).items
+      expect(overlay.each(:_, 22, :_)).to have(2).items
+      expect(overlay.each(:_, 22, 222)).to have(1).items
+      expect(overlay.each(:_, :_, 222)).to have(2).items
+      expect(overlay.each(:_, :_, 223)).to have(1).items
 
-      expect(overlay.select(:_, :_, :_)).to have(wmes.length).items
+      expect(overlay.each(:_, :_, :_)).to have(wmes.length).items
 
-      expect(overlay.select(1, 11, 111)).to have(1).items
-      expect(overlay.select(1, 11, 111).first).to eq(wmes.first)
+      expect(overlay.each(1, 11, 111)).to have(1).items
+      expect(overlay.each(1, 11, 111).first).to eq(wmes.first)
     end
   end
 
@@ -85,10 +85,10 @@ describe Wongi::Engine::Overlay do
       wme = Wongi::Engine::WME.new(1, 11, 111)
 
       overlay.assert(wme)
-      expect(overlay.select(:_, :_, :_)).to have(1).items
+      expect(overlay.each(:_, :_, :_)).to have(1).items
 
       overlay.retract(wme)
-      expect(overlay.select(:_, :_, :_)).to have(0).items
+      expect(overlay.each(:_, :_, :_)).to have(0).items
     end
   end
 

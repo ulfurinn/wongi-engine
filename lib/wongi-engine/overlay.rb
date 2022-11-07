@@ -71,6 +71,8 @@ module Wongi::Engine
       else
         raise Error, "overlays can only accept data"
       end
+
+      self
     end
 
     def assert(wme, generator: nil)
@@ -78,6 +80,8 @@ module Wongi::Engine
       queue.push(operation)
 
       run_queue if queue.length == 1
+
+      self
     end
 
     def retract(wme, options = {})
@@ -89,9 +93,11 @@ module Wongi::Engine
       queue.push(operation)
 
       run_queue if queue.length == 1
+
+      self
     end
 
-    def run_queue
+    private def run_queue
       until queue.empty?
         operation, wme, options = queue.shift
 
@@ -119,19 +125,6 @@ module Wongi::Engine
       self == rete.default_overlay
     end
 
-    # TODO: this is inconsistent.
-    # A WME retracted in-flight will be visible in active enumerators
-    # but a token will not.
-    # But this is how it works.
-
-    # def wmes(template)
-    #   DuplicatingEnumerator.new(index(template))
-    # end
-
-    # def tokens(beta)
-    #   DeleteSafeEnumerator.new(raw_tokens(beta))
-    # end
-
     def find(wme)
       if wme.is_a?(Array)
         wme = WME.new(*wme)
@@ -139,20 +132,30 @@ module Wongi::Engine
       find_wme(wme)
     end
 
-    def select(*args)
+    def each(*args, &block)
+      template = nil
       case args.length
+      when 0
+        template = Template.new(:_, :_, :_)
       when 1
-        case args.first
+        arg = args.first
+        case arg
+        when Array
+          template = Template.new(*arg)
         when Template
-          each_by_template(args.first)
+          template = arg
+        when WME
+          template = Template.new(arg.subject, arg.predicate, arg.object)
         else
           raise ArgumentError
         end
       when 3
-        each_by_template(Template.new(*args))
+        template = Template.new(*args)
       else
         raise ArgumentError
       end
+
+      each_by_template(template, &block)
     end
 
     def entity(subject)

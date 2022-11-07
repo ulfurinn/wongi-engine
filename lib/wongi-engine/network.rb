@@ -134,7 +134,7 @@ module Wongi::Engine
     end
 
     def wmes
-      current_overlay.select(:_, :_, :_)
+      each.to_a
     end
 
     alias statements wmes
@@ -172,6 +172,7 @@ module Wongi::Engine
         else
           raise Error, "I don't know how to accept a #{something.class}"
         end
+        self
       end
     end
 
@@ -210,7 +211,7 @@ module Wongi::Engine
     end
 
     def initial_fill(alpha)
-      default_overlay.select(:_, :_, :_).to_a.each do |wme|
+      default_overlay.each(:_, :_, :_).to_a.each do |wme|
         alpha.activate wme if wme =~ alpha.template
       end
     end
@@ -238,32 +239,19 @@ module Wongi::Engine
     end
 
     def exists?(wme)
-      find(wme.subject, wme.predicate, wme.object)
+      !find(wme.subject, wme.predicate, wme.object).nil?
     end
 
     def each(*args, &block)
-      template = case args.length
-                 when 0
-                   Template.new(:_, :_, :_)
-                 when 3
-                   Template.new(*args)
-                 else
-                   raise Error, "Network#each expect a template or nothing at all"
-                 end
-      matching = current_overlay.select(template)
-      if block_given?
-        matching.each(&block)
-      else
-        matching.each
-      end
+      current_overlay.each(*args, &block)
     end
 
-    def select(s, p, o, &block)
-      current_overlay.select(s, p, o, &block)
+    def select(*args, &block)
+      each(*args, &block)
     end
 
-    def find(s, p, o)
-      select(s, p, o).first
+    def find(*args)
+      each(*args).first
     end
 
     protected
