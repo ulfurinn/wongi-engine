@@ -1,6 +1,6 @@
 ---
 title: Rulesets
-weight: 10
+weight: 8
 ---
 
 # Rulesets

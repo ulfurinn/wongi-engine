@@ -100,7 +100,7 @@ Filters are a category of matchers that block rule execution based on some predi
 same x, y
 ```
 
-`same` passes if its arguments compare as equal using `#==`. It is obviously only useful if at least one of them is a variable.
+`same` passes if its arguments compare as equal using `#==`. It is obviously only useful if at least one of them is a variable. In fact, it's recommended to use it if _both_ arguments are variables, because otherwise you can usually just match on the expected value directly with `has`.
 
 ### diff / ne
 
@@ -108,7 +108,22 @@ same x, y
 diff x, y
 ```
 
-`diff` passes if its arguments do not compare as equal using `#==`.
+`diff` passes if its arguments do not compare as equal using `#==`. As with `same`, it's best to use this matcher when both arguments are variables.
+
+However, note that there is a subtle difference in behaviour between "there is no value X" and "there is a value that is not X". To illustrate, suppose you have an item that is tagged with `luxury` and `import`, and you encode this with `{item, tag, luxury}` and `{item, tag, import}`.
+
+Then, you might want to have a rule that captures non-imported items, so you can try saying:
+
+```ruby
+forall {
+  has :Item, :tag, :Tag
+  diff :Tag, "import"
+}
+```
+
+But this rule will erroneously match on your item, because it will latch on to the `luxury` tag, since all facts are processed independently of each other, and `luxury` is indeed not equal to `import`. This is the "there is a tag that is not X" scenario.
+
+In this situation, what you want to do instead is `neg :Item, :tag, "import"` to say "there is no tag X".
 
 ### less
 
@@ -139,3 +154,33 @@ end
 ```
 
 `assert` passes if the block returns a truthy value.
+
+## Aggregator matchers
+
+Aggregator calculate a value across all matching tokens and pass it forward. They all have the same base form:
+
+```ruby
+aggregate :NewVar, over: :Var, map: ->(token) { ... }, using: ->(values) { ... }, partition: [:Var1, :Var2, ...]
+```
+
+`NewVar` is the variable that will receive the result of the aggregation.
+
+`over` is the input variable to the aggregation function. Alternatively, a `map` function with more complex logic may be provided.
+
+`using` is the actual aggregation function.
+
+`partition` splits all tokens into groups based on the provided variables. If no partitions are given, all tokens are lumped in the same group.
+
+The execution order is `tokens -> partition -> map/over -> using`.
+
+For convenience, the following matchers are defined with pre-declared `using` arguments:
+
+### `count`
+
+### `min`
+
+### `max`
+
+### `sum`
+
+### `product`

@@ -1,11 +1,11 @@
 ---
 title: Queries
-weight: 9
+weight: 1
 ---
 
 # Queries
 
-Queries allow injecting variables at the top of a rule as a form of parametrization:
+Queries allow injecting variables at the top of a rule as a form of parametrization. Effectively, they just declare a variable that you bind when you execute the query.
 
 ```ruby
 q = engine.query "friends" do

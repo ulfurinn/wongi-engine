@@ -11,4 +11,3 @@ To begin, say:
 require 'wongi-engine'
 engine = Wongi::Engine.create
 ```
-
