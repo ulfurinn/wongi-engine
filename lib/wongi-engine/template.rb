@@ -28,6 +28,10 @@ module Wongi::Engine
       Template.concrete?(subject) && Template.concrete?(predicate) && Template.concrete?(object)
     end
 
+    def bitmap
+      (Template.concrete?(subject) ? 4 : 0) | (Template.concrete?(predicate) ? 2 : 0) | (Template.concrete?(object) ? 1 : 0)
+    end
+
     def variables
       [].tap do |a|
         a << subject if Template.variable?(subject)

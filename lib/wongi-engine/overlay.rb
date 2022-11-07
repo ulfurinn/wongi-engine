@@ -22,12 +22,14 @@ module Wongi::Engine
 
       @wmes = Set.new
       @indexes = [
-        AlphaIndex.new(%i[subject]),
-        AlphaIndex.new(%i[predicate]),
+        nil,
         AlphaIndex.new(%i[object]),
-        AlphaIndex.new(%i[subject predicate]),
-        AlphaIndex.new(%i[subject object]),
+        AlphaIndex.new(%i[predicate]),
         AlphaIndex.new(%i[predicate object]),
+        AlphaIndex.new(%i[subject]),
+        AlphaIndex.new(%i[subject object]),
+        AlphaIndex.new(%i[subject predicate]),
+        nil,
       ]
       @hidden_parent_wmes = {}
 
@@ -230,9 +232,7 @@ module Wongi::Engine
       elsif template.root?
         wmes.each { y << _1 }
       else
-        indexes.map { |index|
-          index.collections_for_template(template)
-        }.compact.first.each { y << _1 }
+        indexes[template.bitmap].collection_for_wme(template).each { y << _1 }
       end
     end
 
@@ -250,7 +250,7 @@ module Wongi::Engine
 
       unless has_own_wme?(wme)
         wmes.add(wme)
-        indexes.each { _1.add(wme) }
+        indexes[1..6].each { _1.add(wme) }
       end
 
       if generator
@@ -270,7 +270,7 @@ module Wongi::Engine
         # no remaining reasons to keep this WME around
         if !own_generated?(wme) && !own_manual?(wme)
           wmes.delete(wme)
-          indexes.each { _1.remove(wme) }
+          indexes[1..6].each { _1.remove(wme) }
         end
 
         neg_join_results.remove_wme(wme)
