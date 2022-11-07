@@ -109,6 +109,10 @@ module Wongi::Engine
       overlays.last
     end
 
+    def entity(subject)
+      current_overlay.entity(subject)
+    end
+
     def assert(wme)
       default_overlay.assert(wme)
     end

@@ -155,6 +155,11 @@ module Wongi::Engine
       end
     end
 
+    def entity(subject)
+      # 4 is the bitmap for <s _ _>
+      EntityIterator.new(subject, indexes[4].collection_for_wme(Template.new(subject, :_, :_)))
+    end
+
     def manual?(wme)
       wme_manual.key?(wme) ||
         if parent
