@@ -7,3 +7,6 @@ theme = "hugo-book"
 [params]
   BookTheme = 'auto'
   BookComments = false
+
+[permalinks]
+  posts = '/:year/:month/:title/'
