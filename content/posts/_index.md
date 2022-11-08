@@ -1,0 +1,5 @@
+---
+menu:
+  after:
+title: Announcements
+---
