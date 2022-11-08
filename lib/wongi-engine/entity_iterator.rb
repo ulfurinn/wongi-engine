@@ -23,12 +23,37 @@ module Wongi::Engine
       end
     end
 
+    def get(name)
+      each { |k, v| return v if k == name }
+      nil
+    end
+
+    def [](name)
+      get(name)
+    end
+
     def get_all(name)
       each.filter_map { |k, v| v if k == name }
     end
 
+    def fetch(name, *args, &block)
+      each { |k, v| return v if k == name }
+      if args.first
+        args.first
+      elsif block
+        block.call(name)
+      else
+        raise KeyError
+      end
+    end
+
     def method_missing(name)
       each { |k, v| return v if k == name }
+      raise NoMethodError
+    end
+
+    def respond_to_missing?(name, _include_private)
+      each { |k, v| return true if k == name }
       super
     end
   end
