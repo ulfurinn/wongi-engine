@@ -2,7 +2,7 @@
 title: Tutorial
 ---
 
-# Wongi::Engine
+# [Wongi::Engine](https://github.com/ulfurinn/wongi-engine)
 
 This is a pure-Ruby forward-chaining rule engine based on the classic [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm).
 
