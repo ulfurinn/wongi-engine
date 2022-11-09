@@ -157,7 +157,7 @@ end
 
 ## Aggregates
 
-Aggregates calculate a value across all matching tokens and pass it forward. They all have the same base form:
+Aggregates calculate a value across all matching result sets and pass it forward. They all have the same base form:
 
 ```ruby
 aggregate :NewVar, over: :Var, map: ->(token) { ... }, using: ->(values) { ... }, partition: [:Var1, :Var2, ...]
@@ -165,7 +165,7 @@ aggregate :NewVar, over: :Var, map: ->(token) { ... }, using: ->(values) { ... }
 
 `NewVar` is the variable that will receive the result of the aggregation.
 
-`over` is the input variable to the aggregation function. Alternatively, a `map` function with more complex logic may be provided.
+`over` is the variable that is fed to the aggregation function. Alternatively, a `map` function with more complex logic may be provided.
 
 `using` is the actual aggregation function.
 

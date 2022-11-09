@@ -19,6 +19,6 @@ end
 
 Overlays may be nested if necessary, creating nested scopes, kind of like layered filesystems.
 
-**NB**: Only the current (top-most) overlay may be modified. Lower ones may be modified once everything on top of them goes out of scope.
+{{<hint "info">}}Only the current (top-most) overlay may be modified. Lower ones may be modified once everything on top of them goes out of scope.{{</hint>}}
 
-**NB**: Entity iterators created inside an overlay are only guaranteed to be valid while that overlay is the current one.
+{{<hint "warning">}}[Entity iterators]({{<ref "known-knowns.md#entity-iterators">}}) created inside an overlay are only guaranteed to be valid while that overlay is the current one.{{</hint>}}
