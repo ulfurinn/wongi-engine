@@ -86,6 +86,12 @@ module Wongi::Engine::DSL
     clause :gte
     accept Wongi::Engine::GreaterThanOrEqualTest
 
+    clause :in_list
+    accept Wongi::Engine::InListTest
+
+    clause :not_in_list
+    accept Wongi::Engine::NotInListTest
+
     clause :aggregate
     accept Clause::Aggregate
 
