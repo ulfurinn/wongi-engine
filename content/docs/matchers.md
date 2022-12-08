@@ -94,13 +94,15 @@ The rule compiler can collapse some simpler matchers like `has` into a single ex
 
 Filters are a category of matchers that block rule execution based on some predicate; they operate entirely on the token assembed so far.
 
+Any argument to filter clauses can be a variable or a literal value, though usually you'd want at least one argument to be a variable.
+
 ### same / eq / equal
 
 ```ruby
 same x, y
 ```
 
-`same` passes if its arguments compare as equal using `#==`. It is obviously only useful if at least one of them is a variable. In fact, it's recommended to use it if _both_ arguments are variables, because otherwise you can usually just match on the expected value directly with `has`.
+`same` passes if its arguments compare as equal using `#==`. It's recommended to only use it if _both_ arguments are variables, because otherwise you can usually just match on the expected value directly with `has`.
 
 ### diff / ne
 
@@ -108,9 +110,9 @@ same x, y
 diff x, y
 ```
 
-`diff` passes if its arguments do not compare as equal using `#==`. As with `same`, it's best to use this matcher when both arguments are variables.
+`diff` passes if its arguments do not compare as equal using `#==`.
 
-However, note that there is a subtle difference in behaviour between "there is no value X" and "there is a value that is not X". To illustrate, suppose you have an item that is tagged with `luxury` and `import`, and you encode this with `{item, tag, luxury}` and `{item, tag, import}`.
+As with `same`, it's best to use this matcher when both arguments are variables. However, note that there is a subtle difference in behaviour between "there is no value X" and "there is a value that is not X". To illustrate, suppose you have an item that is tagged with `luxury` and `import`, and you encode this with `{item, tag, luxury}` and `{item, tag, import}`.
 
 Then, you might want to have a rule that captures non-imported items, so you can try saying:
 
@@ -140,6 +142,16 @@ greater x, y
 ```
 
 `greater` passes if `x > y`.
+
+### in_list, not_in_list
+
+```ruby
+in_list value, list
+
+not_in_list value, list
+```
+
+`in_list` passes if the second argument includes the first one; `not_in_list` passes if it does not.
 
 ### assert
 
