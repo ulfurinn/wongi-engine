@@ -29,7 +29,7 @@ module Wongi::Engine
     end
 
     def ==(other)
-      super && x == other.x && y == other.y
+      self.class == other.class && x == other.x && y == other.y
     end
   end
 end
