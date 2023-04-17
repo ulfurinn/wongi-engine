@@ -155,7 +155,7 @@ module Wongi::Engine
         raise ArgumentError
       end
 
-      each_by_template(template, &block)
+      each_by_template(template).each(&block)
     end
 
     def entity(subject)

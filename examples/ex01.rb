@@ -1,23 +1,21 @@
-include Wongi::Engine
+engine = Wongi::Engine.create
 
-ds = Network.new
-
-ds << WME.new("Alice", "friend", "Bob")
+engine << ["Alice", "friend", "Bob"]
 
 puts "Enumerate all:"
 
-ds.each do |wme|
+engine.each do |wme|
   puts wme
 end
 
 puts "Enumerate by pattern:"
 
-ds.each :_, "friend", :_ do |wme|
+engine.each :_, "friend", :_ do |wme|
   puts wme
 end
 
 puts "Mismatching pattern:"
 
-ds.each :_, "foe", :_ do |wme|
+engine.each :_, "foe", :_ do |wme|
   puts wme
 end

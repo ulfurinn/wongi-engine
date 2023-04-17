@@ -68,6 +68,29 @@ describe Wongi::Engine::Overlay do
       expect(overlay.each(1, 11, 111)).to have(1).items
       expect(overlay.each(1, 11, 111).first).to eq(wmes.first)
     end
+
+    it 'iterates with a block' do
+      wmes = [
+        Wongi::Engine::WME.new(1, 11, 111),
+        Wongi::Engine::WME.new(1, 11, 112),
+        Wongi::Engine::WME.new(1, 11, 113),
+        Wongi::Engine::WME.new(1, 12, 121),
+        Wongi::Engine::WME.new(1, 12, 122),
+        Wongi::Engine::WME.new(2, 11, 111),
+        Wongi::Engine::WME.new(2, 11, 222),
+        Wongi::Engine::WME.new(2, 22, 222),
+        Wongi::Engine::WME.new(2, 22, 223),
+        Wongi::Engine::WME.new(3, 33, 113),
+        Wongi::Engine::WME.new(3, 33, 333),
+        Wongi::Engine::WME.new(3, 34, 333),
+      ]
+      wmes.each { overlay.assert(_1) }
+
+      returned = []
+      overlay.each { |wme| returned << wme }
+
+      expect(returned).to eq wmes
+    end
   end
 
   context "retracting facts" do
