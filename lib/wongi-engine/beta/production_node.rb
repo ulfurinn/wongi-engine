@@ -1,11 +1,12 @@
 module Wongi
   module Engine
     class ProductionNode < BetaNode
-      attr_accessor :tracer, :compilation_context
+      attr_accessor :tracer, :compilation_context, :name
 
-      def initialize(parent, actions)
+      def initialize(name, parent, actions)
         super(parent)
         @actions = actions.each { |action| action.production = self }
+        @name = name
       end
 
       def beta_activate(token)

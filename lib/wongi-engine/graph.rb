@@ -29,22 +29,22 @@ module Wongi::Engine
     end
 
     def dump_alphas(io)
-      io.puts "subgraph cluster_alphas {"
       @rete.alphas.reject { |alpha| alpha.betas.empty? }.each do |alpha|
-        io.puts "node#{print_hash alpha.object_id} [shape=box label=\"#{alpha.template.to_s.gsub(/"/, '"')}\"];"
+        io.puts "node#{print_hash alpha.object_id} [shape=box style=filled fillcolor=olivedrab1 label=#{alpha_label(alpha).dump}];"
       end
-      io.puts "};"
     end
 
     def dump_betas(io, opts)
-      dump_beta(io, @rete.beta_top, opts)
+      @rete.beta_top.children.each do |child|
+        dump_beta(io, child, opts)
+      end
     end
 
     def dump_beta(io, beta, opts)
       return if @seen_betas.include? beta
 
       @seen_betas << beta
-      io.puts "node#{print_hash beta.object_id} [label=\"#{beta.class.name.split('::').last}\\nid=#{beta.object_id}\"];"
+      io.puts "node#{print_hash beta.object_id} [style=filled fillcolor=#{beta_fillcolor(beta)} label=#{beta_label(beta).dump}];"
       if beta.is_a? NccNode
         io.puts "node#{print_hash beta.partner.object_id} -> node#{print_hash beta.object_id};"
         io.puts "{ rank=same; node#{print_hash beta.partner.object_id} node#{print_hash beta.object_id} }"
@@ -56,6 +56,48 @@ module Wongi::Engine
       beta.children.each do |child|
         io.puts "node#{print_hash beta.object_id} -> node#{print_hash child.object_id};"
         dump_beta(io, child, opts)
+      end
+    end
+
+    def alpha_label(node)
+      node.template.to_s
+    end
+
+    def beta_label(node)
+      label = node.class.name.split('::').last
+      label += "\n" +
+        case node
+        when JoinNode, NegNode, OptionalNode
+          node.alpha.template.to_s
+        when FilterNode
+          node.test.to_s
+        when AssignmentNode
+          "#{node.variable} := #{node.body.respond_to?(:call) ? '<dynamic>' : node.body}"
+        when ProductionNode
+          node.name
+        else
+          ""
+        end
+
+      label
+    end
+
+    def beta_fillcolor(node)
+      case node
+      when JoinNode
+        "lightgreen"
+      when NegNode
+        "lightpink"
+      when OptionalNode
+        "palegreen"
+      when FilterNode
+        "lightblue"
+      when AssignmentNode
+        "lightyellow"
+      when ProductionNode
+        "lightcoral"
+      else
+        "white"
       end
     end
   end

@@ -1,5 +1,7 @@
 module Wongi::Engine
   class AssignmentNode < BetaNode
+    attr_reader :variable, :body
+
     def initialize(parent, variable, body)
       super(parent)
       @variable = variable
@@ -11,8 +13,8 @@ module Wongi::Engine
 
       overlay.add_token(token)
       children.each do |child|
-        value = @body.respond_to?(:call) ? @body.call(token) : @body
-        child.beta_activate Token.new(child, token, nil, { @variable => value })
+        value = body.respond_to?(:call) ? body.call(token) : body
+        child.beta_activate Token.new(child, token, nil, { variable => value })
       end
     end
 
@@ -30,7 +32,7 @@ module Wongi::Engine
 
     def refresh_child(child)
       tokens.each do |token|
-        child.beta_activate Token.new(child, token, nil, { @variable => @body.respond_to?(:call) ? @body.call(token) : @body })
+        child.beta_activate Token.new(child, token, nil, { variable => body.respond_to?(:call) ? body.call(token) : body })
       end
     end
   end

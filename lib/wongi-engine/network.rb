@@ -178,7 +178,7 @@ module Wongi::Engine
 
     def install_rule(rule)
       derived = rule.import_into self
-      production = build_production beta_top, derived.conditions, [], derived.actions, false
+      production = build_production(rule.name, beta_top, derived.conditions, [], derived.actions, false)
       productions[rule.name] = production if rule.name
       production
     end
@@ -224,7 +224,7 @@ module Wongi::Engine
       query = queries[name] = RootNode.new(nil)
       query.rete = self
       query.seed(parameters.to_h { |param| [param, nil] })
-      results[name] = build_production query, conditions, parameters, actions, true
+      results[name] = build_production(name, query, conditions, parameters, actions, true)
     end
 
     def execute(name, valuations)
@@ -296,9 +296,9 @@ module Wongi::Engine
       end
     end
 
-    def build_production(root, conditions, parameters, actions, alpha_deaf)
+    def build_production(name, root, conditions, parameters, actions, alpha_deaf)
       compiler = Compiler.new(self, root, conditions, parameters, alpha_deaf)
-      ProductionNode.new(compiler.compile, actions).tap do |production|
+      ProductionNode.new(name, compiler.compile, actions).tap do |production|
         production.compilation_context = compiler
         production.refresh
       end

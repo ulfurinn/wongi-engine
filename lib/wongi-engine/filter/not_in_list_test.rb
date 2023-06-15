@@ -29,5 +29,9 @@ module Wongi::Engine
     def ==(other)
       self.class == other.class && x == other.x && y == other.y
     end
+
+    def to_s
+      "#{x} not in #{y}"
+    end
   end
 end
