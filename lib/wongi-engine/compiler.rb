@@ -100,7 +100,8 @@ module Wongi::Engine
     end
 
     def filter_node(filter)
-      self.node = FilterNode.new(node, filter).tap(&:refresh)
+      existing = node.children.find { |n| n.is_a?(FilterNode) && n.test == filter }
+      self.node = existing || FilterNode.new(node, filter).tap(&:refresh)
     end
   end
 end
