@@ -15,6 +15,10 @@ module Wongi::Engine
       parents.flat_map(&:ancestors).uniq + parents.to_a
     end
 
+    def ancestral_wme?(wme)
+      self.wme == wme || parents.any? { _1.ancestral_wme?(wme) }
+    end
+
     def child_of?(token)
       parents.include?(token)
     end

@@ -47,6 +47,7 @@ module Wongi
         assignments = collect_assignments(wme)
 
         tokens.each do |token|
+          next if token.ancestral_wme?(wme)
           next unless matches?(token, wme)
 
           children.each do |beta|
@@ -61,8 +62,7 @@ module Wongi
 
       def beta_activate(token)
         # p beta_activate: {class: self.class, object_id:, token:}
-        return if tokens.find { |t| t.duplicate? token }
-
+        
         overlay.add_token(token)
 
         template = specialize(alpha.template, tests, token)

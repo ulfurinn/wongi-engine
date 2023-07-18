@@ -9,7 +9,6 @@ module Wongi::Engine
     end
 
     def beta_activate(token, _wme = nil, _assignments = {})
-      return if tokens.find { |t| t.duplicate? token }
 
       overlay.add_token(token)
       children.each do |child|

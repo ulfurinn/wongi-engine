@@ -30,8 +30,6 @@ module Wongi::Engine
     end
 
     def beta_activate(token)
-      return if tokens.find { |t| t.duplicate? token }
-
       overlay.add_token(token)
       evaluate
     end

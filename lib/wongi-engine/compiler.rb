@@ -37,9 +37,9 @@ module Wongi::Engine
                     JoinNode.new(node, tests, assignment).tap do |join|
                       join.alpha = alpha
                       alpha.betas << join unless alpha_deaf
+                      join.refresh
                     end
                   end
-      node.tap(&:refresh)
     end
 
     def neg_node(condition, tests)

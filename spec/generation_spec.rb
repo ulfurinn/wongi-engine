@@ -104,4 +104,45 @@ describe Wongi::Engine::DSL::Action::StatementGenerator do
       expect(engine.find(*%w[Alice relative Dwight])).to be_nil
     end
   end
+
+  specify do
+    engine << rule("r1") {
+      forall {
+        has :Item, :price_group, :Group
+        has :Group, :name, :Name
+        has :Group, :base_price, :Price
+        # equal :Price, :MaxPrice # -- this is necessary for this to work without token converging
+      }
+      make {
+        gen :Item, :Group, :Price
+      }
+    }
+
+    engine << rule("r2") {
+      forall {
+        has :Item, :price_group, :Group
+        has :Item, :Group, :Price
+      }
+      make {
+        gen :Item, :price, :Price
+      }
+    }
+
+    material1 = Object.new
+    engine << [:toy, :price_group, material1]
+    engine << [material1, :name, :material]
+    engine << [material1, :base_price, 100]
+
+    material2 = Object.new
+    engine << [:toy, :price_group, material2]
+    engine << [material2, :name, :material]
+    engine << [material2, :base_price, 200]
+
+    packaging = Object.new
+    engine << [:toy, :price_group, packaging]
+    engine << [packaging, :name, :packaging]
+    engine << [packaging, :base_price, 20]
+
+    expect(engine.productions["r2"]).to have(3).tokens
+  end
 end

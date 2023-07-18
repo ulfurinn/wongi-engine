@@ -14,6 +14,7 @@ module Wongi
       def alpha_activate(wme, children: self.children)
         # p alpha_activate: {class: self.class, object_id:, wme:}
         tokens.each do |token|
+          next if token.ancestral_wme?(wme)
           next unless matches?(token, wme)
 
           # order matters for proper invalidation
@@ -40,7 +41,6 @@ module Wongi
 
       def beta_activate(token)
         # p beta_activate: {class: self.class, object_id:, token:}
-        return if tokens.find { |t| t.duplicate? token }
 
         overlay.add_token(token)
 

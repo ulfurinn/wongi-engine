@@ -11,7 +11,6 @@ module Wongi
 
       def beta_activate(token)
         # p beta_activate: {class: self.class, object_id:, token:}
-        return if tokens.find { |t| t.duplicate? token }
 
         overlay.add_token(token)
 

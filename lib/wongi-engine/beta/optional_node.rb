@@ -15,6 +15,7 @@ module Wongi
       def alpha_activate(wme, children: self.children)
         assignments = collect_assignments(wme)
         tokens.each do |token|
+          next if token.ancestral_wme?(wme)
           next unless matches? token, wme
 
           optional = overlay.opt_join_results_for(token: token).empty?
@@ -52,8 +53,6 @@ module Wongi
       end
 
       def beta_activate(token)
-        return if tokens.find { |t| t.duplicate? token }
-
         overlay.add_token(token)
 
         match = false

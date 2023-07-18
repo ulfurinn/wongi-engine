@@ -10,8 +10,6 @@ module Wongi
       end
 
       def beta_activate(token)
-        return if tokens.find { |t| t.duplicate? token }
-
         return unless test.passes?(token)
 
         overlay.add_token(token)
