@@ -18,7 +18,6 @@ jobs:
           - "2.7"
           - jruby-head
           - truffleruby-head
-          - truffleruby+graalvm-head
 
     steps:
       - uses: actions/checkout@v3
