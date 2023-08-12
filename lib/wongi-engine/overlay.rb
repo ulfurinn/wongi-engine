@@ -436,7 +436,7 @@ module Wongi::Engine
     end
 
     def add_ncc_token(owner, ncc)
-      if hidden_ncc_tokens.key?(owner) && hidden_ncc_tokens[token].include?(ncc)
+      if hidden_ncc_tokens.key?(owner) && hidden_ncc_tokens[owner].include?(ncc)
         hidden_ncc_tokens[owner].delete(ncc)
         if hidden_ncc_tokens[owner].empty?
           hidden_ncc_tokens.delete(owner)
