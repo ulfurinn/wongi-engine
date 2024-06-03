@@ -3,6 +3,8 @@
 [![Gem](https://img.shields.io/gem/v/wongi-engine.svg)](https://rubygems.org/gems/wongi-engine/)
 [![Build Status](https://github.com/ulfurinn/wongi-engine/actions/workflows/test.yml/badge.svg)](https://github.com/ulfurinn/wongi-engine/actions/workflows/test.yml)
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R0YVX79)
+
 This is a pure-Ruby forward-chaining rule engine based on the classic [Rete algorithm](http://en.wikipedia.org/wiki/Rete_algorithm).
 
 Ruby >= 2.7 and JRuby are supported. Rubinius should work but isn't actively supported.
